@@ -1,0 +1,14 @@
+/home/rickvanberlo/Projects/C#/Mercury_Api/bin/Debug/netcoreapp2.2/Mercury_Api.deps.json
+/home/rickvanberlo/Projects/C#/Mercury_Api/bin/Debug/netcoreapp2.2/Mercury_Api.runtimeconfig.json
+/home/rickvanberlo/Projects/C#/Mercury_Api/bin/Debug/netcoreapp2.2/Mercury_Api.runtimeconfig.dev.json
+/home/rickvanberlo/Projects/C#/Mercury_Api/bin/Debug/netcoreapp2.2/Mercury_Api.dll
+/home/rickvanberlo/Projects/C#/Mercury_Api/bin/Debug/netcoreapp2.2/Mercury_Api.pdb
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.csprojAssemblyReference.cache
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.csproj.CoreCompileInputs.cache
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.RazorAssemblyInfo.cache
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.RazorAssemblyInfo.cs
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.AssemblyInfoInputs.cache
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.AssemblyInfo.cs
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.RazorTargetAssemblyInfo.cache
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.dll
+/home/rickvanberlo/Projects/C#/Mercury_Api/obj/Debug/netcoreapp2.2/Mercury_Api.pdb
