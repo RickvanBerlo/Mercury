@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mercury_Api.Database;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mercury_Api.Controllers
@@ -10,6 +11,9 @@ namespace Mercury_Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        public ValuesController(DatabaseService databaseservice){
+            
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
