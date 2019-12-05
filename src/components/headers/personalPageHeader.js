@@ -3,15 +3,20 @@ import styled, { keyframes } from 'styled-components';
 import TopNavbar from '../navbars/topNavbar.js';
 import Background from '../../assets/city.gif';
 import screenResolution from '../../utils/screenResolution';
+import IconButton from '../buttons/iconButton';
 
 const Header = () => {
     const { height, width } = screenResolution();
     console.log(width);
     return (
-        <Container height={height - 20 + "px"}>
+        <Container height={height + "px"}>
             <TopNavbar />
             <TitleContainer height={(height / 2 - 80) + "px"}>
                 <Title> Rick van Berlo</Title>
+                <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} />
+                <IconButton icon={['fab', 'linkedin-in']} size="2x" color="white" onClick={() => window.open("https://www.linkedin.com/in/rick-v-8a619799/", "_blank")} />
+                <IconButton icon={['fab', 'github']} size="2x" color="white" onClick={() => window.open("https://github.com/RickvanBerlo", "_blank")} />
+                <IconButton icon={['fab', 'instagram']} size="2x" color="white" onClick={() => window.open("https://www.instagram.com/rickvanberlo/?hl=nl", "_blank")} />
             </TitleContainer>
         </Container>
     );

@@ -5,7 +5,7 @@ import Button from './button';
 const NavButton = ({ name = "No name" }) => {
     return (
         <Container>
-            <Button name={name} height={"48px"} padding={"20px"} />
+            <Button name={name} height={"48px"} padding={"20px"} color={"white"} />
         </Container>
     );
 }

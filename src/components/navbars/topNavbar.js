@@ -23,6 +23,7 @@ const Container = styled.div`
     width: 100%;
     text-align: center;
     background-color: transparent;
+    z-index: 100;
 `
 
 export default TopNavbar;
