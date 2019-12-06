@@ -1,15 +1,16 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import NavButton from '../buttons/navButton';
+import strings from '../../constants/strings';
 
 const TopNavbar = () => {
     return (
         <Container>
-            <NavButton name="HOME" />
-            <NavButton name="OVER MIJ" />
-            <NavButton name="CURRICULUM VITAE" />
-            <NavButton name="PORTFOLIO" />
-            <NavButton name="CONTACT" />
+            <NavButton name={strings.NAVIGATION.BUTTON1} />
+            <NavButton name={strings.NAVIGATION.BUTTON2} />
+            <NavButton name={strings.NAVIGATION.BUTTON3} />
+            <NavButton name={strings.NAVIGATION.BUTTON4} />
+            <NavButton name={strings.NAVIGATION.BUTTON5} />
         </Container>
     );
 }

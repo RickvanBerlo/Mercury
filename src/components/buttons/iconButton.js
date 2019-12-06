@@ -1,8 +1,9 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import colors from '../../constants/colors';
 
-const IconButton = ({ icon = "times", padding = "20px", size = "2x", color = "black", onClick = () => { console.log("no function") } }) => {
+const IconButton = ({ icon = "times", padding = "20px", size = "2x", color = colors.DARK_GRAY, onClick = () => { console.log("no function") } }) => {
     return (
         <Container padding={padding} onClick={onClick}>
             <StyledIcon icon={icon} size={size} color={color} />

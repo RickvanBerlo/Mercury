@@ -1,7 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import colors from '../../constants/colors';
 
-const Button = ({ name = "No name", padding = "20px", height = "50px", color = "black", onClick = () => { console.log("no function") } }) => {
+const Button = ({ name = "No name", padding = "20px", height = "50px", color = colors.DARK_GRAY, onClick = () => { console.log("no function") } }) => {
     return (
         <Container padding={padding} height={height} onClick={onClick} color={color}>
             {name}

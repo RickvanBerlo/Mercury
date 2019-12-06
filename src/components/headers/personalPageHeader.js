@@ -4,6 +4,8 @@ import TopNavbar from '../navbars/topNavbar.js';
 import Background from '../../assets/city.gif';
 import screenResolution from '../../utils/screenResolution';
 import IconButton from '../buttons/iconButton';
+import colors from '../../constants/colors';
+import strings from '../../constants/strings';
 
 const Header = () => {
     const { height, width } = screenResolution();
@@ -12,7 +14,7 @@ const Header = () => {
         <Container height={height + "px"}>
             <TopNavbar />
             <TitleContainer height={(height / 2 - 80) + "px"}>
-                <Title> Rick van Berlo</Title>
+                <Title>{strings.NAME}</Title>
                 <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} />
                 <IconButton icon={['fab', 'linkedin-in']} size="2x" color="white" onClick={() => window.open("https://www.linkedin.com/in/rick-v-8a619799/", "_blank")} />
                 <IconButton icon={['fab', 'github']} size="2x" color="white" onClick={() => window.open("https://github.com/RickvanBerlo", "_blank")} />
@@ -24,7 +26,7 @@ const Header = () => {
 
 //styles
 const Container = styled.div`
-    background: #1F1F1F url(${Background}) no-repeat center;
+    background: ${colors.DARK_GRAY} url(${Background}) no-repeat center;
     width: 100%;
     height: ${props => props.height};
     background-attachment: fixed;
@@ -36,7 +38,7 @@ const Container = styled.div`
 const Title = styled.h1`
     color: white;
     font-size: 78.5px;
-    text-shadow: 3px 2px 3px rgba(0, 0, 0, .8);
+    text-shadow: 3px 2px 3px ${colors.TRANSPARENT_80};
 `
 
 const TitleContainer = styled.div`

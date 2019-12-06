@@ -1,35 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import Background from '../../assets/city.gif';
-import screenResolution from '../../utils/screenResolution';
 import image from '../../assets/profilepic.jpg';
+import colors from '../../constants/colors';
+import strings from '../../constants/strings';
 
 const HeadSection = () => {
-    const { height, width } = screenResolution();
-    console.log(width);
     return (
-        <Container height={height + "px"}>
+        <Container>
             <CenterContainer>
                 <ImageContainer>
                     <Image src={image} />
                 </ImageContainer>
                 <TextContainer>
-                    <Title>Over mij</Title>
-                    <Description>
-                        Mijn naam is Rick van Berlo, ben 20 jaar, woon in Gennep en studeer momenteel op het HBO op Avans in Den Bosch.
-                        <br /><br />
-                        Techniek heeft mij vanaf kleins af aan heel erg inspireert, vooral de computers.
-                        In het begin was ik vooral bezig met computers in elkaar zetten maar naarmate ik ouder werd ontdekte ik dat je ook software kon schrijven voor de computer.
-                        Dit sprak me erg aan en tot heden ben ik er nog steeds zeer geïntereseerd in.
-                    </Description>
-                    <Title>Contact gegevens</Title>
-                    <Description>
-                        Rick van Berlo <br />
-                        WillemBoyeweg 38 <br />
-                        Gennep, 6591ZT <br />
-                        06-57854479 <br />
-                        rickvanberlo@gmail.com
-                    </Description>
+                    <Title>{strings.HEADSECTION.TITLE}</Title>
+                    <Description>{strings.HEADSECTION.DESCRIPTION}</Description>
+                    <Title>{strings.HEADSECTION.CONTACT_TITLE}</Title>
+                    <Description>{strings.HEADSECTION.CONTACT_DESCRIPTION}</Description>
                 </TextContainer>
             </CenterContainer>
         </Container>
@@ -39,7 +25,7 @@ const HeadSection = () => {
 //styles
 const Container = styled.div`
     margin-top: -50px;
-    background: #2b2b2b;
+    background: ${colors.DARK_GRAY};
     padding-top: 96px;
     padding-bottom: 80px;
     overflow: hidden;
@@ -49,9 +35,10 @@ const Title = styled.h3`
     font: 22px/30px 'opensans-bold', sans-serif;
 `
 const Description = styled.p`
-    color: #7A7A7A;
+    color: ${colors.GRAY};
     font: 16px 'opensans-bold', sans-serif;
     line-height: 30px;
+    white-space: pre-line;
 `
 
 const CenterContainer = styled.div`

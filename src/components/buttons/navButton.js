@@ -1,11 +1,12 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import Button from './button';
+import colors from '../../constants/colors';
 
 const NavButton = ({ name = "No name" }) => {
     return (
         <Container>
-            <Button name={name} height={"48px"} padding={"20px"} color={"white"} />
+            <Button name={name} height={"48px"} padding={"20px"} color={colors.WHITE} />
         </Container>
     );
 }

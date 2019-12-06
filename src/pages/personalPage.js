@@ -3,14 +3,15 @@ import styled, { keyframes } from 'styled-components';
 import Header from '../components/headers/personalPageHeader';
 import HeadSection from '../components/personalPageSections/headSection';
 import SubSection from '../components/personalPageSections/subSection';
+import strings from '../constants/strings';
 
 const CurriculemVitae = () => {
   return (
     <Container>
       <Header />
       <HeadSection />
-      <SubSection />
-      <SubSection />
+      <SubSection content={strings.WORK} />
+      <SubSection content={strings.WORK} />
     </Container>
   );
 }

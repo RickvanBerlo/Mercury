@@ -3,15 +3,16 @@ import styled, { keyframes } from 'styled-components';
 import Background from '../../assets/city.gif';
 import screenResolution from '../../utils/screenResolution';
 import image from '../../assets/profilepic.jpg';
+import colors from '../../constants/colors';
 
-const SubSection = () => {
+const SubSection = ({ content }) => {
     const { height, width } = screenResolution();
     console.log(width);
     return (
         <Container height={height + "px"}>
             <CenterContainer>
                 <CategoryContainer>
-                    <Category>Werk</Category>
+                    <Category>{content.CATEGORY}</Category>
                 </CategoryContainer>
                 <TextContainer>
                     <Title>Student aan Huis</Title>
@@ -40,15 +41,16 @@ const Container = styled.div`
     padding-top: 60px;
     padding-bottom: 40px;
     overflow: hidden;
-    border-bottom: 1px solid #E8E8E8;
+    border-bottom: 1px solid ${colors.LIGHT_GRAY};
 `
 const Title = styled.h3`
     font: 22px/30px 'opensans-bold', sans-serif;
 `
 const Description = styled.p`
-    color: #7A7A7A;
+    color: ${colors.GRAY};
     font: 16px 'opensans-bold', sans-serif;
     line-height: 30px;
+    white-space: pre-line;
 `
 
 const DotContainer = styled.span`
@@ -58,7 +60,7 @@ const DotContainer = styled.span`
 
 const Info = styled.p`
     font: 19px 'librebaskerville-italic', serif;
-    color: #6E7881;
+    color: ${colors.SUBTITLE};
     margin-bottom: 18px;
     margin-top: 9px;
 `
@@ -78,7 +80,7 @@ const CategoryContainer = styled.div`
     position: relative;
     min-height: 1px;
     float: left;
-    border-bottom: 3px solid lightskyblue;
+    border-bottom: 3px solid ${colors.LIGHT_BLUE};
 `
 const Category = styled.h2`
     position: relative;
