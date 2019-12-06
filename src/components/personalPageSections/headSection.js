@@ -41,7 +41,7 @@ const Container = styled.div`
     margin-top: -50px;
     background: #2b2b2b;
     padding-top: 96px;
-    padding-bottom: 66px;
+    padding-bottom: 80px;
     overflow: hidden;
 `
 const Title = styled.h3`
