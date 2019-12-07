@@ -5,7 +5,8 @@ const colors = {
     SUBTITLE: "#6E7881",
     LIGHT_BLUE: "lightskyblue",
     TRANSPARENT_80: "rgba(0, 0, 0, .8)",
-    WHITE: "#FFFFFF"
+    WHITE: "#FFFFFF",
+    TRANSPARENT: "transparent",
 }
 
 export default colors;
