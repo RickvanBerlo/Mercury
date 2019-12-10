@@ -4,47 +4,62 @@ const projects =
     [
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
             IMAGE: profile
         },
         {
             TITLE: "tester",
-            LINK: "www.google.com",
+            LINK: "https://www.google.com",
+            IMAGE: profile
+        },
+        {
+            TITLE: "tester",
+            LINK: "https://www.google.com",
+            IMAGE: profile
+        },
+        {
+            TITLE: "tester",
+            LINK: "https://www.google.com",
+            IMAGE: profile
+        },
+        {
+            TITLE: "tester",
+            LINK: "https://www.google.com",
             IMAGE: profile
         }
     ];

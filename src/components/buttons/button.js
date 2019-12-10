@@ -22,6 +22,11 @@ const Container = styled.a`
     width: auto;
     line-height ${props => props.height};
     color: ${props => props.color};
+    transition: color 0.2s linear; /* vendorless fallback */
+    -o-transition: color 0.2s linear; /* opera */
+    -ms-transition: color 0.2s linear; /* IE 10 */
+    -moz-transition: color 0.2s linear; /* Firefox */
+    -webkit-transition: color 0.2s linear; /*safari and chrome */
     
 `
 

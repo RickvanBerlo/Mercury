@@ -4,9 +4,9 @@ import image from '../../assets/profilepic.jpg';
 import colors from '../../constants/colors';
 import strings from '../../constants/strings';
 
-const HeadSection = () => {
+const HeadSection = ({ name }) => {
     return (
-        <Container>
+        <Container id={name}>
             <CenterContainer>
                 <ImageContainer>
                     <Image src={image} />

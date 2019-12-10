@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import colors from '../../constants/colors';
 
-const TextSection = ({ content }) => {
+const TextSection = ({ content, name }) => {
     return (
-        <Container>
+        <Container id={name}>
             <CenterBlock>
                 <CenterContainer>
                     <CategoryContainer>
