@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import colors from '../../constants/colors';
-import Background from '../../assets/projectsBackground.jpeg';
+import Background from '../../assets/projectsBackground.jpg';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import projects from '../../constants/projects';
@@ -65,6 +65,8 @@ const LinkContainer = styled.div`
 
 const Text = styled.p`
   padding-top: 5%;
+  font: 18px 'Open Sans Bold',sans-serif;
+  font-weight:600;
   margin: 0px;
   color: ${colors.WHITE}
 `
@@ -84,10 +86,12 @@ const TitleContainer = styled.div`
 `
 const Title = styled.h3`
   color: ${colors.WHITE}
-  font-size: 20px;
   position: relative;
   text-align: center;
   line-height: 80px;
+  padding-top: 20px; 
+  font: 22px 'Open Sans Bold',sans-serif;
+  font-weight:600;
   text-shadow: 3px 2px 3px rgba(0, 0, 0, .8);
   margin: 0px;
 `

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import colors from '../../constants/colors';
-import Background from '../../assets/projectsBackground.jpeg';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 

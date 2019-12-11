@@ -13,7 +13,8 @@ const Button = ({ name = "No name", padding = "20px", height = "50px", color = c
 //styles
 const Container = styled.a`
     text-align: center; 
-    font: 15px 'opensans-bold',sans-serif;
+    font: 14px 'Open Sans Bold',sans-serif;
+    font-weight:600;
     display: block;
     cursor: pointer;
     height: ${props => props.height};

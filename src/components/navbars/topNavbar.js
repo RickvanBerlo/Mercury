@@ -17,21 +17,25 @@ const TopNavbar = () => {
         if (document.getElementById('projectSection').getBoundingClientRect().y < 0) {
             if (colorbutton4 != colors.BLUE) {
                 setColorButton4(colors.BLUE);
-                setColorButton3(colors.WHITE)
+                setColorButton3(colors.WHITE);
+                setColorButton1(colors.WHITE);
+                setColor(colors.NAVBAR);
             }
         } else if (document.getElementById('infoSection').getBoundingClientRect().y < 0) {
             if (colorbutton3 != colors.BLUE) {
-                setColorButton4(colors.WHITE)
+                setColorButton4(colors.WHITE);
                 setColorButton3(colors.BLUE);
-                setColorButton2(colors.WHITE)
+                setColorButton2(colors.WHITE);
+                setColorButton1(colors.WHITE);
+                setColor(colors.NAVBAR);
             }
         } else if (document.getElementById('headSection').getBoundingClientRect().y < 0) {
             if (colorbutton2 != colors.BLUE) {
                 setVisibility("visible");
                 setOpacity(1);
                 setColor(colors.NAVBAR);
-                setColorButton3(colors.WHITE)
-                setColorButton2(colors.BLUE)
+                setColorButton3(colors.WHITE);
+                setColorButton2(colors.BLUE);
                 setColorButton1(colors.WHITE);
             }
         } else if (window.scrollY > 265) {
@@ -52,6 +56,7 @@ const TopNavbar = () => {
     useEffect(() => {
         window.addEventListener('scroll', listenScrollEvent)
     })
+
     return (
         <Container visibility={visibility} opacity={opacity} color={color}>
             <NavButton name={strings.NAVIGATION.BUTTON1} color={colorbutton1} onClick={() => { window.scrollTo(0, 0); }} />

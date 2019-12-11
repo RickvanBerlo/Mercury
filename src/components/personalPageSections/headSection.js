@@ -29,14 +29,16 @@ const Container = styled.div`
     padding-top: 96px;
     padding-bottom: 80px;
     overflow: hidden;
+    text-align: center;
 `
 const Title = styled.h3`
     color: white;
-    font: 22px/30px 'opensans-bold', sans-serif;
+    font: 20px 'Open Sans Bold',sans-serif;
+    font-weight:600;
 `
 const Description = styled.p`
     color: ${colors.GRAY};
-    font: 16px 'opensans-bold', sans-serif;
+    font: 16px 'Open Sans',sans-serif;
     line-height: 30px;
     white-space: pre-line;
 `
@@ -45,6 +47,7 @@ const CenterContainer = styled.div`
     width: 96%;
     max-width: 1020px;
     margin: 0 auto;
+    display: flex;
 `
 const ImageContainer = styled.div`
     margin-top: 3%;
@@ -61,11 +64,12 @@ const Image = styled.img`
 `
 
 const TextContainer = styled.div`
-    float: right;
+    text-align:left;
     width: 70%;
     position: relative;
     padding: 0 20px;
     min-height: 1px;
+    margin-left: 30px;
 `
 
 

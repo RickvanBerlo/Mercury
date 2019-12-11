@@ -23,7 +23,6 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const Container = styled.a`
     display: inline-block !important;
     text-align: center; 
-    font: 15px 'opensans-bold',sans-serif;
     display: block;
     cursor: pointer;
     height: auto;
@@ -31,7 +30,7 @@ const Container = styled.a`
     padding-right: ${props => props.padding};
     width: auto;
     &:hover ${StyledIcon} {
-     color:#0676F6;
+     color: ${colors.BLUE};
    }
     
 `
