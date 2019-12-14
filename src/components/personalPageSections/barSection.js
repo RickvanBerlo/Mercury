@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const TextSection = ({ content, name }) => {
+const BarSection = ({ content, name }) => {
+
+    const [transition, setTransition] = useState(false)
+
+    const listenScrollEvent = () => {
+        if (0 > document.getElementById('internshipSection').getBoundingClientRect().y) {
+            setTransition(true);
+        } else {
+            if (transition) {
+                setTransition(false);
+            }
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', listenScrollEvent)
+    })
+
     return (
         <Container id={name}>
             <CenterBlock>
@@ -15,7 +32,7 @@ const TextSection = ({ content, name }) => {
                     <RightContainer>
                         {
                             content.SECTIONS.map((section, index) => {
-                                return createSection(section, index);
+                                return createSection(section, index, transition);
                             })
                         }
                     </RightContainer>
@@ -25,17 +42,12 @@ const TextSection = ({ content, name }) => {
     );
 }
 
-const createSection = (section, index) => {
+const createSection = (section, index, transition) => {
     return (
-        <TextContainer key={index}>
+        <BarContainer key={index}>
             <Title>{section.TITLE}</Title>
-            <Info>
-                {section.SUBTITLE}
-                <DotContainer>•</DotContainer>
-                <Date>{section.DATE}</Date>
-            </Info>
-            <Description>{section.DESCRIPTION}</Description>
-        </TextContainer>
+            <Bar><Percentage percentage={section.PERCENTAGE} transition={transition} /></Bar>
+        </BarContainer>
     )
 }
 
@@ -45,54 +57,21 @@ const CenterBlock = styled.div`
     margin-right: 5%;
     padding-top: 60px;
     padding-bottom: 40px;
-    display: inline-block;  
+    display: inline-block;
     text-align: left;
     border-bottom: 1px solid ${colors.LIGHT_GRAY};
-    @media (max-width: 767px) {
-        padding-top: 30px;
-    }
 `
 
 const Container = styled.div`
     text-align: center;
     background-color: ${colors.WHITE}
 `
+
 const Title = styled.h3`
-    font: 26px 'Open Sans Bold',sans-serif;
+    font: 20px 'Open Sans Bold',sans-serif;
     font-weight:600;
-    @media (max-width: 767px) {
-        margin-bottom: 5px;
-    }
-`
-const Description = styled.p`
-    color: ${colors.GRAY};
-    font: 16px 'Open Sans',sans-serif;
-    line-height: 30px;
-    white-space: pre-line;
-`
-
-const DotContainer = styled.span`
-    margin-right: 5px;
-    margin-left: 5px;
-    
-`
-
-const Info = styled.p`
-    font: 18px 'Libre Baskerville', serif;
-    color: ${colors.SUBTITLE};
-    margin-bottom: 18px;
-    margin-top: 9px;
-    @media (max-width: 767px) {
-        font: 15px 'Libre Baskerville', serif;
-    }
-`
-
-const Date = styled.em`
-    font: 16px 'Open Sans',sans-serif;
-    margin-top: 6px;
-    @media (max-width: 767px) {
-        font: 12px 'Open Sans',sans-serif;
-    }
+    margin-bottom: 10px;lsc 
+    text-align: left;
 `
 
 const CenterContainer = styled.div`
@@ -104,6 +83,7 @@ const CenterContainer = styled.div`
         display: grid;
     }
 `
+
 const CategoryContainer = styled.div`
     width: auto;
     position: sticky;
@@ -119,14 +99,12 @@ const Category = styled.h2`
     letter-spacing: 1px;
 `
 
-const TextContainer = styled.div`
+const BarContainer = styled.div`
     position: relative;
-    padding: 0 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
     min-height: 1px;
-    @media (max-width: 767px) {
-        text-align: left;
-        margin-top: 50px;
-    }
 `
 
 const LeftContainer = styled.div`
@@ -140,5 +118,24 @@ const RightContainer = styled.div`
         width: 80vw;
     }
 `
+const Bar = styled.div`
+    background-color: ${colors.LIGHT_GRAY}
+    height: 40px;
+    width: auto;
+    border-radius: 5px;
+`
 
-export default TextSection;
+const Percentage = styled.div`
+    background-color: ${colors.DARK_GRAY}
+    height: 100%;
+    border-radius: 5px;
+    width: ${props => props.transition ? props.percentage : "0%"}
+    transition: width 1.5s ease-out;
+    -o-transition: width 1.5s ease-out; /* opera */
+    -ms-transition: width 1.5s ease-out; /* IE 10 */
+    -moz-transition: width 1.5s ease-out; /* Firefox */
+    -webkit-transition: width 1.5s ease-out; /*safari and chrome */
+`
+
+
+export default BarSection;

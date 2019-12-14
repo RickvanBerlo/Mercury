@@ -1,12 +1,15 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import Button from './button';
 import colors from '../../constants/colors';
+import screenResolution from '../../utils/screenResolution';
 
 const NavButton = ({ name = "No name", onClick, color = colors.WHITE }) => {
+    const height = screenResolution().width < 450 ? "48px" : "48px";
+    const padding = screenResolution().width < 450 ? "10px" : "20px";
     return (
         <Container>
-            <Button name={name} height={"48px"} padding={"20px"} color={color} onClick={onClick} />
+            <Button name={name} height={height} padding={padding} color={color} onClick={onClick} />
         </Container>
     );
 }
@@ -17,6 +20,8 @@ const Container = styled.div`
     width: auto;
     display: inline-block;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
 `
 
 export default NavButton;

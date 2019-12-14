@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import colors from '../../constants/colors';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,8 +13,7 @@ const HorizontalScroller = ({ items = [], createItem = () => { console.error("no
             arrowRight={<StyledIcon icon={"arrow-right"} size={"2x"} color={colors.WHITE} />}
             onSelect={onSelect}
             itemStyle={{ padding: "0px 15px", outline: "none" }}
-            hideSingleArrow={true}
-            alignCenter={false}
+            alignCenter={true}
             wheel={false}
         />
     );
@@ -37,6 +36,14 @@ const StyledIcon = styled(FontAwesomeIcon)`
     -webkit-transition: color 0.3s linear; /*safari and chrome */
     &:hover {
         color:#0676F6;
+    }
+    @media (max-width: 767px) {
+        &:hover{
+            color: ${colors.WHITE};
+        }
+        &:active {
+            color: ${colors.BLUE} 
+        }
     }
 `
 export default HorizontalScroller;

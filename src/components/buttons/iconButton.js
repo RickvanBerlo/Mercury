@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import colors from '../../constants/colors';
 
@@ -29,9 +29,18 @@ const Container = styled.a`
     padding-left: ${props => props.padding};
     padding-right: ${props => props.padding};
     width: auto;
+    -webkit-tap-highlight-color: transparent;
     &:hover ${StyledIcon} {
-     color: ${colors.BLUE};
-   }
+        color: ${colors.BLUE};
+    }
+    @media (max-width: 767px) {
+        &:hover ${StyledIcon} {
+            color: ${colors.WHITE};
+        }
+        &:active ${StyledIcon} {
+            color: ${colors.BLUE} 
+        }
+    }
     
 `
 export default IconButton;

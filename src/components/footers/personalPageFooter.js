@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-import Background from '../../assets/city.gif';
+import React from 'react';
+import styled from 'styled-components';
 import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
 
@@ -19,7 +18,7 @@ const Header = () => {
 
 //styles
 const Container = styled.div`
-    background-color: ${colors.DARK_GRAY}
+    background-color: ${colors.FOOTER}
     height: 150px;
     text-align: center;
 `

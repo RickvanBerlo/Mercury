@@ -1,4 +1,3 @@
-import React from 'react';
 const strings = {
     NAME: "Rick van Berlo",
     NAVIGATION: {
@@ -27,6 +26,14 @@ const strings = {
     WORK: {
         CATEGORY: "Werk",
         SECTIONS: [
+            {
+                TITLE: "Student aan Huis",
+                SUBTITLE: "Thuis service medewerker",
+                DATE: "September 2017 / September 2019",
+                DESCRIPTION:
+                    `Tijdens deze baan ga ik naar klanten toe om hun problemen met de computer op te lossen, bijles geven over hoe je sommige functionaliteiten kunt gebruiken en advies geven over nieuwe technische aankopen. 
+                    Deze baan is zeer veelzijdig omdat je niet weet wat het probleem zal worden bij de klant. De problemen kunnen uitlopen van APK's(opschonen pc) tot en met zeer geavanceerde systeem problemen.`,
+            },
             {
                 TITLE: "Student aan Huis",
                 SUBTITLE: "Thuis service medewerker",
@@ -87,7 +94,24 @@ const strings = {
                     Verder heb ik hier ook geleerd hoe ik moet reageren in moeilijke situaties.`,
             },
         ]
-    }
+    },
+    SKILLS: {
+        CATEGORY: "Ervaring",
+        SECTIONS: [
+            {
+                TITLE: "C-Sharp",
+                PERCENTAGE: "80%",
+            },
+            {
+                TITLE: "Java",
+                PERCENTAGE: "60%",
+            },
+            {
+                TITLE: "Javascript",
+                PERCENTAGE: "20%",
+            },
+        ]
+    },
 
 
 }

@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import colors from '../../constants/colors';
 import Background from '../../assets/projectsBackground.jpg';
-import ScrollMenu from 'react-horizontal-scrolling-menu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import projects from '../../constants/projects';
 import HorizontalScroller from '../scroller/horizontalScroller';
 import porjects from '../../constants/projects';
@@ -61,6 +59,16 @@ const LinkContainer = styled.div`
     visibility: visible;
     opacity: 1;
   }
+  @media (max-width: 767px) {
+    &:hover ${TextContainer}{
+      visibility: hidden;
+      opacity: 0;
+    }
+    &:active ${TextContainer}{
+      visibility: visible;
+      opacity: 1;
+    }
+}
 `
 
 const Text = styled.p`
@@ -78,7 +86,7 @@ const Container = styled.div`
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    position: relative; 
+    position: relative;
 `
 
 const TitleContainer = styled.div`
@@ -94,6 +102,10 @@ const Title = styled.h3`
   font-weight:600;
   text-shadow: 3px 2px 3px rgba(0, 0, 0, .8);
   margin: 0px;
+  @media (max-width: 767px) {
+    font: 20px 'Open Sans Bold',sans-serif;
+    font-weight:600;
+  }
 `
 
 export default HorizontalScrollerSection;

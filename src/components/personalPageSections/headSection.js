@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React from 'react';
+import styled from 'styled-components';
 import image from '../../assets/profilepic.jpg';
 import colors from '../../constants/colors';
 import strings from '../../constants/strings';
@@ -7,34 +7,46 @@ import strings from '../../constants/strings';
 const HeadSection = ({ name }) => {
     return (
         <Container id={name}>
-            <CenterContainer>
-                <ImageContainer>
-                    <Image src={image} />
-                </ImageContainer>
-                <TextContainer>
-                    <Title>{strings.HEADSECTION.TITLE}</Title>
-                    <Description>{strings.HEADSECTION.DESCRIPTION}</Description>
-                    <Title>{strings.HEADSECTION.CONTACT_TITLE}</Title>
-                    <Description>{strings.HEADSECTION.CONTACT_DESCRIPTION}</Description>
-                </TextContainer>
-            </CenterContainer>
-        </Container>
+            <CenterBlock>
+                <CenterContainer>
+                    <LeftContainer>
+                        <ImageContainer>
+                            <Image src={image} />
+                        </ImageContainer>
+                    </LeftContainer>
+                    <RightContainer>
+                        <TextContainer>
+                            <Title>{strings.HEADSECTION.TITLE}</Title>
+                            <Description>{strings.HEADSECTION.DESCRIPTION}</Description>
+                            <Title>{strings.HEADSECTION.CONTACT_TITLE}</Title>
+                            <Description>{strings.HEADSECTION.CONTACT_DESCRIPTION}</Description>
+                        </TextContainer>
+                    </RightContainer>
+                </CenterContainer >
+            </CenterBlock >
+        </Container >
     );
 }
 
 //styles
+
+const CenterBlock = styled.div`
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-top: 60px;
+    padding-bottom: 40px;
+    display: inline-block;  
+    text-align: left;
+`
+
 const Container = styled.div`
-    margin-top: -50px;
-    background: ${colors.DARK_GRAY};
-    padding-top: 96px;
-    padding-bottom: 80px;
-    overflow: hidden;
     text-align: center;
+    background-color: ${colors.DARK_GRAY}
 `
 const Title = styled.h3`
-    color: white;
-    font: 20px 'Open Sans Bold',sans-serif;
+    font: 22px 'Open Sans Bold',sans-serif;
     font-weight:600;
+    color: ${colors.WHITE}
 `
 const Description = styled.p`
     color: ${colors.GRAY};
@@ -48,28 +60,50 @@ const CenterContainer = styled.div`
     max-width: 1020px;
     margin: 0 auto;
     display: flex;
+    @media (max-width: 767px) {
+        display: grid;
+    }
 `
-const ImageContainer = styled.div`
-    margin-top: 3%;
+
+const TextContainer = styled.div`
     position: relative;
     padding: 0 20px;
     min-height: 1px;
+    @media (max-width: 767px) {
+        margin-top: 50px;
+    }
+`
+
+const LeftContainer = styled.div`
+    margin-top: 10px;
+    padding-right: 40px;
+    min-width: 200px;
+    @media (max-width: 767px) {
+        display: contents;
+        margin: 0px 30px;
+    }
+`
+const RightContainer = styled.div`
+    width: 60vw;
+    @media (max-width: 767px) {
+        width: 80vw;
+    }
+`
+
+const ImageContainer = styled.div`
+    margin-top: 3%;
+    position: relative;
+    min-width: 200px;
     float: left;
+    @media (max-width: 767px) {
+        margin-left: 20px;
+    }
 `
 const Image = styled.img`
     position: relative;
     width: 200px;
     height: 200px;
     border-radius: 100%;
-`
-
-const TextContainer = styled.div`
-    text-align:left;
-    width: 70%;
-    position: relative;
-    padding: 0 20px;
-    min-height: 1px;
-    margin-left: 30px;
 `
 
 
