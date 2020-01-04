@@ -17,7 +17,7 @@ const TopNavbar = () => {
     const HiddingSpot = screenResolution().width < 767 ? 170 : 265;
 
     const listenScrollEvent = () => {
-        if (document.getElementById('projectSection').getBoundingClientRect().y < 41) {
+        if (document.getElementById('contactSection').getBoundingClientRect().y < 48) {
             if (colorbutton4 !== colors.BLUE) {
                 setColorButton4(colors.BLUE);
                 setColorButton3(colors.WHITE);
@@ -66,7 +66,7 @@ const TopNavbar = () => {
             <NavButton name={strings.NAVIGATION.BUTTON1} color={colorbutton1} onClick={() => { window.scrollTo(0, 0); }} />
             <NavButton name={strings.NAVIGATION.BUTTON2} color={colorbutton2} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('headSection').getBoundingClientRect().y + 4); }} />
             <NavButton name={strings.NAVIGATION.BUTTON3} color={colorbutton3} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('infoSection').getBoundingClientRect().y + 4); }} />
-            <NavButton name={strings.NAVIGATION.BUTTON4} color={colorbutton4} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('projectSection').getBoundingClientRect().y - 40); }} />
+            <NavButton name={strings.NAVIGATION.BUTTON4} color={colorbutton4} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('contactSection').getBoundingClientRect().y - 40); }} />
         </Container>
     );
 }

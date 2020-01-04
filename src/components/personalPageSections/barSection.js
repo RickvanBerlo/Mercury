@@ -59,7 +59,7 @@ const CenterBlock = styled.div`
     padding-bottom: 40px;
     display: inline-block;
     text-align: left;
-    border-bottom: 1px solid ${colors.LIGHT_GRAY};
+    padding-bottom: 100px;
 `
 
 const Container = styled.div`

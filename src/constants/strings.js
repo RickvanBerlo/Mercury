@@ -4,8 +4,7 @@ const strings = {
         BUTTON1: "HOME",
         BUTTON2: "OVER MIJ",
         BUTTON3: "CURRICULUM VITAE",
-        BUTTON4: "PORTFOLIO",
-        BUTTON5: "CONTACT"
+        BUTTON4: "CONTACT"
     },
     HEADSECTION: {
         TITLE: "Over mij",
@@ -76,7 +75,6 @@ const strings = {
                 DESCRIPTION:
                     `Tijdens deze afstudeerstage heb ik samen met mijn afstudeerpartner gewerkt aan een Augmented Reality app.
                     De app kan een 2D plattegrond creeren aan de hand van de meetpunten die geplaatst zijn in de AR-wereld.`
-
             },
             {
                 TITLE: "Cloudy Hostings",
@@ -95,7 +93,35 @@ const strings = {
             },
         ]
     },
-    SKILLS: {
+    PROJECT: {
+        CATEGORY: "Project",
+        SECTIONS: [
+            {
+                TITLE: "Mercury-Api",
+                SUBTITLE: "NodeJS",
+                DESCRIPTION:
+                    `Tijdens deze afstudeerstage heb ik samen met mijn afstudeerpartner gewerkt aan een Augmented Reality app.
+                    De app kan een 2D plattegrond creeren aan de hand van de meetpunten die geplaatst zijn in de AR-wereld.`,
+                LINK: "https://github.com/RickvanBerlo/Mercury_Api",
+            },
+            {
+                TITLE: "Mercury-App",
+                SUBTITLE: "React-native",
+                DESCRIPTION:
+                    `Deze stage heeft me geleerd hoe ik hele werkstations in moet richten, hoe ik een Windows server moet installeren en deployen en heeft me kennis laten maken met programmeren in Java.`,
+                LINK: "https://github.com/RickvanBerlo/Mercury_App",
+            },
+            {
+                TITLE: "Mercury-Web",
+                SUBTITLE: "React",
+                DESCRIPTION:
+                    `Deze stage heeft me geleerd hoe ik professioneel met andere medewerkers moet praten, wat een informatie systeem is en hoe ik dit moet gebruiken. 
+                    Verder heb ik hier ook geleerd hoe ik moet reageren in moeilijke situaties.`,
+                LINK: "https://github.com/RickvanBerlo/Mercury_Web",
+            },
+        ]
+    },
+    SKILL: {
         CATEGORY: "Ervaring",
         SECTIONS: [
             {

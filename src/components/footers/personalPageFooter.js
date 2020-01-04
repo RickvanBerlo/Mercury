@@ -19,11 +19,11 @@ const Header = () => {
 //styles
 const Container = styled.div`
     background-color: ${colors.FOOTER}
-    height: 150px;
+    height: 100px;
     text-align: center;
 `
 
 const Center = styled.div`
-line-height: 150px;
+line-height: 100px;
 `
 export default Header;

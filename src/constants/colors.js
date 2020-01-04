@@ -10,6 +10,7 @@ const colors = {
     TRANSPARENT: "transparent",
     NAVBAR: "#333",
     BLUE: '#0676F6',
+    BLACK: '#000000'
 }
 
 export default colors;

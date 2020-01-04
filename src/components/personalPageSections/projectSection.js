@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const TextSection = ({ content, name }) => {
+const ProjectSection = ({ content, name }) => {
     return (
         <Container id={name}>
             <CenterBlock>
@@ -31,10 +31,9 @@ const createSection = (section, index) => {
             <Title>{section.TITLE}</Title>
             <Info>
                 {section.SUBTITLE}
-                <DotContainer>•</DotContainer>
-                <Date>{section.DATE}</Date>
             </Info>
             <Description>{section.DESCRIPTION}</Description>
+            <Link href={section.LINK} target="_blank">Github</Link>
         </TextContainer>
     )
 }
@@ -61,7 +60,6 @@ const Title = styled.h3`
     font: 26px 'Open Sans Bold',sans-serif;
     font-weight:600;
     margin-bottom: 10px;
-    margin-top: 21px;
     @media (max-width: 767px) {
         margin-bottom: 5px;
     }
@@ -82,7 +80,7 @@ const DotContainer = styled.span`
 const Info = styled.p`
     font: 18px 'Libre Baskerville', serif;
     color: ${colors.SUBTITLE};
-    margin-bottom: 22px;
+    margin-bottom: 18px;
     margin-top: 9px;
     @media (max-width: 767px) {
         font: 15px 'Libre Baskerville', serif;
@@ -103,7 +101,6 @@ const CenterContainer = styled.div`
     margin: 0 auto;
     display: flex;
     @media (max-width: 767px) {
-        margin-bottom: 10px;
         display: grid;
     }
 `
@@ -144,4 +141,9 @@ const RightContainer = styled.div`
     }
 `
 
-export default TextSection;
+const Link = styled.a`
+    cursor: pointer;
+    font: 16px 'Open Sans',sans-serif;
+`
+
+export default ProjectSection;
