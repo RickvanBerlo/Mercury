@@ -71,12 +71,6 @@ const Description = styled.p`
     white-space: pre-line;
 `
 
-const DotContainer = styled.span`
-    margin-right: 5px;
-    margin-left: 5px;
-    
-`
-
 const Info = styled.p`
     font: 18px 'Libre Baskerville', serif;
     color: ${colors.SUBTITLE};
@@ -84,14 +78,6 @@ const Info = styled.p`
     margin-top: 9px;
     @media (max-width: 767px) {
         font: 15px 'Libre Baskerville', serif;
-    }
-`
-
-const Date = styled.em`
-    font: 16px 'Open Sans',sans-serif;
-    margin-top: 6px;
-    @media (max-width: 767px) {
-        font: 12px 'Open Sans',sans-serif;
     }
 `
 

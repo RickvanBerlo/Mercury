@@ -4,7 +4,6 @@ import Header from '../components/headers/personalPageHeader';
 import HeadSection from '../components/personalPageSections/headSection';
 import TextSection from '../components/personalPageSections/textSection';
 import BarSection from '../components/personalPageSections/barSection';
-import HorizontalScrollerSection from '../components/personalPageSections/horizontalScrollerSection';
 import ProjectSection from '../components/personalPageSections/projectSection';
 import ContactSection from '../components/personalPageSections/contactSection';
 import Footer from '../components/footers/personalPageFooter';
@@ -14,14 +13,13 @@ const CurriculemVitae = () => {
   return (
     <Container id="rootContainer">
       <Header />
-      <HeadSection name="headSection" />
+      <HeadSection content={strings.ABOUT} name="headSection" contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} />
       <TextSection content={strings.WORK} name={"infoSection"} />
       <TextSection content={strings.EDUCATION} name={"educationSection"} />
       <TextSection content={strings.INTERSHIP} name={"internshipSection"} />
       <ProjectSection content={strings.PROJECT} name={"projectSection"} />
       <BarSection content={strings.SKILL} name={"barSection"} />
-      {/* <HorizontalScrollerSection name={"projectSection"} /> */}
-      <ContactSection name={"contactSection"} contactTitle={strings.HEADSECTION.CONTACT_TITLE} contactContent={strings.HEADSECTION.CONTACT_DESCRIPTION} />
+      <ContactSection name={"contactSection"} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} />
       <Footer />
     </Container>
   );

@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import image from '../../assets/profilepic.jpg';
 import colors from '../../constants/colors';
-import strings from '../../constants/strings';
 
-const HeadSection = ({ name }) => {
+const HeadSection = ({ name, content, contactTitle, contactContent }) => {
     return (
         <Container id={name}>
             <CenterBlock>
@@ -16,10 +15,10 @@ const HeadSection = ({ name }) => {
                     </LeftContainer>
                     <RightContainer>
                         <TextContainer>
-                            <Title>{strings.HEADSECTION.TITLE}</Title>
-                            <Description>{strings.HEADSECTION.DESCRIPTION}</Description>
-                            <Title>{strings.HEADSECTION.CONTACT_TITLE}</Title>
-                            <Description>{strings.HEADSECTION.CONTACT_DESCRIPTION}</Description>
+                            <Title>{content.TITLE}</Title>
+                            <Description>{content.DESCRIPTION}</Description>
+                            <Title>{contactTitle}</Title>
+                            <Description>{contactContent}</Description>
                         </TextContainer>
                     </RightContainer>
                 </CenterContainer >
