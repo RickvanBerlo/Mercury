@@ -342,5 +342,4 @@ const Form = styled.form`
     padding-bottom: 30px;
 `
 
-
 export default ContactSection;
