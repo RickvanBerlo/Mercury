@@ -12,6 +12,7 @@ const colors = {
     BLUE: '#0676F6',
     BLACK: '#000000',
     RED: '#CC0000',
+    GREEN: '#7ac142',
 }
 
 export default colors;

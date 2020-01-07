@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
+import screenResolution from '../../utils/screenResolution';
+import Checkmark from '../../components/animations/checkmark/checkmark';
 
 const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [email, setEmail] = useState("");
@@ -10,14 +12,16 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [emailValid, setEmailValid] = useState(false);
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
+    const [enableCheckmark, setEnableCheckmark] = useState(false);
 
+    const disable = screenResolution().width > 768 ? !emailValid : false;
     return (
         <Container id={name}>
             <Title>{content.TITLE}</Title>
             <CenterBlock>
                 <CenterContainer>
                     <LeftContainer>
-                        <Form onSubmit={(event) => handleSubmit(event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover)}>
+                        <Form onSubmit={(event) => handleSubmit(event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark)}>
                             <InputContainer>
                                 <LeftFlex>
                                     <Label>
@@ -34,6 +38,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                                         maxLength={30}
                                         value={email}
                                         onChange={(event) => { changeEmail(event, setEmail, setEmailValid) }}
+                                        required
                                     />
                                 </RightFlex>
                             </InputContainer>
@@ -54,6 +59,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                                         value={subject}
                                         onChange={(event) => { changeSubject(event, setSubject, setSubjectValid) }}
                                         onClick={() => { setSubjectClicked(true) }}
+                                        required
                                     />
                                 </RightFlex>
                             </InputContainer>
@@ -74,17 +80,20 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                             <SubmitButtonContainer>
                                 <LeftFlex>
                                 </LeftFlex>
-                                <RightFlex>
+                                <SubmitButtonRightFlex>
                                     <SubmitButton
                                         emailValid={emailValid}
                                         subjectValid={subjectValid}
-                                        disabled={!emailValid}
+                                        disabled={disable}
                                         type="submit"
                                         value="Verzenden"
                                         onMouseEnter={() => { setSubmitButtonHover(true) }}
-                                        onMouseOut={() => { !submitButtonHover && setEmailValid(false); setSubjectValid(false); }}
+                                        onMouseOut={() => { if (!submitButtonHover) { setEmailValid(false); setSubjectValid(false); } }}
                                     />
-                                </RightFlex>
+                                    <CheckmarkContainer>
+                                        <Checkmark size={60} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
+                                    </CheckmarkContainer>
+                                </SubmitButtonRightFlex>
                             </SubmitButtonContainer>
                         </Form>
                     </LeftContainer>
@@ -99,7 +108,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
 }
 
 const changeEmail = (event, setEmail, setEmailValid) => {
-    setEmailValid(event.target.value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i));
+    setEmailValid(event.target.value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i) != null);
     setEmail(event.target.value);
 }
 
@@ -112,13 +121,14 @@ const changeDescription = (event, setDescription) => {
     setDescription(event.target.value);
 }
 
-const handleSubmit = (event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover) => {
+const handleSubmit = (event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark) => {
     event.preventDefault();
     setEmail("");
     setSubject("");
     setDescription("");
     setSubjectClicked(false);
     setSubmitButtonHover(false);
+    setEnableCheckmark(true);
     // if (window.innerWidth < 767) {
     //     setEmailValid(false);
     //     setSubjectValid(false);
@@ -253,7 +263,7 @@ const EmailInput = styled.input`
     resize: none;
     boxShadow: none;
     border: 0;
-    outline: ${props => { return (props.submitButtonHover && !props.emailValid) || (props.emailLength > 0 && !props.emailValid) ? `1px solid ${colors.RED}` : 'none'; }}
+    outline: ${props => { return (props.emailLength > 0 && !props.emailValid) || (props.submitButtonHover && !props.emailValid) ? `1px solid ${colors.RED}` : 'none'; }}
     &:-webkit-autofill,
     &:-webkit-autofill:hover, 
     &:-webkit-autofill:focus, 
@@ -277,6 +287,15 @@ const RightFlex = styled.div`
     @media (max-width: 1300px) {
         flex: 2;
     }
+`
+
+const SubmitButtonRightFlex = styled.div`
+    flex: 3;
+    @media (max-width: 1300px) {
+        flex: 2;
+    }
+    display: flex;
+    margin-top: 20px;
 `
 
 const SubjectInput = styled.input`
@@ -303,11 +322,25 @@ const SubjectInput = styled.input`
     }
 `
 
+const showColor = (props) => keyframes`
+    from { 
+        background-color: ${colors.BLACK};
+        color: ${colors.WHITE};
+    }
+    50% {
+        background-color: ${ props.emailValid && props.subjectValid ? colors.WHITE : colors.RED};
+        color: ${colors.BLACK};
+    }
+    to { 
+        background-color: ${colors.BLACK}; 
+        color: ${colors.WHITE};
+    }
+`;
+
 const SubmitButton = styled.input`
     background-color: ${colors.BLACK};
     min-width: 150px;
     min-height: 60px;
-    margin-top: 20px;
     padding: 10px 10px;
     color: ${colors.WHITE}
     font: 24px 'Open Sans Bold',sans-serif;
@@ -319,12 +352,23 @@ const SubmitButton = styled.input`
     -moz-transition: color 0.3s linear, background-color 0.3s linear; /* Firefox */
     -webkit-transition: color 0.3s linear, background-color 0.3s linear; /*safari and chrome */
     -webkit-tap-highlight-color: transparent;
-    &:hover {
-        background-color: ${ props => props.emailValid && props.subjectValid ? colors.WHITE : colors.RED};
-        color: ${colors.BLACK}
-    }
     &:focus {
         outline: none;
+    }
+    @media (min-width: 768px){
+        &:hover {
+            background-color: ${ props => props.emailValid && props.subjectValid ? colors.WHITE : colors.RED};
+            color: ${colors.BLACK}
+        }
+    }   
+    @media (max-width: 767px) {
+        &:hover {
+            -webkit-animation: ${props => css`${showColor(props)} 1s linear`};
+	        -moz-animation: ${props => css`${showColor(props)} 1s linear`};
+	        -ms-animation: ${props => css`${showColor(props)} 1s linear`};
+	        -o-animation: ${props => css`${showColor(props)} 1s linear`};
+	        animation: ${props => css`${showColor(props)} 1s linear`};
+        }
     }
 `
 
@@ -340,6 +384,11 @@ const Form = styled.form`
     width: 100%;
     height: 100%;
     padding-bottom: 30px;
+`
+
+const CheckmarkContainer = styled.div`
+    flex: 1
+    margin-left: 20px;
 `
 
 export default ContactSection;
