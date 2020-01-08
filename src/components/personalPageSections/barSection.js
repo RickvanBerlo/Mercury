@@ -7,7 +7,7 @@ const BarSection = ({ content, name }) => {
     const [transition, setTransition] = useState(false)
 
     const listenScrollEvent = () => {
-        if (0 > document.getElementById('internshipSection').getBoundingClientRect().y) {
+        if (100 > document.getElementById('projectSection').getBoundingClientRect().y) {
             setTransition(true);
         } else {
             if (transition) {

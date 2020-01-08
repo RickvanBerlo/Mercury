@@ -33,7 +33,7 @@ const TopNavbar = () => {
                 setColorButton1(colors.WHITE);
                 setColor(colors.NAVBAR);
             }
-        } else if (document.getElementById('headSection').getBoundingClientRect().y < 0) {
+        } else if (document.getElementById('headSection').getBoundingClientRect().y < 45) {
             if (colorbutton2 !== colors.BLUE) {
                 setVisibility("visible");
                 setOpacity(1);

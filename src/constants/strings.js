@@ -4,8 +4,7 @@ const strings = {
     CONTACT_DESCRIPTION:
         `Rick van Berlo
             WillemBoyeweg 38
-            Gennep, 6591ZT
-            06-57854479`,
+            Gennep, 6591ZT`,
     NAVIGATION: {
         BUTTON1: "HOME",
         BUTTON2: "OVER MIJ",
@@ -15,11 +14,12 @@ const strings = {
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:
-            `Mijn naam is Rick van Berlo, ben 20 jaar, woon in Gennep en studeer momenteel op het HBO op Avans in Den Bosch.
+            `Techniek heeft mij vanaf kleins af aan heel erg inspireert, vooral de computers.
+            In het begin was ik vooral bezig met de hardware kant van de computers. Ik probeerde elke computer aan de praat te krijgen en dit was vaak met succes.
+            Naarmate ik ouder werk ondekte ik hoe ik software kon schrijven voor computers. Dit sprak me zo erg aan dat ik meteen wist dat ik hier later een beroep in wilde.
             
-            Techniek heeft mij vanaf kleins af aan heel erg inspireert, vooral de computers.
-            In het begin was ik vooral bezig met computers in elkaar zetten maar naarmate ik ouder werd ontdekte ik dat je ook software kon schrijven voor de computer.
-            Dit sprak me erg aan en tot heden ben ik er nog steeds zeer geïntereseerd in.`,
+            Om het programmeren te beheersen heb ik de opleiding Informatica gevolgd op het HBO in Avans. In mijn vrije tijd ben ik bezig met mijn eigen projecten die hieronder te vinden zijn. 
+            `,
     },
     WORK: {
         CATEGORY: "Werk",
@@ -29,16 +29,9 @@ const strings = {
                 SUBTITLE: "Thuis service medewerker",
                 DATE: "September 2017 / September 2019",
                 DESCRIPTION:
-                    `Tijdens deze baan ga ik naar klanten toe om hun problemen met de computer op te lossen, bijles geven over hoe je sommige functionaliteiten kunt gebruiken en advies geven over nieuwe technische aankopen. 
-                    Deze baan is zeer veelzijdig omdat je niet weet wat het probleem zal worden bij de klant. De problemen kunnen uitlopen van APK's(opschonen pc) tot en met zeer geavanceerde systeem problemen.`,
-            },
-            {
-                TITLE: "Student aan Huis",
-                SUBTITLE: "Thuis service medewerker",
-                DATE: "September 2017 / September 2019",
-                DESCRIPTION:
-                    `Tijdens deze baan ga ik naar klanten toe om hun problemen met de computer op te lossen, bijles geven over hoe je sommige functionaliteiten kunt gebruiken en advies geven over nieuwe technische aankopen. 
-                    Deze baan is zeer veelzijdig omdat je niet weet wat het probleem zal worden bij de klant. De problemen kunnen uitlopen van APK's(opschonen pc) tot en met zeer geavanceerde systeem problemen.`,
+                    `Om dit werk te verrichten moet je beschikken over een aantal eigenschappen. 
+                    Je moet vindingrijk zijn. Elk probleem kan je tegenkomen en hier zal je zo snel mogelijk een oplossing voor moeten verzinnen. 
+                    Verder moet je klantgericht zijn. De klant moet het gevoel krijgen dat jij, hem verder kan helpen met het probleem dat zij momenteel hebben. `,
             },
         ]
     },
@@ -50,17 +43,16 @@ const strings = {
                 SUBTITLE: "Software Ontwikkelaar",
                 DATE: "September 2016 / heden",
                 DESCRIPTION:
-                    `Deze opleiding bevindt zich in Den Bosch. Hier volg ik de opleiding informatica en leer ik diverse soorten programmeertalen en bijbehorende structuren (MVC,MVVM).
-                     Verder leer ik ook hoe ik een database moet modeleren, opzetten en deployen. Deze kennis kunnen daarna weer toegepast worden in het maken van programma's in C#, Java, enz...`,
+                    `Het HBO informatica heeft me geholpen bij het leren van verschillende programmeertalen zoals: C#, Java, Javascript en SQL. 
+                    Om mijn kennis van programmeertalen te verrijken heb ik als minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met C++ en verschillende design patterns.`,
             },
             {
                 TITLE: "MBO Systeemheerder",
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "September 2013 / Juni 2016",
                 DESCRIPTION:
-                    `Tijdens deze opleiding heb ik geleerd hoe databases werken, hoe een servicedesks funtioneren en hoe het internet in elkaar zit.
-                    Verder heb ik hier ook geleerd hoe je een interne netwerk moet configuren. op het Technovium heb ik verschillende soorten certificaten gehaald.
-                    Waaronder Cisco en Microsoft certificaten.`,
+                    `Het MBO heeft me laten zien hoe interessant de ICT sector. 
+                    Tijdens deze opleiding leerde we servers beheren en configureren, databases configureren, netwerken aanleggen en programmeren in de taal Java.`,
             },
         ]
     },
@@ -72,15 +64,15 @@ const strings = {
                 SUBTITLE: "Programmeur",
                 DATE: "September-2019 / Heden",
                 DESCRIPTION:
-                    `Tijdens deze afstudeerstage heb ik samen met mijn afstudeerpartner gewerkt aan een Augmented Reality app.
-                    De app kan een 2D plattegrond creeren aan de hand van de meetpunten die geplaatst zijn in de AR-wereld.`
+                    `Bij Bluenotion heb ik mijn afstudeerstage van het HBO volbracht. 
+                    Als afstudeeropdracht heb ik samen met mijn afstudeerpartner een app gemaakt voor een extern partij. De app geeft het bedrijf de mogelijkheid om een plattegrond te creëren van een desbetreffende ruimte. Deze functionaliteit is gemaakt met behulp van Augmented Reality.`
             },
             {
                 TITLE: "Cloudy Hostings",
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "Januari 2015 / Juni 2016",
                 DESCRIPTION:
-                    `Deze stage heeft me geleerd hoe ik hele werkstations in moet richten, hoe ik een Windows server moet installeren en deployen en heeft me kennis laten maken met programmeren in Java.`,
+                    `Tijdens deze stage ik mogen experimenteren met het deployen van servers en het beheren van webshops. Dit bedrijf is gespecialiseerd in het verhuren cloud omgevingen en hosten van websites.`,
             },
             {
                 TITLE: "CenterParcs",
@@ -88,7 +80,7 @@ const strings = {
                 DATE: "Januari 2014 - Juni 2015",
                 DESCRIPTION:
                     `Deze stage heeft me geleerd hoe ik professioneel met andere medewerkers moet praten, wat een informatie systeem is en hoe ik dit moet gebruiken. 
-                    Verder heb ik hier ook geleerd hoe ik moet reageren in moeilijke situaties.`,
+                    Verder leerde deze stage mij hoe ik vriendelijk om moet gaan met rustige en moeilijke klanten`,
             },
         ]
     },
@@ -96,27 +88,26 @@ const strings = {
         CATEGORY: "Project",
         SECTIONS: [
             {
-                TITLE: "Mercury-Api",
-                SUBTITLE: "NodeJS",
+                TITLE: "Mercury-Web",
+                SUBTITLE: "React",
                 DESCRIPTION:
-                    `Tijdens deze afstudeerstage heb ik samen met mijn afstudeerpartner gewerkt aan een Augmented Reality app.
-                    De app kan een 2D plattegrond creeren aan de hand van de meetpunten die geplaatst zijn in de AR-wereld.`,
-                LINK: "https://github.com/RickvanBerlo/Mercury_Api",
+                    `In het project Mercury word gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en email's me kunnen ontvangen/verzenden.
+                    Dit project zal de frontend worden voor het project Mercury.`,
+                LINK: "https://github.com/RickvanBerlo/Mercury_Web",
             },
             {
                 TITLE: "Mercury-App",
                 SUBTITLE: "React-native",
                 DESCRIPTION:
-                    `Deze stage heeft me geleerd hoe ik hele werkstations in moet richten, hoe ik een Windows server moet installeren en deployen en heeft me kennis laten maken met programmeren in Java.`,
+                    `Om mijn persoonlijke assistente overal te kunnen benaderen zal er een app ontwikkeld worden.`,
                 LINK: "https://github.com/RickvanBerlo/Mercury_App",
             },
             {
-                TITLE: "Mercury-Web",
-                SUBTITLE: "React",
+                TITLE: "Mercury-Api",
+                SUBTITLE: "NodeJS",
                 DESCRIPTION:
-                    `Deze stage heeft me geleerd hoe ik professioneel met andere medewerkers moet praten, wat een informatie systeem is en hoe ik dit moet gebruiken. 
-                    Verder heb ik hier ook geleerd hoe ik moet reageren in moeilijke situaties.`,
-                LINK: "https://github.com/RickvanBerlo/Mercury_Web",
+                    `Dit is de backend voor de projecten Mercury-App en Mecury-Web. Dit project zal de connectie naar de database voorzien.`,
+                LINK: "https://github.com/RickvanBerlo/Mercury_Api",
             },
         ]
     },
@@ -133,7 +124,15 @@ const strings = {
             },
             {
                 TITLE: "Javascript",
-                PERCENTAGE: "20%",
+                PERCENTAGE: "65%",
+            },
+            {
+                TITLE: "C++",
+                PERCENTAGE: "50%",
+            },
+            {
+                TITLE: "SQL",
+                PERCENTAGE: "70%",
             },
         ]
     },

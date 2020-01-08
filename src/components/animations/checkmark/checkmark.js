@@ -30,7 +30,7 @@ const stroke = keyframes`
   }
 `
 
-const scale = keyframes`
+const enlarge = keyframes`
   from { 
     transform: scale3d(1, 1, 1);
   }
@@ -48,47 +48,60 @@ const fill = keyframes`
   }
 `
 
+const empty = keyframes`
+  to{
+    box-shadow: inset 0 0 0 100vh ${colors.TRANSPARENT};
+  }
+`
+
+const shrink = keyframes`
+  from { 
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+  to {
+    transform: scale3d(0, 0, 0);
+  }
+`
+
+
+// -webkit-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
+// -moz-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
+// -ms-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
+// -o-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
+
 //box-shadow: inset 0 0 0 ${colors.BLUE};
 const Icon = styled.svg`
-  opacity: ${props => props.enable ? 1 : 0};
   display: block;
   border-radius: 50px;
   stroke: ${colors.WHITE};
   stroke-width: 5;
   stroke-miterlimit: 10;
+  fill: ${props => props.enable ? "none" : colors.GREEN}
   width: ${props => props.size}px;
   height: ${props => props.size}px;
-  fill: none;
-  -webkit-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-  -moz-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-  -ms-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-  -o-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-  animation: ${props => props.enable ? css`${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both` : `none`};
+  animation: ${props => props.enable ? fill : empty} 0.4s ease-in-out 0.4s forwards, ${props => props.enable ? enlarge : shrink} 0.3s ease-in-out 0.9s both};
 `
 
 const CheckmarkCircle = styled.circle`
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
-    stroke-width: ${colors.WHITE};
+    stroke-width: 5;
     stroke-miterlimit: 10;
     stroke: ${colors.GREEN};
-    fill: none;
-    -webkit-animation: ${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-	  -moz-animation: ${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-	  -ms-animation: ${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-	  -o-animation: ${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-    animation: ${props => props.enable ? css`${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards` : `none`};
+    fill: ${props => props.enable ? "none" : colors.GREEN}
+    animation: ${props => props.enable && css`${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards`};
 `
 
 const CheckmarkCheck = styled.path`
     transform-origin: 50% 50%;
     stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    -webkit-animation: ${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-	  -moz-animation: ${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-	  -ms-animation: ${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-	  -o-animation: ${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-    animation: ${props => props.enable ? css`${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards` : `none`}
+    stroke-width: 5;
+    stroke-dashoffset: ${props => props.enable ? "48" : "15"};
+    animation: ${props => props.enable && css`${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards`}
+    
 `
 
 const MemoCheckmark = memo(Checkmark);
