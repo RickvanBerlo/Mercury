@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
 import Checkmark from '../../components/animations/checkmark/checkmark';
+import send from '../../utils/emailSender';
+import { ReCaptcha } from 'react-recaptcha-google';
+import './contactSection.css';
 
 const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [email, setEmail] = useState("");
@@ -15,13 +18,33 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [enableCheckmark, setEnableCheckmark] = useState(false);
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
+    let captcha = undefined;
+
+    useEffect(() => {
+        if (captcha) {
+            captcha.reset();
+            captcha.execute();
+        }
+    }, [captcha]);
+
     return (
         <Container id={name}>
+            <ReCaptcha
+                ref={(el) => { captcha = el; }}
+                size="invisible"
+                render="explicit"
+                sitekey="6Lf0E9AUAAAAAEBG8Ulz0YmkBWOEvUHj6rtugGxS"
+                onloadCallback={() => { onLoadRecaptcha(captcha) }}
+                verifyCallback={verifyCallback}
+            />
             <Title>{content.TITLE}</Title>
             <CenterBlock>
                 <CenterContainer>
                     <LeftContainer>
-                        <Form onSubmit={(event) => handleSubmit(event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark)}>
+                        <Form onSubmit={(event) => handleSubmit(
+                            event,
+                            { setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark },
+                            { email, subject, description })}>
                             <InputContainer>
                                 <LeftFlex>
                                     <Label>
@@ -75,6 +98,9 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                                         value={description}
                                         onChange={(event) => { changeDescription(event, setDescription) }}
                                     />
+                                    <RecaptchaText>
+                                        This site is protected by reCAPTCHA and the Google <Link href="https://policies.google.com/privacy">Privacy Policy</Link> and <Link href="https://policies.google.com/terms">Terms of Service</Link> apply.
+                                    </RecaptchaText>
                                 </RightFlex>
                             </InputContainer>
                             <SubmitButtonContainer>
@@ -121,24 +147,39 @@ const changeDescription = (event, setDescription) => {
     setDescription(event.target.value);
 }
 
-const handleSubmit = (event, setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark) => {
+const handleSubmit = (event, setters, getters) => {
     event.preventDefault();
-    setEmail("");
-    setSubject("");
-    setDescription("");
-    setSubjectClicked(false);
-    setSubmitButtonHover(false);
-    setEnableCheckmark(true);
-    // if (window.innerWidth < 767) {
-    //     setEmailValid(false);
-    //     setSubjectValid(false);
-    // }
+    //send email
+    send(getters.email, getters.subject, getters.description, setters.setEnableCheckmark);
+
+    setters.setEmail("");
+    setters.setSubject("");
+    setters.setDescription("");
+    setters.setSubjectClicked(false);
+    setters.setSubmitButtonHover(false);
+}
+
+const onLoadRecaptcha = (captcha) => {
+    if (captcha) {
+        captcha.reset();
+        captcha.execute();
+    }
+}
+
+const verifyCallback = (recaptchaToken) => {
+    // Here you will get the final recaptchaToken!!!  
+    console.log(recaptchaToken, "<= your recaptcha token")
 }
 
 //styles
 const Container = styled.div`
     text-align: center;
     background-color: ${colors.DARK_GRAY};
+`
+
+const RecaptchaText = styled.p`
+    font-size: 13px;
+    color: ${colors.WHITE}
 `
 
 const Title = styled.h2`
@@ -175,6 +216,11 @@ const Description = styled.p`
     font: 16px 'Open Sans',sans-serif;
     line-height: 30px;
     white-space: pre-line;
+`
+
+const Link = styled.a`
+    color: ${colors.BLUE};
+    text-decoration: none;
 `
 
 const CenterContainer = styled.div`
@@ -383,7 +429,6 @@ const SubmitButtonContainer = styled.div`
 const Form = styled.form`
     width: 100%;
     height: 100%;
-    padding-bottom: 30px;
 `
 
 const CheckmarkContainer = styled.div`

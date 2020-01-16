@@ -130,6 +130,8 @@ const RightContainer = styled.div`
 const Link = styled.a`
     cursor: pointer;
     font: 16px 'Open Sans',sans-serif;
+    color: ${colors.BLUE};
+    text-decoration: none;
 `
 
 export default ProjectSection;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/headers/personalPageHeader';
 import HeadSection from '../components/personalPageSections/headSection';
@@ -8,8 +8,13 @@ import ProjectSection from '../components/personalPageSections/projectSection';
 import ContactSection from '../components/personalPageSections/contactSection';
 import Footer from '../components/footers/personalPageFooter';
 import strings from '../constants/strings';
+import { loadReCaptcha } from 'react-recaptcha-google'
 
 const CurriculemVitae = () => {
+  useEffect(() => {
+    loadReCaptcha();
+  }, []);
+
   return (
     <Container id="rootContainer">
       <Header />
