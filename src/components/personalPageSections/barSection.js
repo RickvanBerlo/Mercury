@@ -9,10 +9,6 @@ const BarSection = ({ content, name }) => {
     const listenScrollEvent = () => {
         if (100 > document.getElementById('projectSection').getBoundingClientRect().y) {
             setTransition(true);
-        } else {
-            if (transition) {
-                setTransition(false);
-            }
         }
     }
 

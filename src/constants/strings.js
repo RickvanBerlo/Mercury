@@ -1,10 +1,12 @@
+import calculateAge from '../utils/calculateAge';
+
 const strings = {
     NAME: "Rick van Berlo",
     CONTACT_TITLE: "Contact gegevens",
     CONTACT_DESCRIPTION:
         `Rick van Berlo
-            WillemBoyeweg 38
-            Gennep, 6591ZT`,
+        WillemBoyeweg 38
+        Gennep, 6591ZT`,
     NAVIGATION: {
         BUTTON1: "HOME",
         BUTTON2: "OVER MIJ",
@@ -14,11 +16,15 @@ const strings = {
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:
-            `Techniek heeft mij vanaf kleins af aan heel erg inspireert, vooral de computers.
-            In het begin was ik vooral bezig met de hardware kant van de computers. Ik probeerde elke computer aan de praat te krijgen en dit was vaak met succes.
-            Naarmate ik ouder werk ondekte ik hoe ik software kon schrijven voor computers. Dit sprak me zo erg aan dat ik meteen wist dat ik hier later een beroep in wilde.
+            `de ICT sector heeft me van kleins af aan geinterseerd. ik zag hoe ICT de wereld aan het veranderen was en wou hier graag een steentje in bij dragen. Met deze motivatie ben ik in de ICT sector gedoken.
             
-            Om het programmeren te beheersen heb ik de opleiding Informatica gevolgd op het HBO in Avans. In mijn vrije tijd ben ik bezig met mijn eigen projecten die hieronder te vinden zijn. 
+            Als eerste heb ik een netwerkbeerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: het configureren en beheren van servers, omgaan met klantencontact en het congifureren van netwrken.
+            Tijdens deze opleiding heb ik ook mijn eerste ervaring gehad met programmeren. Door dit vak wist ik al snel dat ik een programmeur wilde worden en ben na het afronden van deze opleiding een HBO informatica opleiding gestart.
+            
+            Hierin heb ik de benodigde vaardigheden geleerd om een programeur te worden. Enkele van deze vaardigheden zijn het programmeren in verschillende programeertalen zoals: C#, Java en Javascript, het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexen architecturen.
+            om mijn kennis te verrijken heb ik een minor gevold in software architectuur. Hierin heb ik kennis gemaakt met de programmertaal C++.
+
+            Momenteel ben ik ${calculateAge(new Date('May 6, 1997 23:15:30'))} jaar.
             `,
     },
     WORK: {
@@ -43,7 +49,7 @@ const strings = {
                 SUBTITLE: "Software Ontwikkelaar",
                 DATE: "September 2016 / heden",
                 DESCRIPTION:
-                    `Het HBO informatica heeft me geholpen bij het leren van verschillende programmeertalen zoals: C#, Java, Javascript en SQL. 
+                    `De opleiding HBO informatica heeft me geholpen bij het leren van verschillende programmeertalen zoals: C#, Java, Javascript en SQL. 
                     Om mijn kennis van programmeertalen te verrijken heb ik als minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met C++ en verschillende design patterns.`,
             },
             {
@@ -51,7 +57,7 @@ const strings = {
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "September 2013 / Juni 2016",
                 DESCRIPTION:
-                    `Het MBO heeft me laten zien hoe interessant de ICT sector. 
+                    `De opldeiding MBO systeembeheerder heeft me laten zien hoe interessant de ICT sector is. 
                     Tijdens deze opleiding leerde we servers beheren en configureren, databases configureren, netwerken aanleggen en programmeren in de taal Java.`,
             },
         ]
@@ -88,26 +94,17 @@ const strings = {
         CATEGORY: "Project",
         SECTIONS: [
             {
-                TITLE: "Mercury-Web",
+                TITLE: "Mercury",
                 SUBTITLE: "React",
                 DESCRIPTION:
                     `In het project Mercury word gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en email's me kunnen ontvangen/verzenden.
-                    Dit project zal de frontend worden voor het project Mercury.`,
-                LINK: "https://github.com/RickvanBerlo/Mercury_Web",
-            },
-            {
-                TITLE: "Mercury-App",
-                SUBTITLE: "React-native",
-                DESCRIPTION:
-                    `Om mijn persoonlijke assistente overal te kunnen benaderen zal er een app ontwikkeld worden.`,
-                LINK: "https://github.com/RickvanBerlo/Mercury_App",
-            },
-            {
-                TITLE: "Mercury-Api",
-                SUBTITLE: "NodeJS",
-                DESCRIPTION:
-                    `Dit is de backend voor de projecten Mercury-App en Mecury-Web. Dit project zal de connectie naar de database voorzien.`,
-                LINK: "https://github.com/RickvanBerlo/Mercury_Api",
+                    `,
+                LINKS:
+                    [
+                        { NAME: "Web", LINK: "https://github.com/RickvanBerlo/Mercury_Web" },
+                        { NAME: "App", LINK: "https://github.com/RickvanBerlo/Mercury_App" },
+                        { NAME: "Api", LINK: "https://github.com/RickvanBerlo/Mercury_Api" },
+                    ],
             },
         ]
     },
@@ -145,6 +142,5 @@ const strings = {
 
 
 }
-
 
 export default strings;

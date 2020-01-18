@@ -33,7 +33,13 @@ const createSection = (section, index) => {
                 {section.SUBTITLE}
             </Info>
             <Description>{section.DESCRIPTION}</Description>
-            <Link href={section.LINK} target="_blank">Github</Link>
+            <LinkList>
+                {
+                    section.LINKS.map((link, index) => {
+                        return <Link href={link.LINK} target="_blank">{link.NAME}</Link>
+                    })
+                }
+            </LinkList>
         </TextContainer>
     )
 }
@@ -108,6 +114,7 @@ const Category = styled.h2`
 const TextContainer = styled.div`
     position: relative;
     padding: 0 20px;
+    padding-bottom: 30px;
     min-height: 1px;
     @media (max-width: 767px) {
         text-align: left;
@@ -130,8 +137,27 @@ const RightContainer = styled.div`
 const Link = styled.a`
     cursor: pointer;
     font: 16px 'Open Sans',sans-serif;
-    color: ${colors.BLUE};
+    color: ${colors.DARK_GRAY};
+    background-color: ${colors.DARK_WHITE}
+    border: 1px solid ${colors.LIGHT_GRAY};
     text-decoration: none;
+    flex: 1;
+    margin: 0px 30px 0px 0px;
+    padding: 2px 0px;
+    text-align: center;
+    transition: color 0.25s, background-color 0.25s linear; /* vendorless fallback */
+    -o-transition: color 0.25s, background-color 0.25s linear; /* opera */
+    -ms-transition: color 0.25s, background-color 0.25s linear; /* IE 10 */
+    -moz-transition: color 0.25s, background-color 0.25s linear; /* Firefox */
+    -webkit-transition: color 0.25s, background-color 0.25s linear; /*safari and chrome */
+    &:hover {
+        color: ${colors.LIGHT_GRAY}
+        background-color: ${colors.DARK_GRAY}
+    }
+`
+
+const LinkList = styled.div`
+    display: flex;
 `
 
 export default ProjectSection;
