@@ -16,16 +16,20 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
     const [enableCheckmark, setEnableCheckmark] = useState(false);
+    const [token, setToken] = useState("");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
     let captcha = undefined;
 
     useEffect(() => {
-        if (captcha) {
-            captcha.reset();
-            captcha.execute();
-        }
-    }, [captcha]);
+        send(email, subject, description, setEnableCheckmark);
+
+        setEmail("");
+        setSubject("");
+        setDescription("");
+        setSubjectClicked(false);
+        setSubmitButtonHover(false);
+    }, [token]);
 
     return (
         <Container id={name}>
@@ -34,8 +38,8 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                 size="invisible"
                 render="explicit"
                 sitekey="6Lf0E9AUAAAAAEBG8Ulz0YmkBWOEvUHj6rtugGxS"
-                onloadCallback={() => { onLoadRecaptcha(captcha) }}
-                verifyCallback={verifyCallback}
+                onloadCallback={() => { }}
+                verifyCallback={(token) => { verifyCallback(token, setToken) }}
             />
             <Title>{content.TITLE}</Title>
             <CenterBlock>
@@ -43,8 +47,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                     <LeftContainer>
                         <Form onSubmit={(event) => handleSubmit(
                             event,
-                            { setEmail, setSubject, setDescription, setEmailValid, setSubjectValid, setSubjectClicked, setSubmitButtonHover, setEnableCheckmark },
-                            { email, subject, description })}>
+                            captcha)}>
                             <InputContainer>
                                 <LeftFlex>
                                     <Label>
@@ -147,28 +150,19 @@ const changeDescription = (event, setDescription) => {
     setDescription(event.target.value);
 }
 
-const handleSubmit = (event, setters, getters) => {
+const handleSubmit = (event, captcha) => {
     event.preventDefault();
-    //send email
-    send(getters.email, getters.subject, getters.description, setters.setEnableCheckmark);
 
-    setters.setEmail("");
-    setters.setSubject("");
-    setters.setDescription("");
-    setters.setSubjectClicked(false);
-    setters.setSubmitButtonHover(false);
-}
-
-const onLoadRecaptcha = (captcha) => {
     if (captcha) {
         captcha.reset();
         captcha.execute();
     }
 }
 
-const verifyCallback = (recaptchaToken) => {
+const verifyCallback = (recaptchaToken, setToken) => {
     // Here you will get the final recaptchaToken!!!  
     console.log(recaptchaToken, "<= your recaptcha token")
+    setToken(recaptchaToken);
 }
 
 //styles
