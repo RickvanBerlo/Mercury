@@ -40,6 +40,11 @@ const Container = styled.a`
         font-weight: 600;
         line-height ${props => props.height};
     }
+    @media (max-width: 340px) {
+        font: 10px 'Open Sans Bold',sans-serif;
+        font-weight: 600;
+        line-height ${props => props.height};
+    }
     
 `
 

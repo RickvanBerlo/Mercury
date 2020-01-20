@@ -60,6 +60,7 @@ const Container = styled.div`
 const Title = styled.h3`
     font: 26px 'Open Sans Bold',sans-serif;
     font-weight:600;
+    user-select: none;
     margin-bottom: 10px;
     margin-top: 21px;
     @media (max-width: 767px) {
@@ -70,6 +71,7 @@ const Description = styled.p`
     color: ${colors.GRAY};
     font: 16px 'Open Sans',sans-serif;
     line-height: 30px;
+    user-select: none;
     white-space: pre-line;
 `
 
@@ -83,6 +85,7 @@ const Info = styled.p`
     font: 18px 'Libre Baskerville', serif;
     color: ${colors.SUBTITLE};
     margin-bottom: 22px;
+    user-select: none;
     margin-top: 9px;
     @media (max-width: 767px) {
         font: 15px 'Libre Baskerville', serif;
@@ -91,6 +94,7 @@ const Info = styled.p`
 
 const Date = styled.em`
     font: 16px 'Open Sans',sans-serif;
+    user-select: none;
     margin-top: 6px;
     @media (max-width: 767px) {
         font: 12px 'Open Sans',sans-serif;
@@ -118,6 +122,7 @@ const Category = styled.h2`
     font: 18px 'Open Sans Bold',sans-serif;
     border-bottom: 3px solid ${colors.LIGHT_BLUE};
     font-weight:600;
+    user-select: none;
     text-transform: uppercase;
     letter-spacing: 1px;
 `

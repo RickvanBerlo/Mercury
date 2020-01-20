@@ -36,7 +36,7 @@ const createSection = (section, index) => {
             <LinkList>
                 {
                     section.LINKS.map((link, index) => {
-                        return <Link href={link.LINK} target="_blank">{link.NAME}</Link>
+                        return <Link key={"Link" + index} href={link.LINK} target="_blank">{link.NAME}</Link>
                     })
                 }
             </LinkList>
@@ -65,6 +65,7 @@ const Container = styled.div`
 const Title = styled.h3`
     font: 26px 'Open Sans Bold',sans-serif;
     font-weight:600;
+    user-select: none;
     margin-bottom: 10px;
     @media (max-width: 767px) {
         margin-bottom: 5px;
@@ -74,6 +75,7 @@ const Description = styled.p`
     color: ${colors.GRAY};
     font: 16px 'Open Sans',sans-serif;
     line-height: 30px;
+    user-select: none;
     white-space: pre-line;
 `
 
@@ -82,6 +84,7 @@ const Info = styled.p`
     color: ${colors.SUBTITLE};
     margin-bottom: 18px;
     margin-top: 9px;
+    user-select: none;
     @media (max-width: 767px) {
         font: 15px 'Libre Baskerville', serif;
     }
@@ -107,6 +110,7 @@ const Category = styled.h2`
     font: 18px 'Open Sans Bold',sans-serif;
     border-bottom: 3px solid ${colors.LIGHT_BLUE};
     font-weight:600;
+    user-select: none;
     text-transform: uppercase;
     letter-spacing: 1px;
 `
@@ -142,6 +146,7 @@ const Link = styled.a`
     border: 1px solid ${colors.LIGHT_GRAY};
     text-decoration: none;
     flex: 1;
+    user-select: none;
     margin: 0px 30px 0px 0px;
     padding: 2px 0px;
     text-align: center;

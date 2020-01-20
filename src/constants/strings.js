@@ -2,11 +2,17 @@ import calculateAge from '../utils/calculateAge';
 
 const strings = {
     NAME: "Rick van Berlo",
+    GENERAL_INFORMATION: "Algemene informatie",
+    GENERAL_INFORMATION_DESCRIPTION:
+        `Naam: Rick van Berlo
+        Leeftijd: ${calculateAge(new Date('May 6, 1997 23:15:30'))} jaar
+        Woonplaats: Gennep
+        `,
     CONTACT_TITLE: "Contact gegevens",
     CONTACT_DESCRIPTION:
-        `Rick van Berlo
-        WillemBoyeweg 38
-        Gennep, 6591ZT`,
+        `rickvanberlo@gmail.com
+        06-57854479`
+    ,
     NAVIGATION: {
         BUTTON1: "HOME",
         BUTTON2: "OVER MIJ",
@@ -16,15 +22,14 @@ const strings = {
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:
-            `de ICT sector heeft me van kleins af aan geinterseerd. ik zag hoe ICT de wereld aan het veranderen was en wou hier graag een steentje in bij dragen. Met deze motivatie ben ik in de ICT sector gedoken.
-            
-            Als eerste heb ik een netwerkbeerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: het configureren en beheren van servers, omgaan met klantencontact en het congifureren van netwrken.
+            `De ICT sector heeft me van kleins af aan geïnteresseerd. ik zag hoe ICT de wereld aan het veranderen was en wou hier graag een steentje in bijdragen. Met deze motivatie ben ik in de ICT sector gedoken.
+
+            Als eerste heb ik een systeembeheerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: het configureren en beheren van servers, omgaan met klantencontact en het configureren van netwerken.
             Tijdens deze opleiding heb ik ook mijn eerste ervaring gehad met programmeren. Door dit vak wist ik al snel dat ik een programmeur wilde worden en ben na het afronden van deze opleiding een HBO informatica opleiding gestart.
             
-            Hierin heb ik de benodigde vaardigheden geleerd om een programeur te worden. Enkele van deze vaardigheden zijn het programmeren in verschillende programeertalen zoals: C#, Java en Javascript, het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexen architecturen.
-            om mijn kennis te verrijken heb ik een minor gevold in software architectuur. Hierin heb ik kennis gemaakt met de programmertaal C++.
+            Hierin heb ik de benodigde vaardigheden geleerd om een programmeur te worden. Enkele van deze vaardigheden zijn het programmeren in verschillende programmeertalen zoals: C#, Java en Javascript, het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexe architecturen.
+            om mijn kennis te verrijken heb ik als minor: software architectuur gevolgd op Avans. Hierin heb ik kennis gemaakt met de programmeertaal C++.
 
-            Momenteel ben ik ${calculateAge(new Date('May 6, 1997 23:15:30'))} jaar.
             `,
     },
     WORK: {
@@ -78,15 +83,14 @@ const strings = {
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "Januari 2015 / Juni 2016",
                 DESCRIPTION:
-                    `Tijdens deze stage ik mogen experimenteren met het deployen van servers en het beheren van webshops. Dit bedrijf is gespecialiseerd in het verhuren cloud omgevingen en hosten van websites.`,
+                    `Tijdens deze stage heb ik kennis opgedaan over het deployen van servers en het beheren van webshops. Dit bedrijf is gespecialiseerd in het verhuren cloud omgevingen en hosten van websites.`,
             },
             {
                 TITLE: "CenterParcs",
                 SUBTITLE: "ServiceDesk Medewerker",
                 DATE: "Januari 2014 - Juni 2015",
                 DESCRIPTION:
-                    `Deze stage heeft me geleerd hoe ik professioneel met andere medewerkers moet praten, wat een informatie systeem is en hoe ik dit moet gebruiken. 
-                    Verder leerde deze stage mij hoe ik vriendelijk om moet gaan met rustige en moeilijke klanten`,
+                    `Deze stage heeft mij laten zien hoe belangrijk een goede communiceren met de klant kan zijn. Hier heb ik mijn communicatie vaardigheden verbeterd en heb ik geleerd snel en efficiënt computers kan deployen in het werkveld.`,
             },
         ]
     },
@@ -97,7 +101,7 @@ const strings = {
                 TITLE: "Mercury",
                 SUBTITLE: "React",
                 DESCRIPTION:
-                    `In het project Mercury word gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en email's me kunnen ontvangen/verzenden.
+                    `In het project Mercury wordt gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en email me kunnen ontvangen/verzenden.
                     `,
                 LINKS:
                     [
@@ -113,7 +117,7 @@ const strings = {
         SECTIONS: [
             {
                 TITLE: "C-Sharp",
-                PERCENTAGE: "80%",
+                PERCENTAGE: "65%",
             },
             {
                 TITLE: "Java",
@@ -125,22 +129,20 @@ const strings = {
             },
             {
                 TITLE: "C++",
-                PERCENTAGE: "50%",
+                PERCENTAGE: "25%",
             },
             {
                 TITLE: "SQL",
-                PERCENTAGE: "70%",
+                PERCENTAGE: "55%",
             },
         ]
     },
     CONTACT: {
-        TITLE: "Hier kun u een bericht achter laten als u mij iets wilt laten weten",
+        TITLE: "Via dit fomulier kun je mij een bericht achter laten.",
         EMAIL: "Email",
         SUBJECT: "Onderwerp",
         DESCRIPTION: "Omschrijving",
     }
-
-
 }
 
 export default strings;

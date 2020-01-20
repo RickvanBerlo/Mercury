@@ -5,8 +5,9 @@ import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
 
 const NavButton = ({ name = "No name", onClick, color = colors.WHITE }) => {
-    const height = screenResolution().width < 450 ? "48px" : "48px";
-    const padding = screenResolution().width < 450 ? "10px" : "20px";
+    const width = screenResolution().width;
+    const height = width < 450 ? "48px" : "48px";
+    const padding = width < 450 ? "10px" : "20px";
     return (
         <Container>
             <Button name={name} height={height} padding={padding} color={color} onClick={onClick} />

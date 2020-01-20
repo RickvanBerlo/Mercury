@@ -66,6 +66,7 @@ const Container = styled.div`
 const Title = styled.h3`
     font: 20px 'Open Sans Bold',sans-serif;
     font-weight:600;
+    user-select: none;
     margin-bottom: 10px;lsc 
     text-align: left;
 `
@@ -91,6 +92,7 @@ const Category = styled.h2`
     font: 18px 'Open Sans Bold',sans-serif;
     border-bottom: 3px solid ${colors.LIGHT_BLUE};
     font-weight:600;
+    user-select: none;
     text-transform: uppercase;
     letter-spacing: 1px;
 `

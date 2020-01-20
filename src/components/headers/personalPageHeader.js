@@ -35,12 +35,16 @@ const Container = styled.div`
 `
 const Title = styled.h1`
     color: white;
+    user-select: none;
     font: 90px 'Open Sans Bold',sans-serif;
     font-weight:600;
     text-shadow: 3px 2px 3px ${colors.TRANSPARENT_80};
     @media (max-width: 767px) {
         font: 55px 'Open Sans Bold',sans-serif;
-      }
+    }
+    @media (max-width: 340px) {
+        font: 40px 'Open Sans Bold',sans-serif;
+    }
 `
 
 const TitleContainer = styled.div`

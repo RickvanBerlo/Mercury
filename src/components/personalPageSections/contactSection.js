@@ -15,20 +15,22 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [emailValid, setEmailValid] = useState(false);
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
-    const [enableCheckmark, setEnableCheckmark] = useState(false);
+    const [enableCheckmark, setEnableCheckmark] = useState(undefined);
     const [token, setToken] = useState("");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
     let captcha = undefined;
 
     useEffect(() => {
-        send(email, subject, description, setEnableCheckmark);
+        if (token) {
+            send(email, subject, description, setEnableCheckmark);
 
-        setEmail("");
-        setSubject("");
-        setDescription("");
-        setSubjectClicked(false);
-        setSubmitButtonHover(false);
+            setEmail("");
+            setSubject("");
+            setDescription("");
+            setSubjectClicked(false);
+            setSubmitButtonHover(false);
+        }
     }, [token]);
 
     return (
@@ -45,9 +47,11 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
             <CenterBlock>
                 <CenterContainer>
                     <LeftContainer>
-                        <Form onSubmit={(event) => handleSubmit(
-                            event,
-                            captcha)}>
+                        <Form onSubmit={(event) => {
+                            handleSubmit(
+                                event,
+                                captcha)
+                        }}>
                             <InputContainer>
                                 <LeftFlex>
                                     <Label>
@@ -173,6 +177,7 @@ const Container = styled.div`
 
 const RecaptchaText = styled.p`
     font-size: 13px;
+    user-select: none;
     color: ${colors.WHITE}
 `
 
@@ -180,6 +185,7 @@ const Title = styled.h2`
     font: 22px 'Open Sans Bold',sans-serif;
     color:${colors.WHITE}
     padding-top: 40px;
+    user-select: none;
     padding-bottom: 50px;
     font-weight:600;
     @media (max-width: 767px) {
@@ -202,18 +208,21 @@ const CenterBlock = styled.div`
 
 const ContactTitle = styled.h3`
     font: 18px 'Open Sans Bold',sans-serif;
+    user-select: none;
     color:${colors.WHITE}
 `
 
 const Description = styled.p`
     color: ${colors.GRAY};
     font: 16px 'Open Sans',sans-serif;
+    user-select: none;
     line-height: 30px;
     white-space: pre-line;
 `
 
 const Link = styled.a`
     color: ${colors.BLUE};
+    user-select: none;
     text-decoration: none;
 `
 
@@ -247,6 +256,9 @@ const LeftContainer = styled.div`
 
 const RightContainer = styled.div`
     width: 200px;
+    @media (max-width: 767px) {
+        margin-top: 40px;
+    }
 `
 
 const LeftFlex = styled.div`
@@ -256,6 +268,7 @@ const LeftFlex = styled.div`
 const Label = styled.label`
     color: ${colors.WHITE}
     font: 18px 'Open Sans Bold',sans-serif;
+    user-select: none;
     max-width: 60px;  
     line-height: 40px; 
 `

@@ -9,12 +9,14 @@ const TopNavbar = () => {
     const [visibility, setVisibility] = useState("visible");
     const [opacity, setOpacity] = useState(1);
     const [color, setColor] = useState(colors.TRANSPARENT);
-    const [colorbutton1, setColorButton1] = useState(colors.BLUE);
+    const [colorbutton1, setColorButton1] = useState(colors.WHITE);
     const [colorbutton2, setColorButton2] = useState(colors.WHITE);
     const [colorbutton3, setColorButton3] = useState(colors.WHITE);
     const [colorbutton4, setColorButton4] = useState(colors.WHITE);
 
-    const HiddingSpot = screenResolution().width < 767 ? 170 : 265;
+    const width = screenResolution().width;
+    console.log(width)
+    const HiddingSpot = width < 767 ? width < 600 ? 100 : 170 : 300;
 
     const listenScrollEvent = () => {
         if (document.getElementById('contactSection').getBoundingClientRect().y < 48) {
@@ -59,7 +61,8 @@ const TopNavbar = () => {
 
     useEffect(() => {
         window.addEventListener('scroll', listenScrollEvent)
-    })
+        if (window.scrollY < HiddingSpot) setColorButton1(colors.BLUE);
+    }, [])
 
     return (
         <Container visibility={visibility} opacity={opacity} color={color}>
