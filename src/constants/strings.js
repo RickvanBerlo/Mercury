@@ -135,10 +135,18 @@ const strings = {
                 TITLE: "SQL",
                 PERCENTAGE: "55%",
             },
+            {
+                TITLE: "Css",
+                PERCENTAGE: "60%"
+            },
+            {
+                TITLE: "Html",
+                PERCENTAGE: "60%"
+            }
         ]
     },
     CONTACT: {
-        TITLE: "Via dit fomulier kun je mij een bericht achter laten.",
+        TITLE: "Wil je een bericht achter laten dan kun je dit doen via dit formulier",
         EMAIL: "Email",
         SUBJECT: "Onderwerp",
         DESCRIPTION: "Omschrijving",

@@ -1,7 +1,8 @@
 import React from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import image from '../../assets/profilepic2.png';
 import colors from '../../constants/colors';
+import LinkButton from '../../components/buttons/linkButton';
 
 const HeadSection = ({ name, content, infoTitle, infoContent }) => {
     return (
@@ -21,7 +22,8 @@ const HeadSection = ({ name, content, infoTitle, infoContent }) => {
                             <FlexContainer>
                                 <InfoDescription>{infoContent}</InfoDescription>
                                 <ButtonContainer>
-                                    <CvButton href="/cv/CV_RickvanBerlo.pdf" download>Download CV</CvButton>
+                                    <LinkButton name="Download CV" padding="10px 20px" display="inline-block" margin="25px 0px 0px 0px" borderRadius="4px" fontSize="18px" href="/cv/CV_RickvanBerlo.pdf"></LinkButton>
+                                    {/* <CvButton href="/cv/CV_RickvanBerlo.pdf" download>Download CV</CvButton> */}
                                 </ButtonContainer>
                             </FlexContainer>
                         </TextContainer>
@@ -63,14 +65,9 @@ const Container = styled.div`
 const ButtonContainer = styled.div`
     flex: 1;
     @media (max-width: 900px){
-        margin-top: 50px;
         margin-bottom: 20px;
     }
-    @media (max-width: 767px){
-        margin-top: 0px;
-    }
     @media (max-width: 700px){
-        margin-top: 50px;
         margin-bottom: 20px;
     }
 `
@@ -101,7 +98,7 @@ const InfoDescription = styled.p`
     font: 16px 'Open Sans',sans-serif;
     line-height: 30px;
     white-space: pre-line;
-    flex: 1;
+    flex: 2;
 `
 
 const CenterContainer = styled.div`
@@ -156,53 +153,6 @@ const Image = styled.img`
     border-radius: 100%;
     pointer-events: none;
     user-select: none;
-`
-
-const showColor = () => keyframes`
-    from { 
-        background-color: ${colors.GRAY};
-        color: ${colors.WHITE};
-    }
-    50% {
-        background-color: ${colors.WHITE};
-        color: ${colors.BLACK};
-    }
-    to { 
-        background-color: ${colors.GRAY}; 
-        color: ${colors.WHITE};
-    }
-`;
-
-const CvButton = styled.a`
-    background-color: ${colors.GRAY};
-    border-radius: 4px;
-    padding: 10px 20px;
-    color: ${colors.WHITE}
-    font: 20px 'Open Sans Bold',sans-serif;
-    border: none;
-    cursor: pointer;
-    text-decoration: none
-    transition: color 0.3s linear, background-color 0.3s linear; /* vendorless fallback */
-    -o-transition: color 0.3s linear, background-color 0.3s linear; /* opera */
-    -ms-transition: color 0.3s linear, background-color 0.3s linear; /* IE 10 */
-    -moz-transition: color 0.3s linear, background-color 0.3s linear; /* Firefox */
-    -webkit-transition: color 0.3s linear, background-color 0.3s linear; /*safari and chrome */
-    -webkit-tap-highlight-color: transparent;
-    @media (min-width: 768px){
-        &:hover {
-            background-color: ${colors.WHITE};
-            color: ${colors.BLACK}
-        }
-    }
-    @media (max-width: 767px) {
-        &:hover {
-            -webkit-animation: ${css`${showColor()} 1s linear`};
-	        -moz-animation: ${css`${showColor()} 1s linear`};
-	        -ms-animation: ${css`${showColor()} 1s linear`};
-	        -o-animation: ${css`${showColor()} 1s linear`};
-	        animation: ${css`${showColor()} 1s linear`};
-        }
-    }
 `
 
 export default HeadSection;

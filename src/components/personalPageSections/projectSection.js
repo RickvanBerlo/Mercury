@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import colors from '../../constants/colors';
+import LinkButton from '../../components/buttons/linkButton';
 
 const ProjectSection = ({ content, name }) => {
     return (
@@ -36,11 +37,24 @@ const createSection = (section, index) => {
             <LinkList>
                 {
                     section.LINKS.map((link, index) => {
-                        return <Link key={"Link" + index} href={link.LINK} target="_blank">{link.NAME}</Link>
+                        return <LinkButton
+                            key={"Link" + index}
+                            name={link.NAME}
+                            textColor={colors.DARK_GRAY}
+                            bgColor={colors.DARK_WHITE}
+                            href={link.LINK}
+                            margin="0px 30px 0px 0px"
+                            border={`1px solid ${colors.LIGHT_GRAY}`}
+                            flex={1}
+                            padding="2px 0px"
+                            clickBgColor={colors.DARK_GRAY}
+                            clickColor={colors.LIGHT_GRAY}
+                        >
+                        </LinkButton>
                     })
                 }
             </LinkList>
-        </TextContainer>
+        </TextContainer >
     )
 }
 
@@ -135,29 +149,6 @@ const RightContainer = styled.div`
     width: 60vw;
     @media (max-width: 767px) {
         width: 80vw;
-    }
-`
-
-const Link = styled.a`
-    cursor: pointer;
-    font: 16px 'Open Sans',sans-serif;
-    color: ${colors.DARK_GRAY};
-    background-color: ${colors.DARK_WHITE}
-    border: 1px solid ${colors.LIGHT_GRAY};
-    text-decoration: none;
-    flex: 1;
-    user-select: none;
-    margin: 0px 30px 0px 0px;
-    padding: 2px 0px;
-    text-align: center;
-    transition: color 0.25s, background-color 0.25s linear; /* vendorless fallback */
-    -o-transition: color 0.25s, background-color 0.25s linear; /* opera */
-    -ms-transition: color 0.25s, background-color 0.25s linear; /* IE 10 */
-    -moz-transition: color 0.25s, background-color 0.25s linear; /* Firefox */
-    -webkit-transition: color 0.25s, background-color 0.25s linear; /*safari and chrome */
-    &:hover {
-        color: ${colors.LIGHT_GRAY}
-        background-color: ${colors.DARK_GRAY}
     }
 `
 
