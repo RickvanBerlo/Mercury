@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import image from '../../assets/profilepic2.png';
+import image from '../../assets/profilepic.png';
 import colors from '../../constants/colors';
 import LinkButton from '../../components/buttons/linkButton';
 
