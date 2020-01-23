@@ -1,9 +1,3 @@
-/**
- * Software distributed under the Apache License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
- * specific language governing rights and limitations under the License.
- */
-
 import React, { memo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../../constants/colors';
@@ -75,9 +69,9 @@ const shrink = keyframes`
 
 //box-shadow: inset 0 0 0 ${colors.BLUE};
 const Icon = styled.svg`
-  display: block;
+  display: inline;
   border-radius: 50px;
-  position: absolute;
+  flex: 1;
   stroke: ${colors.WHITE};
   stroke-width: 5;
   stroke-miterlimit: 10;

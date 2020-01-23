@@ -1,9 +1,3 @@
-/**
- * Software distributed under the Apache License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
- * specific language governing rights and limitations under the License.
- */
-
 import React, { memo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../../constants/colors';
@@ -20,8 +14,8 @@ const Crossmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
       viewBox='0 0 52 52'
     >
       <CheckmarkCircle enable={enable} cx='26' cy='26' r='25' />
-      <CheckmarkCheck enable={enable} d='M 37,15 l -23,23 M 100,10 l -90,90' />
-      <CheckmarkCheck enable={enable} d='M 14,15 l 23,23 M 100,10 l -90,90' />
+      <CheckmarkCheck enable={enable} d='M 37,15 l -23,23' />
+      <CheckmarkCheck enable={enable} d='M 14,15 l 23,23' />
     </Icon>
   );
 };
@@ -76,9 +70,9 @@ const shrink = keyframes`
 
 //box-shadow: inset 0 0 0 ${colors.BLUE};
 const Icon = styled.svg`
-  display: block;
+  display: inline;
   border-radius: 50px;
-  position: absolute;
+  flex: 1;
   stroke: ${colors.WHITE};
   stroke-width: 5;
   stroke-miterlimit: 10;

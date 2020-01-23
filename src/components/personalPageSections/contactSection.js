@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
-import Checkmark from '../../components/animations/checkmark/checkmark';
-import Crossmark from '../../components/animations/crossmark/crossmark';
+import Checkmark from '../animations/checkmark/checkmark';
+import Crossmark from '../animations/crossmark/crossmark';
+import Notification from '../animations/notification/notification';
 import send from '../../utils/emailSender';
 import { ReCaptcha } from 'react-recaptcha-google';
 import './contactSection.css';
@@ -17,7 +18,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
     const [enableCheckmark, setEnableCheckmark] = useState(undefined);
-    const [enableCrossmark, setEnableCrossmark] = useState(undefined);
+    const [enableCrossmark, setEnableCrossmark] = useState(true);
     const [token, setToken] = useState("");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
@@ -126,8 +127,12 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                                         onMouseOut={() => { if (!submitButtonHover) { setEmailValid(false); setSubjectValid(false); } }}
                                     />
                                     <CheckmarkContainer>
-                                        <Checkmark size={60} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
-                                        <Crossmark size={60} enable={enableCrossmark} setEnable={setEnableCrossmark} timeInMiliseconds={2000} />
+                                        <FlexContainer>
+                                            <Checkmark size={60} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
+                                            <Crossmark size={60} enable={enableCrossmark} setEnable={setEnableCrossmark} timeInMiliseconds={2000} />
+                                            <Notification text={"Dankjewel"} enable={enableCheckmark} color={colors.WHITE} paddingLeft="15px" />
+                                            <Notification text={"Probeer het nogmaals"} enable={enableCrossmark} color={colors.WHITE} paddingLeft="15px" />
+                                        </FlexContainer>
                                     </CheckmarkContainer>
                                 </SubmitButtonRightFlex>
                             </SubmitButtonContainer>
@@ -182,6 +187,11 @@ const RecaptchaText = styled.p`
     font-size: 13px;
     user-select: none;
     color: ${colors.WHITE}
+`
+
+const FlexContainer = styled.div`
+    display: table;
+
 `
 
 const Title = styled.h2`

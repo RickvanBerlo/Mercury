@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 
 const BarSection = ({ content, name }) => {
-
-    const [transition, setTransition] = useState(false)
+    const [transition, setTransition] = useState(false);
 
     const listenScrollEvent = () => {
-        if (100 > document.getElementById('projectSection').getBoundingClientRect().y) {
-            setTransition(true);
+        if (content.CATEGORY) {
+            if (800 > document.getElementById('barSection').getBoundingClientRect().y) {
+                setTransition(true);
+            }
         }
     }
 
@@ -16,6 +17,7 @@ const BarSection = ({ content, name }) => {
         window.addEventListener('scroll', listenScrollEvent)
     })
 
+    if (!content.CATEGORY) return null;
     return (
         <Container id={name}>
             <CenterBlock>

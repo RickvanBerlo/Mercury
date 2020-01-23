@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 
 const TextSection = ({ content, name }) => {
+    if (!content.CATEGORY) return null;
     return (
         <Container id={name}>
             <CenterBlock>

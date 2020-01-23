@@ -15,7 +15,6 @@ const TopNavbar = () => {
     const [colorbutton4, setColorButton4] = useState(colors.WHITE);
 
     const width = screenResolution().width;
-    console.log(width)
     const HiddingSpot = width < 767 ? width < 600 ? 100 : 170 : 300;
 
     const listenScrollEvent = () => {

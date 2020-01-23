@@ -4,6 +4,7 @@ import colors from '../../constants/colors';
 import LinkButton from '../../components/buttons/linkButton';
 
 const ProjectSection = ({ content, name }) => {
+    if (!content.CATEGORY) return null;
     return (
         <Container id={name}>
             <CenterBlock>
