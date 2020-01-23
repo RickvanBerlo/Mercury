@@ -22,8 +22,16 @@ const HeadSection = ({ name, content, infoTitle, infoContent }) => {
                             <FlexContainer>
                                 <InfoDescription>{infoContent}</InfoDescription>
                                 <ButtonContainer>
-                                    <LinkButton name="Download CV" padding="10px 20px" display="inline-block" margin="25px 0px 0px 0px" borderRadius="4px" fontSize="18px" href="/cv/CV_RickvanBerlo.pdf"></LinkButton>
-                                    {/* <CvButton href="/cv/CV_RickvanBerlo.pdf" download>Download CV</CvButton> */}
+                                    <LinkButton
+                                        name="Download CV"
+                                        padding="10px 20px"
+                                        display="inline-block"
+                                        margin="25px 0px 0px 0px"
+                                        borderRadius="4px"
+                                        fontSize="18px"
+                                        href="/cv/CV_RickvanBerlo.pdf"
+                                    >
+                                    </LinkButton>
                                 </ButtonContainer>
                             </FlexContainer>
                         </TextContainer>

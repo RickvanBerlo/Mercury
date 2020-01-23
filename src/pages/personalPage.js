@@ -8,7 +8,8 @@ import ProjectSection from '../components/personalPageSections/projectSection';
 import ContactSection from '../components/personalPageSections/contactSection';
 import Footer from '../components/footers/personalPageFooter';
 import strings from '../constants/strings';
-import { loadReCaptcha } from 'react-recaptcha-google'
+import { loadReCaptcha } from 'react-recaptcha-google';
+import config from '../constants/config';
 
 const CurriculemVitae = () => {
   useEffect(() => {
@@ -24,7 +25,7 @@ const CurriculemVitae = () => {
       <TextSection content={strings.INTERSHIP} name={"internshipSection"} />
       <ProjectSection content={strings.PROJECT} name={"projectSection"} />
       <BarSection content={strings.SKILL} name={"barSection"} />
-      <ContactSection name={"contactSection"} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} />
+      <ContactSection name={"contactSection"} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} recaptchaConfig={config.RECAPTCHA} />
       <Footer />
     </Container>
   );

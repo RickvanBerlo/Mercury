@@ -3,11 +3,12 @@ import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
 import Checkmark from '../../components/animations/checkmark/checkmark';
+import Crossmark from '../../components/animations/crossmark/crossmark';
 import send from '../../utils/emailSender';
 import { ReCaptcha } from 'react-recaptcha-google';
 import './contactSection.css';
 
-const ContactSection = ({ name, content, contactTitle, contactContent }) => {
+const ContactSection = ({ name, content, contactTitle, contactContent, recaptchaConfig }) => {
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [description, setDescription] = useState("");
@@ -16,6 +17,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
     const [enableCheckmark, setEnableCheckmark] = useState(undefined);
+    const [enableCrossmark, setEnableCrossmark] = useState(undefined);
     const [token, setToken] = useState("");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
@@ -23,7 +25,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
 
     useEffect(() => {
         if (token) {
-            send(email, subject, description, setEnableCheckmark);
+            send(email, subject, description, setEnableCheckmark, setEnableCrossmark);
 
             setEmail("");
             setSubject("");
@@ -37,9 +39,9 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
         <Container id={name}>
             <ReCaptcha
                 ref={(el) => { captcha = el; }}
-                size="invisible"
-                render="explicit"
-                sitekey="6Lf0E9AUAAAAAEBG8Ulz0YmkBWOEvUHj6rtugGxS"
+                size={recaptchaConfig.SIZE}
+                render={recaptchaConfig.RENDER}
+                sitekey={recaptchaConfig.SITEKEY}
                 onloadCallback={() => { }}
                 verifyCallback={(token) => { verifyCallback(token, setToken) }}
             />
@@ -125,6 +127,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent }) => {
                                     />
                                     <CheckmarkContainer>
                                         <Checkmark size={60} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
+                                        <Crossmark size={60} enable={enableCrossmark} setEnable={setEnableCrossmark} timeInMiliseconds={2000} />
                                     </CheckmarkContainer>
                                 </SubmitButtonRightFlex>
                             </SubmitButtonContainer>

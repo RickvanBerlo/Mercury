@@ -8,7 +8,7 @@ import React, { memo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../../constants/colors';
 
-const Checkmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
+const Crossmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
   if (enable === undefined) return null;
   if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false) }, timeInMiliseconds);
 
@@ -20,7 +20,8 @@ const Checkmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
       viewBox='0 0 52 52'
     >
       <CheckmarkCircle enable={enable} cx='26' cy='26' r='25' />
-      <CheckmarkCheck enable={enable} d='M14.1 27.2l7.1 7.2 16.7-16.8' />
+      <CheckmarkCheck enable={enable} d='M 37,15 l -23,23 M 100,10 l -90,90' />
+      <CheckmarkCheck enable={enable} d='M 14,15 l 23,23 M 100,10 l -90,90' />
     </Icon>
   );
 };
@@ -45,7 +46,7 @@ const enlarge = keyframes`
 
 const fill = keyframes`
   to { 
-    box-shadow: inset 0 0 0 100vh ${colors.GREEN};
+    box-shadow: inset 0 0 0 100vh ${colors.RED};
   }
 `
 
@@ -81,7 +82,7 @@ const Icon = styled.svg`
   stroke: ${colors.WHITE};
   stroke-width: 5;
   stroke-miterlimit: 10;
-  fill: ${props => props.enable ? "none" : colors.GREEN}
+  fill: ${props => props.enable ? "none" : colors.RED}
   width: ${props => props.size}px;
   height: ${props => props.size}px;
   animation: ${props => props.enable ? fill : empty} 0.4s ease-in-out 0.4s forwards, ${props => props.enable ? enlarge : shrink} 0.3s ease-in-out 0.9s both};
@@ -92,8 +93,8 @@ const CheckmarkCircle = styled.circle`
     stroke-dashoffset: 166;
     stroke-width: 5;
     stroke-miterlimit: 10;
-    stroke: ${colors.GREEN};
-    fill: ${props => props.enable ? "none" : colors.GREEN}
+    stroke: ${colors.RED};
+    fill: ${props => props.enable ? "none" : colors.RED}
     animation: ${props => props.enable && css`${stroke} 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards`};
 `
 
@@ -101,10 +102,10 @@ const CheckmarkCheck = styled.path`
     transform-origin: 50% 50%;
     stroke-dasharray: 48;
     stroke-width: 5;
-    stroke-dashoffset: ${props => props.enable ? "48" : "15"};
+    stroke-dashoffset: ${props => props.enable ? "48" : "16"};
     animation: ${props => props.enable && css`${stroke} 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards`}
     
 `
 
-const MemoCheckmark = memo(Checkmark);
-export default MemoCheckmark;
+const MemoCrossmark = memo(Crossmark);
+export default MemoCrossmark;
