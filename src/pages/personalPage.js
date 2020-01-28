@@ -20,7 +20,7 @@ const CurriculemVitae = () => {
     <Container id="rootContainer">
       <Header />
       <HeadSection content={strings.ABOUT} name="headSection" infoTitle={strings.GENERAL_INFORMATION} infoContent={strings.GENERAL_INFORMATION_DESCRIPTION} />
-      <TextSection content={strings.WORK} name={"infoSection"} />
+      <TextSection content={strings.WORK} name={"workSection"} />
       <TextSection content={strings.EDUCATION} name={"educationSection"} />
       <TextSection content={strings.INTERSHIP} name={"internshipSection"} />
       <ProjectSection content={strings.PROJECT} name={"projectSection"} />

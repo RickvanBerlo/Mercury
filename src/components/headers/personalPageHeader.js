@@ -5,6 +5,7 @@ import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
 import strings from '../../constants/strings';
 import background from '../../assets/background.png';
+import backgroundMobile from '../../assets/backgroundmobile.png';
 
 //onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('headSection').getBoundingClientRect().y + 4); }}
 
@@ -31,42 +32,47 @@ const Header = () => {
 //styles
 const Container = styled.div`
     background: ${colors.DARK_GRAY} url(${background}) no-repeat center;
-            width: 100%;
-            height: 100vh;
-            position: relative;
-            background-size: cover !important;
-            text-align: center;
-            overflow: hidden;
-        `
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background-size: cover !important;
+    text-align: center;
+    overflow: hidden;
+    background-color: ${colors.DARK_GRAY};
+    @media (max-width: 767px) {
+        background: ${colors.DARK_GRAY} url(${backgroundMobile}) no-repeat center;
+    }
+
+`
 const NavContainer = styled.div`
-            display: table;
-        `
+    display: table;
+`
 const BottomContainer = styled.div`
-            width: 100vw;
-            height: 35vh;
-            display: table-cell;
-            text-align: center;
-            vertical-align: bottom;
-        `
+    width: 100vw;
+    height: 35vh;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom;
+`
 
 const Title = styled.h1`
-            color: white;
-            user-select: none;
-            font: 90px 'Open Sans Bold',sans-serif;
-            font-weight:600;
+    color: white;
+    user-select: none;
+    font: 90px 'Open Sans Bold',sans-serif;
+    font-weight:600;
     text-shadow: 3px 2px 3px ${colors.TRANSPARENT_80};
     @media (max-width: 767px) {
-                font: 55px 'Open Sans Bold',sans-serif;
-        }
+        font: 55px 'Open Sans Bold',sans-serif;
+    }
     @media (max-width: 340px) {
-                font: 40px 'Open Sans Bold',sans-serif;
-        }
-    `
+        font: 40px 'Open Sans Bold',sans-serif;
+    }
+`
 
 const TitleContainer = styled.div`
-     margin-top: 40vh;
- @media (max-width: 767px) {
-                margin - top:30vh;
-          }
-        `
+    margin-top: 40vh;
+    @media (max-width: 767px) {
+        margin - top:30vh;
+    }
+`
 export default Header;

@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
 const TextSection = ({ content, name }) => {
+    const [opacity, setopacity] = useState(0);
+    const [transformLeft, setTransfromLeft] = useState("-30px");
+    const [transformRight, setTransfromRight] = useState("30px");
+
+    const listenScrollEvent = () => {
+        if (opacity !== 0) return;
+        if (document.getElementById(name).getBoundingClientRect().y < 800) {
+            setopacity(1);
+            setTransfromLeft("0px");
+            setTransfromRight("0px");
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', listenScrollEvent)
+    })
+
     if (!content.CATEGORY) return null;
     return (
         <Container id={name}>
             <CenterBlock>
                 <CenterContainer>
-                    <LeftContainer>
+                    <LeftContainer opacity={opacity} transform={transformLeft}>
                         <CategoryContainer>
                             <Category>{content.CATEGORY}</Category>
                         </CategoryContainer>
                     </LeftContainer>
-                    <RightContainer>
+                    <RightContainer opacity={opacity} transform={transformRight}>
                         {
                             content.SECTIONS.map((section, index) => {
                                 return createSection(section, index);
@@ -142,9 +159,23 @@ const LeftContainer = styled.div`
     margin-top: 10px;
     padding: 0 20px;
     min-width: 200px;
+    opacity: ${props => props.opacity};
+    transform: translate(${props => props.transform}, 0px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
 `
 const RightContainer = styled.div`
     width: 60vw;
+    opacity: ${props => props.opacity};
+    transform: translate(${props => props.transform}, 0px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
     @media (max-width: 767px) {
         width: 80vw;
     }

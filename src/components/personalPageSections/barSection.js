@@ -4,11 +4,20 @@ import colors from '../../constants/colors';
 
 const BarSection = ({ content, name }) => {
     const [transition, setTransition] = useState(false);
+    const [opacity, setopacity] = useState(0);
+    const [transformLeft, setTransfromLeft] = useState("-30px");
+    const [transformRight, setTransfromRight] = useState("30px");
 
     const listenScrollEvent = () => {
+        if (opacity !== 0) return;
         if (content.CATEGORY) {
-            if (800 > document.getElementById('barSection').getBoundingClientRect().y) {
+            if (document.getElementById(name).getBoundingClientRect().y < 600) {
                 setTransition(true);
+            }
+            if (document.getElementById(name).getBoundingClientRect().y < 800) {
+                setopacity(1);
+                setTransfromLeft("0px");
+                setTransfromRight("0px");
             }
         }
     }
@@ -22,12 +31,12 @@ const BarSection = ({ content, name }) => {
         <Container id={name}>
             <CenterBlock>
                 <CenterContainer>
-                    <LeftContainer>
+                    <LeftContainer opacity={opacity} transform={transformLeft}>
                         <CategoryContainer>
                             <Category>{content.CATEGORY}</Category>
                         </CategoryContainer>
                     </LeftContainer>
-                    <RightContainer>
+                    <RightContainer opacity={opacity} transform={transformRight}>
                         {
                             content.SECTIONS.map((section, index) => {
                                 return createSection(section, index, transition);
@@ -111,9 +120,23 @@ const LeftContainer = styled.div`
     margin-top: 10px;
     padding: 0 20px;
     min-width: 200px;
+    opacity: ${props => props.opacity};
+    transform: translate(${props => props.transform}, 0px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
 `
 const RightContainer = styled.div`
     width: 60vw;
+    opacity: ${props => props.opacity};
+    transform: translate(${props => props.transform}, 0px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
     @media (max-width: 767px) {
         width: 80vw;
     }

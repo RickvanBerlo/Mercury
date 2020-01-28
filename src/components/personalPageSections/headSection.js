@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import image from '../../assets/profilepic.png';
 import colors from '../../constants/colors';
 import LinkButton from '../../components/buttons/linkButton';
 
 const HeadSection = ({ name, content, infoTitle, infoContent }) => {
+    const [opacity, setopacity] = useState(0);
+    const [transform, setTransfrom] = useState("30px");
+
+    const listenScrollEvent = () => {
+        if (opacity !== 0) return;
+        if (document.getElementById(name).getBoundingClientRect().y < 600) {
+            setopacity(1);
+            setTransfrom("0px");
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', listenScrollEvent)
+    })
+
+
     return (
         <Container id={name}>
-            <CenterBlock>
+            <CenterBlock opacity={opacity} transform={transform}>
                 <CenterContainer>
                     <LeftContainer>
                         <ImageContainer>
@@ -47,11 +63,18 @@ const HeadSection = ({ name, content, infoTitle, infoContent }) => {
 
 const CenterBlock = styled.div`
     margin-left: 5%;
+    opacity: ${props => props.opacity};
     margin-right: 5%;
     padding-top: 60px;
     padding-bottom: 60px;
     display: inline-block;
+    transform: translate(0px, ${props => props.transform});
     text-align: left;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
 `
 const FlexContainer = styled.div`
     display: flex;

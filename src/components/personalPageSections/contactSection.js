@@ -20,9 +20,19 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
     const [enableCheckmark, setEnableCheckmark] = useState(undefined);
     const [enableCrossmark, setEnableCrossmark] = useState(undefined);
     const [token, setToken] = useState("");
+    const [opacity, setopacity] = useState(0);
+    const [transform, setTransfrom] = useState("30px");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
     let captcha = undefined;
+
+    const listenScrollEvent = () => {
+        if (opacity !== 0) return;
+        if (document.getElementById(name).getBoundingClientRect().y < 600) {
+            setopacity(1);
+            setTransfrom("0px");
+        }
+    }
 
     useEffect(() => {
         if (token) {
@@ -36,6 +46,10 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
         }
     }, [token]);
 
+    useEffect(() => {
+        window.addEventListener('scroll', listenScrollEvent)
+    })
+
     return (
         <Container id={name}>
             <ReCaptcha
@@ -46,8 +60,8 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                 onloadCallback={() => { }}
                 verifyCallback={(token) => { verifyCallback(token, setToken) }}
             />
-            <Title>{content.TITLE}</Title>
-            <CenterBlock>
+            <Title opacity={opacity} transform={transform}>{content.TITLE}</Title>
+            <CenterBlock opacity={opacity} transform={transform}>
                 <CenterContainer>
                     <LeftContainer>
                         <Form onSubmit={(event) => {
@@ -201,6 +215,13 @@ const Title = styled.h2`
     user-select: none;
     padding-bottom: 50px;
     font-weight:600;
+    opacity: ${props => props.opacity};
+    transform: translate(0px, ${props => props.transform});
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
     @media (max-width: 767px) {
         font: 18px 'Open Sans Bold',sans-serif;
         padding: 20px 20px 0px 20px;
@@ -214,8 +235,16 @@ const CenterBlock = styled.div`
     padding-bottom: 40px;
     display: inline-block;
     text-align: left;
+    opacity: ${props => props.opacity};
+    transform: translate(20px, ${props => props.transform});
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* opera */
+    -ms-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* IE 10 */
+    -moz-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Firefox */
+    -webkit-transition: opacity 0.5s ease-out, transform 0.5s ease-out; /*safari and chrome */
     @media (max-width: 767px) {
-        margin-right: 10%;
+        margin-right: 15vw;
+        margin-left: 0%;
     }
 `
 

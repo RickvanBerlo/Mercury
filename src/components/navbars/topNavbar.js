@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import NavButton from '../buttons/navButton';
 import strings from '../../constants/strings';
 import colors from '../../constants/colors';
-import screenResolution from '../../utils/screenResolution';
 
 const TopNavbar = () => {
     const [visibility, setVisibility] = useState("hidden");
@@ -13,9 +12,6 @@ const TopNavbar = () => {
     const [colorbutton2, setColorButton2] = useState(colors.WHITE);
     const [colorbutton3, setColorButton3] = useState(colors.WHITE);
     const [colorbutton4, setColorButton4] = useState(colors.WHITE);
-
-    const width = screenResolution().width;
-    const HiddingSpot = width < 767 ? width < 600 ? 100 : 170 : 300;
 
     const listenScrollEvent = () => {
         if (document.getElementById('contactSection').getBoundingClientRect().y < 48) {
@@ -27,7 +23,7 @@ const TopNavbar = () => {
                 setColorButton1(colors.WHITE);
                 setColor(colors.NAVBAR);
             }
-        } else if (document.getElementById('infoSection').getBoundingClientRect().y < 0) {
+        } else if (document.getElementById('workSection').getBoundingClientRect().y < 0) {
             if (colorbutton3 !== colors.BLUE) {
                 setVisibility("visible");
                 setColorButton4(colors.WHITE);
@@ -54,14 +50,13 @@ const TopNavbar = () => {
 
     useEffect(() => {
         window.addEventListener('scroll', listenScrollEvent)
-        if (window.scrollY < HiddingSpot) setColorButton1(colors.BLUE);
-    }, [])
+    })
 
     return (
         <Container visibility={visibility} opacity={opacity} color={color}>
             <NavButton name={strings.NAVIGATION.BUTTON1} color={colorbutton1} onClick={() => { window.scrollTo(0, 0); }} />
             <NavButton name={strings.NAVIGATION.BUTTON2} color={colorbutton2} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('headSection').getBoundingClientRect().y + 4); }} />
-            <NavButton name={strings.NAVIGATION.BUTTON3} color={colorbutton3} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('infoSection').getBoundingClientRect().y + 4); }} />
+            <NavButton name={strings.NAVIGATION.BUTTON3} color={colorbutton3} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('workSection').getBoundingClientRect().y + 4); }} />
             <NavButton name={strings.NAVIGATION.BUTTON4} color={colorbutton4} onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('contactSection').getBoundingClientRect().y - 40); }} />
         </Container>
     );
