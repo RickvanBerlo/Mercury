@@ -48,8 +48,8 @@ const createSection = (section, index) => {
                             border={`1px solid ${colors.LIGHT_GRAY}`}
                             flex={1}
                             padding="2px 0px"
-                            clickBgColor={colors.DARK_GRAY}
-                            clickColor={colors.LIGHT_GRAY}
+                            clickBgColor={colors.LIGHT_GREEN}
+                            clickColor={colors.DARK_WHITE}
                         >
                         </LinkButton>
                     })
@@ -123,7 +123,7 @@ const CategoryContainer = styled.div`
 `
 const Category = styled.h2`
     font: 18px 'Open Sans Bold',sans-serif;
-    border-bottom: 3px solid ${colors.LIGHT_BLUE};
+    border-bottom: 3px solid ${colors.LIGHT_GREEN};
     font-weight:600;
     user-select: none;
     text-transform: uppercase;

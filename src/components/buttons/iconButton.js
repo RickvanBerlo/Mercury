@@ -31,14 +31,14 @@ const Container = styled.a`
     width: auto;
     -webkit-tap-highlight-color: transparent;
     &:hover ${StyledIcon} {
-        color: ${colors.BLUE};
+        color: ${colors.LIGHT_GREEN};
     }
     @media (max-width: 767px) {
         &:hover ${StyledIcon} {
             color: ${colors.WHITE};
         }
         &:active ${StyledIcon} {
-            color: ${colors.BLUE} 
+            color: ${colors.LIGHT_GREEN} 
         }
     }
     

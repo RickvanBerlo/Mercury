@@ -18,7 +18,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
     const [subjectClicked, setSubjectClicked] = useState(false);
     const [submitButtonHover, setSubmitButtonHover] = useState(false);
     const [enableCheckmark, setEnableCheckmark] = useState(undefined);
-    const [enableCrossmark, setEnableCrossmark] = useState(true);
+    const [enableCrossmark, setEnableCrossmark] = useState(undefined);
     const [token, setToken] = useState("");
 
     const disable = screenResolution().width > 768 ? !emailValid : false;
@@ -59,7 +59,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                                 <LeftFlex>
                                     <Label>
                                         {content.EMAIL}
-                                        <BlueText> *</BlueText>
+                                        <GreenText> *</GreenText>
                                     </Label>
                                 </LeftFlex>
                                 <RightFlex>
@@ -79,7 +79,7 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                                 <LeftFlex>
                                     <Label>
                                         {content.SUBJECT}
-                                        <BlueText> *</BlueText>
+                                        <GreenText> *</GreenText>
                                     </Label>
                                 </LeftFlex>
                                 <RightFlex>
@@ -128,8 +128,8 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                                     />
                                     <CheckmarkContainer>
                                         <FlexContainer>
-                                            <Checkmark size={60} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
-                                            <Crossmark size={60} enable={enableCrossmark} setEnable={setEnableCrossmark} timeInMiliseconds={2000} />
+                                            <Checkmark size={55} enable={enableCheckmark} setEnable={setEnableCheckmark} timeInMiliseconds={2000} />
+                                            <Crossmark size={55} enable={enableCrossmark} setEnable={setEnableCrossmark} timeInMiliseconds={2000} />
                                             <Notification text={"Dankjewel"} enable={enableCheckmark} color={colors.WHITE} paddingLeft="15px" />
                                             <Notification text={"Probeer het nogmaals"} enable={enableCrossmark} color={colors.WHITE} paddingLeft="15px" />
                                         </FlexContainer>
@@ -248,8 +248,8 @@ const CenterContainer = styled.div`
     }
 `
 
-const BlueText = styled.div`
-    color: ${colors.LIGHT_BLUE};
+const GreenText = styled.div`
+    color: ${colors.LIGHT_GREEN};
     display: inline;
 `
 
@@ -423,7 +423,7 @@ const SubmitButton = styled.input`
     }
     @media (min-width: 768px){
         &:hover {
-            background-color: ${ props => props.emailValid && props.subjectValid ? colors.WHITE : colors.RED};
+            background-color: ${ props => props.emailValid && props.subjectValid ? colors.LIGHT_GREEN : colors.RED};
             color: ${colors.BLACK}
         }
     }   

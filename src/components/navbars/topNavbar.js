@@ -6,7 +6,7 @@ import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
 
 const TopNavbar = () => {
-    const [visibility, setVisibility] = useState("visible");
+    const [visibility, setVisibility] = useState("hidden");
     const [opacity, setOpacity] = useState(1);
     const [color, setColor] = useState(colors.TRANSPARENT);
     const [colorbutton1, setColorButton1] = useState(colors.WHITE);
@@ -20,7 +20,8 @@ const TopNavbar = () => {
     const listenScrollEvent = () => {
         if (document.getElementById('contactSection').getBoundingClientRect().y < 48) {
             if (colorbutton4 !== colors.BLUE) {
-                setColorButton4(colors.BLUE);
+                setVisibility("visible");
+                setColorButton4(colors.LIGHT_GREEN);
                 setColorButton3(colors.WHITE);
                 setColorButton2(colors.WHITE);
                 setColorButton1(colors.WHITE);
@@ -28,8 +29,9 @@ const TopNavbar = () => {
             }
         } else if (document.getElementById('infoSection').getBoundingClientRect().y < 0) {
             if (colorbutton3 !== colors.BLUE) {
+                setVisibility("visible");
                 setColorButton4(colors.WHITE);
-                setColorButton3(colors.BLUE);
+                setColorButton3(colors.LIGHT_GREEN);
                 setColorButton2(colors.WHITE);
                 setColorButton1(colors.WHITE);
                 setColor(colors.NAVBAR);
@@ -41,20 +43,12 @@ const TopNavbar = () => {
                 setColor(colors.NAVBAR);
                 setColorButton4(colors.WHITE);
                 setColorButton3(colors.WHITE);
-                setColorButton2(colors.BLUE);
+                setColorButton2(colors.LIGHT_GREEN);
                 setColorButton1(colors.WHITE);
             }
-        } else if (window.scrollY > HiddingSpot) {
-            if (visibility !== "hidden") {
-                setVisibility("hidden");
-                setOpacity(0);
-            }
         } else {
-            setVisibility("visible");
-            setOpacity(1);
-            setColor(colors.TRANSPARENT);
-            setColorButton1(colors.BLUE);
-            setColorButton2(colors.WHITE)
+            setVisibility("hidden");
+            setOpacity(0);
         }
     }
 

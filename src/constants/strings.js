@@ -22,13 +22,15 @@ const strings = {
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:
-            `De ICT sector heeft me van kleins af aan geïnteresseerd. ik zag hoe ICT de wereld aan het veranderen was en wou hier graag een steentje in bijdragen. Met deze motivatie ben ik in de ICT sector gedoken.
+            `De ICT sector heeft mij van kleins af aan geïnteresseerd. Ik zag hoe ICT de wereld aan het veranderen was en wou hier graag een steentje aan bijdragen. Met deze motivatie ben ik in de ICT sector gedoken.
 
-            Als eerste heb ik een systeembeheerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: het configureren en beheren van servers, omgaan met klantencontact en het configureren van netwerken.
-            Tijdens deze opleiding heb ik ook mijn eerste ervaring gehad met programmeren. Door dit vak wist ik al snel dat ik een programmeur wilde worden en ben na het afronden van deze opleiding een HBO informatica opleiding gestart.
+            Als eerste heb ik een systeembeheerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: Het configureren en beheren van servers, omgaan met klantencontact en het configureren van netwerken.
+            Tijdens deze opleiding heb ik ook mijn eerste ervaring gehad met programmeren. Door deze ervaring wist ik al snel dat ik een programmeur wilde worden en ben na het afronden van deze opleiding een HBO informatica opleiding gestart.
             
-            Hierin heb ik de benodigde vaardigheden geleerd om een programmeur te worden. Enkele van deze vaardigheden zijn het programmeren in verschillende programmeertalen zoals: C#, Java en Javascript, het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexe architecturen.
-            om mijn kennis te verrijken heb ik als minor: software architectuur gevolgd op Avans. Hierin heb ik kennis gemaakt met de programmeertaal C++.
+            Hierin heb ik de benodigde vaardigheden geleerd om een programmeur te worden. Enkele van deze vaardigheden zijn: Het programmeren in verschillende programmeertalen, Het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexe architecturen.
+            Om mijn kennis te verrijken heb ik als minor software architectuur gevolgd op Avans. Hierin heb ik kennis gemaakt met de programmeertaal C++.
+
+            Naast de opleidingen ben ik ook thuis bezig met het verrijken van mijn kennis. Dit komt omdat ik leergierig en zeer geïnteresseerd ben in nieuwe technologieën.
 
             `,
     },
@@ -38,11 +40,10 @@ const strings = {
             {
                 TITLE: "Student aan Huis",
                 SUBTITLE: "Thuis service medewerker",
-                DATE: "September 2017 / September 2019",
+                DATE: "Juni 2017 / Juni 2019",
                 DESCRIPTION:
-                    `Om dit werk te verrichten moet je beschikken over een aantal eigenschappen. 
-                    Je moet vindingrijk zijn. Elk probleem kan je tegenkomen en hier zal je zo snel mogelijk een oplossing voor moeten verzinnen. 
-                    Verder moet je klantgericht zijn. De klant moet het gevoel krijgen dat jij, hem verder kan helpen met het probleem dat zij momenteel hebben. `,
+                    `Tijdens deze baan help je klanten van Student aan Huis met hun computer problemen.
+                    geen enkele afspraak zal hetzelfde zijn waardoor je als werknemer zeer vindingrijk moet zijn om alle problemen op te kunnen lossen.`,
             },
         ]
     },
@@ -55,15 +56,15 @@ const strings = {
                 DATE: "September 2016 / heden",
                 DESCRIPTION:
                     `De opleiding HBO informatica heeft me geholpen bij het leren van verschillende programmeertalen zoals: C#, Java, Javascript en SQL. 
-                    Om mijn kennis van programmeertalen te verrijken heb ik als minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met C++ en verschillende design patterns.`,
+                    Om mijn kennis van programmeertalen te verrijken heb ik als minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met de programmeertaal C++ en verschillende design patterns.`,
             },
             {
                 TITLE: "MBO Systeemheerder",
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "September 2013 / Juni 2016",
                 DESCRIPTION:
-                    `De opldeiding MBO systeembeheerder heeft me laten zien hoe interessant de ICT sector is. 
-                    Tijdens deze opleiding leerde we servers beheren en configureren, databases configureren, netwerken aanleggen en programmeren in de taal Java.`,
+                    `De opleiding MBO systeembeheerder heeft me laten zien hoe interessant de ICT sector is. 
+                    Tijdens deze opleiding leerde we servers beheren en configureren, netwerken aanleggen en programmeren in de taal Java.`,
             },
         ]
     },
@@ -83,14 +84,14 @@ const strings = {
                 SUBTITLE: "Netwerkbeheerder",
                 DATE: "Januari 2015 / Juni 2016",
                 DESCRIPTION:
-                    `Tijdens deze stage heb ik kennis opgedaan over het deployen van servers en het beheren van webshops. Dit bedrijf is gespecialiseerd in het verhuren cloud omgevingen en hosten van websites.`,
+                    `Tijdens deze stage heb ik kennis opgedaan over het deployen van servers en het beheren van webshops. Dit bedrijf is gespecialiseerd in het verhuren van cloud omgevingen en hosten van websites.`,
             },
             {
                 TITLE: "CenterParcs",
                 SUBTITLE: "ServiceDesk Medewerker",
                 DATE: "Januari 2014 - Juni 2015",
                 DESCRIPTION:
-                    `Deze stage heeft mij laten zien hoe belangrijk een goede communiceren met de klant kan zijn. Hier heb ik mijn communicatie vaardigheden verbeterd en heb ik geleerd snel en efficiënt computers kan deployen in het werkveld.`,
+                    `Hier heb ik mijn communicatie vaardigheden verbeterd en heb ik geleerd hoe ik snel en efficiënt computers kan deployen in het werkveld.`,
             },
         ]
     },

@@ -5,9 +5,9 @@ import PersonalPage from './pages/personalPage';
 import * as serviceWorker from './serviceWorker';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown } from '@fortawesome/free-solid-svg-icons'
 
-library.add(fab, faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight);
+library.add(fab, faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown);
 
 ReactDOM.render(<PersonalPage />, document.getElementById('root'));
 

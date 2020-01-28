@@ -28,6 +28,7 @@ const HeadSection = ({ name, content, infoTitle, infoContent }) => {
                                         display="inline-block"
                                         margin="25px 0px 0px 0px"
                                         borderRadius="4px"
+                                        clickBgColor={colors.LIGHT_GREEN}
                                         fontSize="18px"
                                         href="/cv/CV_RickvanBerlo.pdf"
                                     >
@@ -48,7 +49,7 @@ const CenterBlock = styled.div`
     margin-left: 5%;
     margin-right: 5%;
     padding-top: 60px;
-    padding-bottom: 40px;
+    padding-bottom: 60px;
     display: inline-block;
     text-align: left;
 `

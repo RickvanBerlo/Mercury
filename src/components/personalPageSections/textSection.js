@@ -121,7 +121,7 @@ const CategoryContainer = styled.div`
 `
 const Category = styled.h2`
     font: 18px 'Open Sans Bold',sans-serif;
-    border-bottom: 3px solid ${colors.LIGHT_BLUE};
+    border-bottom: 3px solid ${colors.LIGHT_GREEN};
     font-weight:600;
     user-select: none;
     text-transform: uppercase;
