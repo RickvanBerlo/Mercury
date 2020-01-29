@@ -1,5 +1,6 @@
 {
   "name": "mercury_app",
+  "homepage": "https://www.rickvanberlo.nl",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
