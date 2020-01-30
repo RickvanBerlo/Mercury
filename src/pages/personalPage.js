@@ -20,11 +20,11 @@ const CurriculemVitae = () => {
     <Container id="rootContainer">
       <Header />
       <HeadSection content={strings.ABOUT} name="headSection" infoTitle={strings.GENERAL_INFORMATION} infoContent={strings.GENERAL_INFORMATION_DESCRIPTION} />
-      <TextSection content={strings.WORK} name={"workSection"} />
-      <TextSection content={strings.EDUCATION} name={"educationSection"} />
-      <TextSection content={strings.INTERSHIP} name={"internshipSection"} />
-      <ProjectSection content={strings.PROJECT} name={"projectSection"} />
-      <BarSection content={strings.SKILL} name={"barSection"} />
+      {strings.WORK && <TextSection content={strings.WORK} name={"workSection"} />}
+      {strings.EDUCATION && <TextSection content={strings.EDUCATION} name={"educationSection"} />}
+      {strings.INTERSHIP && <TextSection content={strings.INTERSHIP} name={"internshipSection"} />}
+      {strings.PROJECT && <ProjectSection content={strings.PROJECT} name={"projectSection"} />}
+      {strings.SKILL && <BarSection content={strings.SKILL} name={"barSection"} />}
       <ContactSection name={"contactSection"} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} recaptchaConfig={config.RECAPTCHA} />
       <Footer />
     </Container>

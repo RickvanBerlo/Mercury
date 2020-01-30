@@ -4,8 +4,8 @@ import TopNavbar from '../navbars/topNavbar.js';
 import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
 import strings from '../../constants/strings';
-import background from '../../assets/background.png';
-import backgroundMobile from '../../assets/backgroundmobile.png';
+import background from '../../assets/background.jpg';
+import backgroundMobile from '../../assets/backgroundmobile.jpg';
 
 //onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('headSection').getBoundingClientRect().y + 4); }}
 
@@ -15,10 +15,10 @@ const Header = () => {
             <TopNavbar />
             <TitleContainer>
                 <Title>{strings.NAME}</Title>
-                <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} />
+                {/* <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} /> */}
                 <IconButton icon={['fab', 'linkedin-in']} size="2x" color="white" onClick={() => window.open("https://www.linkedin.com/in/rick-v-8a619799/", "_blank")} />
                 <IconButton icon={['fab', 'github']} size="2x" color="white" onClick={() => window.open("https://github.com/RickvanBerlo", "_blank")} />
-                <IconButton icon={['fab', 'instagram']} size="2x" color="white" onClick={() => window.open("https://www.instagram.com/rickvanberlo/?hl=nl", "_blank")} />
+                {/* <IconButton icon={['fab', 'instagram']} size="2x" color="white" onClick={() => window.open("https://www.instagram.com/rickvanberlo/?hl=nl", "_blank")} /> */}
             </TitleContainer>
             <NavContainer>
                 <BottomContainer>

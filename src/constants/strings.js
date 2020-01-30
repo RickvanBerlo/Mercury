@@ -22,7 +22,7 @@ const strings = {
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:
-            `De ICT-sector heeft mij van kleins af aan geïnteresseerd. Ik zag hoe ICT de wereld aan het veranderen was en  ik wilde hier graag een steentje aan bijdragen. Met deze motivatie ben ik in de ICT sector gedoken.
+            `De ICT-sector heeft mij van kleins af aan geïnteresseerd. Ik zag hoe ICT de wereld aan het veranderen was en  ik wilde hier graag een steentje aan bijdragen. Met deze motivatie ben ik in de ICT-sector gedoken.
 
             Als eerste heb ik een systeembeheerders opleiding gevolgd in Nijmegen. Hierin heb ik vaardigheden geleerd zoals: Het configureren en beheren van servers, omgaan met klantencontact en het configureren van netwerken.
             Tijdens deze opleiding heb ik ook mijn eerste ervaring gehad met programmeren. Door deze ervaring wist ik al snel dat ik een programmeur wilde worden en ben ik na het afronden van deze opleiding een HBO informatica opleiding gestart.
@@ -30,7 +30,7 @@ const strings = {
             Hierin heb ik de benodigde vaardigheden geleerd om programmeur te worden. Enkele van deze vaardigheden zijn: Het programmeren in verschillende programmeertalen, het in gebruik kunnen nemen van verschillende design patterns en het uitdenken van complexe architecturen.
             Om mijn kennis te verrijken heb ik als minor software architectuur gevolgd op Avans. Hier heb ik kennis gemaakt met de programmeertaal C++.
 
-            Naast de opleidingen ben ik ook thuis bezig met het verrijken van mijn kennis. Dit komt omdat ik leergierig en zeer geïnteresseerd ben in nieuwe technologieën.
+            Naast de opleidingen ben ik ook thuis bezig met het verrijken van mijn kennis. Thuis voer ik kleine projecten uit om nieuwe technologieën te ontdekken.
 
             `,
     },
@@ -40,7 +40,7 @@ const strings = {
             {
                 TITLE: "Student aan Huis",
                 SUBTITLE: "Thuis service medewerker",
-                DATE: "Juni 2017 / Juni 2019",
+                DATE: "Mei 2016 / Juni 2019",
                 DESCRIPTION:
                     `Tijdens deze baan help je klanten van Student aan Huis met computer problemen.
                     Geen enkele afspraak is hetzelfde waardoor je als werknemer zeer vindingrijk moet zijn om alle problemen op te kunnen lossen.`,
@@ -56,7 +56,7 @@ const strings = {
                 DATE: "September 2016 / heden",
                 DESCRIPTION:
                     `De opleiding HBO informatica heeft me geholpen bij het leren van verschillende programmeertalen zoals: C#, Java, Javascript en SQL. 
-                    Om mijn kennis van programmeertalen te verrijken heb ik de minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met de programmeertaal C++ en verschillende design patterns.`,
+                    Om mijn kennis van programmeertalen te verrijken heb ik de minor software architectuur bij Avans gekozen. Hier heb ik kennis gemaakt met verschillende design patterns en de programmeertaal C++.`,
             },
             {
                 TITLE: "MBO Systeemheerder",
@@ -74,7 +74,7 @@ const strings = {
             {
                 TITLE: "Bluenotion",
                 SUBTITLE: "Programmeur",
-                DATE: "September-2019 / Heden",
+                DATE: "September-2019 / Januari 2020",
                 DESCRIPTION:
                     `Bij Bluenotion heb ik mijn afstudeerstage van het HBO volbracht. 
                     Als afstudeeropdracht heb ik samen met mijn afstudeerpartner een app gemaakt voor een externe partij. De app geeft het bedrijf de mogelijkheid om een plattegrond te creëren van een desbetreffende ruimte. Deze functionaliteit is gemaakt met behulp van Augmented Reality.`
@@ -95,24 +95,24 @@ const strings = {
             },
         ]
     },
-    PROJECT: {
-        CATEGORY: "Project",
-        SECTIONS: [
-            {
-                TITLE: "Mercury",
-                SUBTITLE: "React",
-                DESCRIPTION:
-                    `In het project Mercury wordt gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en e-mail mee kunnen ontvangen of verzenden.
-                    `,
-                LINKS:
-                    [
-                        { NAME: "Web", LINK: "https://github.com/RickvanBerlo/Mercury_Web" },
-                        { NAME: "App", LINK: "https://github.com/RickvanBerlo/Mercury_App" },
-                        { NAME: "Api", LINK: "https://github.com/RickvanBerlo/Mercury_Api" },
-                    ],
-            },
-        ]
-    },
+    // PROJECT: {
+    //     CATEGORY: "Project",
+    //     SECTIONS: [
+    //         {
+    //             TITLE: "Mercury",
+    //             SUBTITLE: "React",
+    //             DESCRIPTION:
+    //                 `In het project Mercury wordt gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en e-mail mee kunnen ontvangen of verzenden.
+    //                 `,
+    //             LINKS:
+    //                 [
+    //                     { NAME: "Web", LINK: "https://github.com/RickvanBerlo/Mercury_Web" },
+    //                     { NAME: "App", LINK: "https://github.com/RickvanBerlo/Mercury_App" },
+    //                     { NAME: "Api", LINK: "https://github.com/RickvanBerlo/Mercury_Api" },
+    //                 ],
+    //         },
+    //     ]
+    // },
     SKILL: {
         CATEGORY: "Ervaring",
         SECTIONS: [
