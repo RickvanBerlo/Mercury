@@ -77,7 +77,7 @@ const Title = styled.h1`
 
 const CenterContainer = styled.div`
     position: absolute;
-    top: 30vh;
+    top: 35vh;
     width: 100vw;
     text-align: center;
     @media (max-height: 467px) {
