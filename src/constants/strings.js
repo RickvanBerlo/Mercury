@@ -99,24 +99,24 @@ const strings = {
             },
         ]
     },
-    // PROJECT: {
-    //     CATEGORY: "Project",
-    //     SECTIONS: [
-    //         {
-    //             TITLE: "Mercury",
-    //             SUBTITLE: "React",
-    //             DESCRIPTION:
-    //                 `In het project Mercury wordt gewerkt aan mijn eigen persoonlijke assistente. Hierin zal ik mijn eigen agenda bij kunnen houden, bestanden naar toe kunnen uploaden en e-mail mee kunnen ontvangen of verzenden.
-    //                 `,
-    //             LINKS:
-    //                 [
-    //                     { NAME: "Web", LINK: "https://github.com/RickvanBerlo/Mercury_Web" },
-    //                     { NAME: "App", LINK: "https://github.com/RickvanBerlo/Mercury_App" },
-    //                     { NAME: "Api", LINK: "https://github.com/RickvanBerlo/Mercury_Api" },
-    //                 ],
-    //         },
-    //     ]
-    // },
+    PROJECT: {
+        CATEGORY: "Project",
+        SECTIONS: [
+            {
+                TITLE: "Mercury",
+                SUBTITLE: "React",
+                DESCRIPTION:
+                    `De code die voor deze website geschreven is, is terug te vinden in dit project.
+                    `,
+                LINKS:
+                    [
+                        { NAME: "Web", LINK: "https://github.com/RickvanBerlo/Mercury_Web" },
+                        // { NAME: "App", LINK: "https://github.com/RickvanBerlo/Mercury_App" },
+                        // { NAME: "Api", LINK: "https://github.com/RickvanBerlo/Mercury_Api" },
+                    ],
+            },
+        ]
+    },
     SKILL: {
         CATEGORY: "Ervaring",
         SECTIONS: [

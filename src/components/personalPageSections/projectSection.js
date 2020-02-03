@@ -65,7 +65,7 @@ const createSection = (section, index) => {
                             border={`1px solid ${colors.LIGHT_GRAY}`}
                             flex={1}
                             padding="2px 0px"
-                            clickBgColor={colors.LIGHT_GREEN}
+                            clickBgColor={colors.DARK_GRAY}
                             clickColor={colors.DARK_WHITE}
                         >
                         </LinkButton>
