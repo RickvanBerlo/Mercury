@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # config files
-/src/constants/config.js
-/src/constants/string.js
+src/constants/config.js
+src/constants/strings.js
