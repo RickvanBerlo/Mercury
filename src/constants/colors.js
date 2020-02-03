@@ -15,6 +15,10 @@ const colors = {
     GREEN: '#7ac142',
     DARK_WHITE: '#f5f5f5',
     LIGHT_GREEN: '#0cd0d0',
+
+
+
+    HEADER_BACKGROUND_COLOR: '#caf2f2',
 }
 
 export default colors;

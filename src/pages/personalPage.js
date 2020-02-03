@@ -10,6 +10,7 @@ import Footer from '../components/footers/personalPageFooter';
 import strings from '../constants/strings';
 import { loadReCaptcha } from 'react-recaptcha-google';
 import config from '../constants/config';
+import TopNavbar from '../components/navbars/topNavbar';;
 
 const CurriculemVitae = () => {
   useEffect(() => {
@@ -18,6 +19,7 @@ const CurriculemVitae = () => {
 
   return (
     <Container id="rootContainer">
+      <TopNavbar />
       <Header />
       <HeadSection content={strings.ABOUT} name="headSection" infoTitle={strings.GENERAL_INFORMATION} infoContent={strings.GENERAL_INFORMATION_DESCRIPTION} />
       {strings.WORK && <TextSection content={strings.WORK} name={"workSection"} />}
