@@ -106,7 +106,7 @@ const strings = {
                 TITLE: "Mercury",
                 SUBTITLE: "React",
                 DESCRIPTION:
-                    `De code die voor deze website geschreven is, is terug te vinden in dit project.
+                    `De code die voor deze website geschreven is, is terug te vinden in dit project. ----
                     `,
                 LINKS:
                     [
