@@ -13,12 +13,16 @@ const strings = {
         `rickvanberlo@gmail.com
         06-57854479`
     ,
-    NAVIGATION: {
-        BUTTON1: "HOME",
-        BUTTON2: "OVER MIJ",
-        BUTTON3: "CURRICULUM VITAE",
-        BUTTON4: "CONTACT"
-    },
+    WEBLINKS: [
+        { ICON: ['fab', 'linkedin-in'], LINK: "https://www.linkedin.com/in/rick-van-berlo/" },
+        { ICON: ['fab', 'github'], LINK: "https://github.com/RickvanBerlo" },
+    ],
+    NAVIGATION: [
+        { PUBLIC_NAME: "HOME", PRIVATE_NAME: undefined },
+        { PUBLIC_NAME: "OVER MIJ", PRIVATE_NAME: "aboutMeSection" },
+        { PUBLIC_NAME: "CURRICULUM VITAE", PRIVATE_NAME: "CVSection" },
+        { PUBLIC_NAME: "CONTACT", PRIVATE_NAME: "contactSection" },
+    ],
     ABOUT: {
         TITLE: "Over mij",
         DESCRIPTION:

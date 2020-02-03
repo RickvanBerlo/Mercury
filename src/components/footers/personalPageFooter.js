@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
 
-const Header = () => {
+const Footer = ({ links }) => {
     return (
         <Container>
             <Center>
-                {/* <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} /> */}
-                <IconButton icon={['fab', 'linkedin-in']} size="2x" color="white" onClick={() => window.open("https://www.linkedin.com/in/rick-van-berlo/", "_blank")} />
-                <IconButton icon={['fab', 'github']} size="2x" color="white" onClick={() => window.open("https://github.com/RickvanBerlo", "_blank")} />
-                {/* <IconButton icon={['fab', 'instagram']} size="2x" color="white" onClick={() => window.open("https://www.instagram.com/rickvanberlo/?hl=nl", "_blank")} /> */}
+                {links.map((link, index) => {
+                    return (<IconButton key={index} icon={link.ICON} size="2x" color="white" onClick={() => window.open(link.LINK, "_blank")} />);
+                })}
             </Center>
         </Container >
     );
@@ -19,11 +18,11 @@ const Header = () => {
 //styles
 const Container = styled.div`
     background-color: ${colors.FOOTER}
-    height: 100px;
+    height: 90px;
     text-align: center;
 `
 
 const Center = styled.div`
-line-height: 100px;
+    line-height: 90px;
 `
-export default Header;
+export default Footer;

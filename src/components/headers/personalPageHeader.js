@@ -2,23 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
-import strings from '../../constants/strings';
 import background from '../../assets/background.jpg';
 import backgroundMobile from '../../assets/backgroundmobile.jpg';
 
-const Header = () => {
+const Header = ({ name, links }) => {
     return (
         <Container>
             <BackgroundContainer></BackgroundContainer>
             <CenterContainer>
-                <Title>{strings.NAME}</Title>
-                {/* <IconButton icon={['fab', 'facebook-f']} size="2x" color="white" onClick={() => window.open("https://www.facebook.com/Rick.van.Berlo", "_blank")} /> */}
-                <IconButton icon={['fab', 'linkedin-in']} size="2x" color="white" onClick={() => window.open("https://www.linkedin.com/in/rick-van-berlo/", "_blank")} />
-                <IconButton icon={['fab', 'github']} size="2x" color="white" onClick={() => window.open("https://github.com/RickvanBerlo", "_blank")} />
-                {/* <IconButton icon={['fab', 'instagram']} size="2x" color="white" onClick={() => window.open("https://www.instagram.com/rickvanberlo/?hl=nl", "_blank")} /> */}
+                <Title>{name}</Title>
+                {links.map((link, index) => {
+                    return (<IconButton key={index} icon={link.ICON} size="2x" color="white" onClick={() => window.open(link.LINK, "_blank")} />);
+                })}
             </CenterContainer>
             <NavContainer>
-                <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('headSection').getBoundingClientRect().y + 4); }} />
+                <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('aboutMeSection').getBoundingClientRect().y + 4); }} />
             </NavContainer>
         </Container>
     );

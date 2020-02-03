@@ -4,7 +4,7 @@ import image from '../../assets/profilepic.png';
 import colors from '../../constants/colors';
 import LinkButton from '../../components/buttons/linkButton';
 
-const HeadSection = ({ name, content, infoTitle, infoContent }) => {
+const AboutMeSection = ({ name, content, infoTitle, infoContent }) => {
     const [opacity, setopacity] = useState(0);
     const [transform, setTransfrom] = useState("30px");
 
@@ -187,4 +187,4 @@ const Image = styled.img`
     user-select: none;
 `
 
-export default HeadSection;
+export default AboutMeSection;

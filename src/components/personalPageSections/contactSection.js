@@ -423,7 +423,7 @@ const showColor = (props) => keyframes`
         color: ${colors.WHITE};
     }
     50% {
-        background-color: ${ props.emailValid && props.subjectValid ? colors.WHITE : colors.RED};
+        background-color: ${ props.emailValid && props.subjectValid ? colors.LIGHT_GREEN : colors.RED};
         color: ${colors.BLACK};
     }
     to { 

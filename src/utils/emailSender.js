@@ -1,7 +1,8 @@
 import emailjs from 'emailjs-com';
+import config from '../constants/config';
 
 const send = (email, subject, description, setEnableCheckmark, setEnableCrossmark) => {
-    emailjs.send('gmail', 'template_Qp8WKywo', { email: email, subject: subject, description: description }, 'user_MZvpYdHKUoxUihdgPgV7e')
+    emailjs.send('gmail', config.MAILJS.TEMPLATE, { email: email, subject: subject, description: description }, config.MAILJS.USER)
         .then(function (response) {
             setEnableCheckmark(true);
         }, function (error) {
