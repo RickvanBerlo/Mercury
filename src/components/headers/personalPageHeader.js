@@ -5,7 +5,7 @@ import colors from '../../constants/colors';
 import background from '../../assets/background.jpg';
 import backgroundMobile from '../../assets/backgroundmobile.jpg';
 
-const Header = ({ name, links }) => {
+const Header = ({ name, links, nextSection }) => {
     return (
         <Container>
             <BackgroundContainer></BackgroundContainer>
@@ -16,7 +16,7 @@ const Header = ({ name, links }) => {
                 })}
             </CenterContainer>
             <NavContainer>
-                <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById('aboutMeSection').getBoundingClientRect().y + 4); }} />
+                <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById(nextSection).getBoundingClientRect().y + 4); }} />
             </NavContainer>
         </Container>
     );

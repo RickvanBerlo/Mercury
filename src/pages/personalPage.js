@@ -18,10 +18,10 @@ const CurriculemVitae = () => {
   return (
     <Container id="rootContainer">
       <TopNavbar buttons={strings.NAVIGATION} />
-      <Header name={strings.NAME} links={strings.WEBLINKS} />
-      <AboutMeSection content={strings.ABOUT} name="aboutMeSection" infoTitle={strings.GENERAL_INFORMATION} infoContent={strings.GENERAL_INFORMATION_DESCRIPTION} />
-      <CurriculemVitaeSection name={"CVSection"} />
-      <ContactSection name={"contactSection"} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} recaptchaConfig={config.RECAPTCHA} />
+      <Header name={strings.NAME} links={strings.WEBLINKS} nextSection={strings.NAVIGATION[1].PRIVATE_NAME} />
+      <AboutMeSection content={strings.ABOUT} name={strings.NAVIGATION[1].PRIVATE_NAME} infoTitle={strings.GENERAL_INFORMATION} infoContent={strings.GENERAL_INFORMATION_DESCRIPTION} />
+      <CurriculemVitaeSection name={strings.NAVIGATION[2].PRIVATE_NAME} />
+      <ContactSection name={strings.NAVIGATION[3].PRIVATE_NAME} content={strings.CONTACT} contactTitle={strings.CONTACT_TITLE} contactContent={strings.CONTACT_DESCRIPTION} recaptchaConfig={config.RECAPTCHA} />
       <Footer links={strings.WEBLINKS} />
     </Container>
   );
