@@ -2,13 +2,23 @@ import React from 'react';
 import styled from 'styled-components';
 import IconButton from '../buttons/iconButton';
 import colors from '../../constants/colors';
-import background from '../../assets/background.jpg';
-import backgroundMobile from '../../assets/backgroundmobile.jpg';
+import { ParallaxBanner } from 'react-scroll-parallax';
+import { mobilecheck } from '../../utils/deviceCheck';
 
-const Header = ({ name, links, nextSection }) => {
+const Header = ({ name, links, nextSection, layers, mobile }) => {
+    var check = mobilecheck();
+
+    const layerObjects = layers.map((layer, index) => {
+        return {
+            children: <ParallaxImage image={layer} />,
+            amount: ((layers.length / 10) - (index / 10)).toFixed(1) - 0.1,
+            props: { style: { top: "0%" } }
+        }
+    });
+
     return (
         <Container>
-            <BackgroundContainer></BackgroundContainer>
+            {!check ? <CustomParallaxBanner layers={layerObjects} /> : <BackgroundMobileContainer verticalImage={mobile[0]} horizontalImage={mobile[1]} />}
             <CenterContainer>
                 <Title>{name}</Title>
                 {links.map((link, index) => {
@@ -18,7 +28,7 @@ const Header = ({ name, links, nextSection }) => {
             <NavContainer>
                 <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById(nextSection).getBoundingClientRect().y + 4); }} />
             </NavContainer>
-        </Container>
+        </Container >
     );
 }
 
@@ -26,28 +36,45 @@ const Header = ({ name, links, nextSection }) => {
 const Container = styled.div`
 height: 100vh;
 width: 100vw;
-background-image: linear-gradient(${colors.HEADER_BACKGROUND_COLOR} 80%, ${colors.DARK_GRAY} 1%, ${colors.DARK_GRAY});
+background-color: ${colors.HEADER_BACKGROUND_COLOR};
 `
 
-const BackgroundContainer = styled.div`
-position: absolute;
-top: 0;
-right: 0;
-bottom: 0px;
-left: 0;
-box-sizing: border-box;
-background: url(${background}) bottom;
-background-size: 100vw;
-background-repeat: no-repeat;
-@media (max-width: 767px) {
-    background: url(${backgroundMobile}) center;
-    background-size: cover;
-    @media (max-height: 467px) {
-        background: url(${background}) bottom;
-        background-size: 100vw;
-        background-repeat: no-repeat;
+const CustomParallaxBanner = styled(ParallaxBanner)`
+    height: 100vh !important;
+`
+
+const ParallaxImage = styled.div`
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    box-sizing: border-box;
+    background: url(${props => props.image}) bottom;
+    background-size: 100vw;
+    background-repeat: no-repeat;
+`
+
+const BackgroundMobileContainer = styled.div`
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: -60px;
+    left: 0;
+    background: url(${props => props.horizontalImage}) bottom;
+    background-size: 100vw;
+    background-repeat: no-repeat;
+    @media (max-width: 767px) {
+        background: url(${props => props.verticalImage}) center;
+        background-size: cover;
+        @media (max-height: 467px) {
+            background: url(${props => props.horizontalImage}) bottom;
+            background-size: 100vw;
+            background-repeat: no-repeat;
+        }
     }
-}
 `
 
 const NavContainer = styled.div`
