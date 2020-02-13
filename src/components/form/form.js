@@ -1,37 +1,47 @@
-import React, { useState, useEffect, cloneElement } from "react";
+import React, { useState, cloneElement } from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
 
 import SubmitButton from './submitButton';
 
 
-const FormWrapper = ({ submitButtonName, elements }) => {
-    const [submitButtonEnable, setSubmitButtonEnable] = useState(false);
-    const [validations, setvalidations] = useState(new Array(elements.length));
+const FormWrapper = ({ submitButtonName, elements, onSubmit }) => {
+    const [validations, setvalidations] = useState(new Array(elements.length).fill(false));
+    const [values, setvalues] = useState(new Array(elements.length).fill(""));
+    const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations));
 
-    const getValid = (index, valid) => {
-        let tmpValidations = validations
+    const getValues = (index, value, valid) => {
+        let tmpValidations = validations;
+        let tmpValues = values;
+
         tmpValidations[index] = valid;
+        tmpValues[index] = value;
+
         setvalidations(tmpValidations);
+        setvalues(tmpValues);
+        setEnableSubmit(CheckIfAllAreValid(validations));
     }
 
-    useEffect(() => {
-        let enable = true;
-        validations.forEach((valid) => {
-            if (!valid) enable = false;
-        })
-        setSubmitButtonEnable(enable);
-    }, [validations])
-
     return (
-        <Form >
+        <Form onSubmit={(event) => { handleSubmit(event, values, onSubmit) }}>
             {elements.map((element, index) => {
-                return cloneElement(element, { key: index, getValid: getValid }, null);
+                return cloneElement(element, { key: index, getValues: getValues }, null);
             })}
-            <SubmitButton name={submitButtonName} submitButtonEnable={submitButtonEnable} />
+            <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
         </Form>
     )
 }
+
+const handleSubmit = (event, values, onSubmit) => {
+    onSubmit(event, values);
+}
+
+const CheckIfAllAreValid = (validations) => {
+    let enable = true;
+    validations.forEach((valid) => {
+        if (!valid) enable = false;
+    })
+    return enable;
+};
 
 
 const Form = styled.form`

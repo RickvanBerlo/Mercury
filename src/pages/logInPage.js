@@ -31,7 +31,7 @@ const LogIn = ({ history }) => {
                 <ContainerLeft degree={degree}>
                     <OffsetTransform degree={degree}>
                         <CenterGroup width={formWidth} top={mobilecheck() ? 20 : 35}>
-                            <Title>login</Title>
+                            <Title>Welkom</Title>
                             {buildForm(formBuilder)}
                         </CenterGroup>
                     </OffsetTransform>
@@ -43,37 +43,19 @@ const LogIn = ({ history }) => {
 
 const buildForm = (formBuilder) => {
     const builder = new formBuilder();
-    builder.addTextInput(undefined, { required: true, placeholder: "naam" });
-    builder.addPasswordInput(undefined, { required: true, placeholder: "wachtwoord" });
-    return builder.getForm("inloggen");
+    builder.addTextInput("username", validation, { required: true });
+    builder.addPasswordInput("password", validation, { required: true });
+    return builder.getForm("inloggen", onSubmit);
 }
 
-const onSubmit = (event) => {
+const onSubmit = (event, values) => {
     event.preventDefault();
-    console.log(event);
+    console.log(values);
 }
 
-//Form
-const TextInput = styled.input`
-    font: 18px 'Open Sans Bold',sans-serif;
-    border: 1px solid gray;
-    border-radius: 5px;
-    padding: 8px;
-    width: 100%;
-    outline: none;
-    margin-bottom: 20px;
-`
-
-const SubmitButton = styled.input`
-    background-color: ${colors.WHITE};
-    min-height: 40px;
-    border-radius: 10px;
-    padding: 5px 20px;
-    color: ${colors.BLACK}
-    outline: none;
-    font: 18px 'Open Sans Bold',sans-serif;
-`
-//Form
+const validation = (value) => {
+    return value ? true : false;
+}
 
 const Container = styled.div`
     width: 100vw;

@@ -1,10 +1,7 @@
 import React from "react";
-import styled from 'styled-components';
-import colors from '../constants/colors';
 
 import Form from '../components/form/form';
-import TextInput from '../components/form/textInput';
-import PasswordInput from '../components/form/passwordInput';
+import Input from '../components/form/Input';
 
 class FormBuilder {
     #elements;
@@ -13,16 +10,16 @@ class FormBuilder {
         this.elements = [];
     }
 
-    addTextInput(validation = undefined, props) {
-        this.elements.push(<TextInput index={this.elements.length} validation={validation} props={props}></TextInput>)
+    addTextInput(name, validation = undefined, props) {
+        this.elements.push(<Input index={this.elements.length} type="text" name={name} validation={validation} props={props}></Input>)
     }
 
-    addPasswordInput(validation = undefined, props) {
-        this.elements.push(<PasswordInput index={this.elements.length} validation={validation} props={props}></PasswordInput>)
+    addPasswordInput(name, validation = undefined, props) {
+        this.elements.push(<Input index={this.elements.length} type="password" name={name} validation={validation} props={props}></Input>)
     }
 
-    getForm(submitButtonName) {
-        return <Form submitButtonName={submitButtonName} elements={this.elements}></Form>;
+    getForm(submitButtonName, onSubmit) {
+        return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit}></Form>;
     }
 }
 
