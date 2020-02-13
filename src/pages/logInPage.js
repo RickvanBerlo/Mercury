@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import colors from '../constants/colors';
 import { lerp, invlerp } from '../utils/lerp';
 import { mobilecheck } from '../utils/deviceCheck';
+import formBuilder from '../utils/formBuilder';
 
 import background from '../assets/background.jpg';
 
@@ -31,32 +32,20 @@ const LogIn = ({ history }) => {
                     <OffsetTransform degree={degree}>
                         <CenterGroup width={formWidth} top={mobilecheck() ? 20 : 35}>
                             <Title>login</Title>
-                            <form onSubmit={onSubmit}>
-                                <TextInput
-                                    type="text"
-                                    maxLength={50}
-                                    value={"email"}
-                                    autofocus={true}
-                                    required
-                                />
-                                <TextInput
-                                    type="password"
-                                    maxLength={50}
-                                    value={"email"}
-                                    autofocus={true}
-                                    required
-                                />
-                                <SubmitButton
-                                    type="submit"
-                                    value="Verzenden">
-                                </SubmitButton>
-                            </form >
+                            {buildForm(formBuilder)}
                         </CenterGroup>
                     </OffsetTransform>
                 </ContainerLeft>
             </HideOverflow>
         </Container >
     )
+}
+
+const buildForm = (formBuilder) => {
+    const builder = new formBuilder();
+    builder.addTextInput(undefined, { required: true, placeholder: "naam" });
+    builder.addPasswordInput(undefined, { required: true, placeholder: "wachtwoord" });
+    return builder.getForm("inloggen");
 }
 
 const onSubmit = (event) => {
