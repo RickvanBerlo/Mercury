@@ -6,8 +6,7 @@ const InputWrapper = ({ index, type, name, validation = (value) => { return true
         <Input
             type={type}
             name={name}
-            placeholder={name}
-            onChange={(event) => { getValues(index, event.target.value, validation(event.target.value)) }}
+            onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)) }}
             {...props}
         >
         </Input>

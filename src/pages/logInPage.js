@@ -34,6 +34,9 @@ const LogIn = ({ history }) => {
                             <Title>Welkom</Title>
                             {buildForm(formBuilder)}
                         </CenterGroup>
+                        <LinkContainer>
+                            <Link href="/register">Nog geen Account? Registreer hier!</Link>
+                        </LinkContainer>
                     </OffsetTransform>
                 </ContainerLeft>
             </HideOverflow>
@@ -43,14 +46,16 @@ const LogIn = ({ history }) => {
 
 const buildForm = (formBuilder) => {
     const builder = new formBuilder();
-    builder.addTextInput("username", validation, { required: true });
-    builder.addPasswordInput("password", validation, { required: true });
+    builder.addTextInput("username", validation, { required: true, placeholder: "e-mail" });
+    builder.addPasswordInput("password", validation, { required: true, placeholder: "wachtwoord" });
     return builder.getForm("inloggen", onSubmit);
 }
 
 const onSubmit = (event, values) => {
     event.preventDefault();
     console.log(values);
+
+    window.location.href = "http://localhost:3000/dashboard";
 }
 
 const validation = (value) => {
@@ -63,6 +68,17 @@ const Container = styled.div`
     background-color: ${colors.HEADER_BACKGROUND_COLOR};
  
 `
+
+const LinkContainer = styled.div`
+    position: absolute;
+    bottom: 3%;
+    left: 7%;
+`
+//link
+const Link = styled.a`
+    color: black
+`
+//endlink
 
 const HideOverflow = styled.div`
     position: relative;

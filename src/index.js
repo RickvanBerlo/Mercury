@@ -5,9 +5,9 @@ import Router from './routes/router';
 import * as serviceWorker from './serviceWorker';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown } from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown, faArrowAltCircleLeft } from '@fortawesome/free-solid-svg-icons'
 
-library.add(fab, faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown);
+library.add(fab, faCheckSquare, faCoffee, faTimes, faArrowLeft, faArrowRight, faArrowDown, faArrowAltCircleDown, faArrowAltCircleLeft);
 
 ReactDOM.render(<Router />, document.getElementById('root'));
 

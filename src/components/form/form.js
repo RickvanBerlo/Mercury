@@ -6,15 +6,14 @@ import SubmitButton from './submitButton';
 
 const FormWrapper = ({ submitButtonName, elements, onSubmit }) => {
     const [validations, setvalidations] = useState(new Array(elements.length).fill(false));
-    const [values, setvalues] = useState(new Array(elements.length).fill(""));
+    const [values, setvalues] = useState({});
     const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations));
-
-    const getValues = (index, value, valid) => {
+    const getValues = (index, name, value, valid) => {
         let tmpValidations = validations;
         let tmpValues = values;
 
         tmpValidations[index] = valid;
-        tmpValues[index] = value;
+        tmpValues[name] = value;
 
         setvalidations(tmpValidations);
         setvalues(tmpValues);
