@@ -4,11 +4,10 @@ import colors from '../../../constants/colors';
 
 const Checkmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
   if (enable === undefined) return null;
-  if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false); }, timeInMiliseconds);
+  if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false) }, timeInMiliseconds);
 
   return (
     <Icon
-      id="checkmark"
       enable={enable}
       size={size}
       xmlns='http://www.w3.org/2000/svg'
