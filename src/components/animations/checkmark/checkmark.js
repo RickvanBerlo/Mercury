@@ -61,13 +61,6 @@ const shrink = keyframes`
   }
 `
 
-
-// -webkit-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -moz-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -ms-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -o-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-
-//box-shadow: inset 0 0 0 ${colors.BLUE};
 const Icon = styled.svg`
   display: inline;
   border-radius: 50px;

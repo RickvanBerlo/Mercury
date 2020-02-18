@@ -3,12 +3,11 @@ import styled, { keyframes } from 'styled-components';
 import colors from '../../../constants/colors';
 
 const notification = ({ text = undefined, color = colors.WHITE, textSize = "18px", paddingLeft = "0px", enable, setEnable, timeInMiliseconds = 0 }) => {
-    if (enable === undefined) return null;
-    if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false) }, timeInMiliseconds);
-    console.log(enable);
-    return (
-        <Text textSize={textSize} color={color} paddingLeft={paddingLeft} enable={enable}>{text}</Text>
-    );
+  if (enable === undefined) return null;
+  if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false) }, timeInMiliseconds);
+  return (
+    <Text textSize={textSize} color={color} paddingLeft={paddingLeft} enable={enable}>{text}</Text>
+  );
 }
 
 const show = keyframes`
