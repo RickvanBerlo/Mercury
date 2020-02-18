@@ -7,11 +7,13 @@ import formBuilder from '../utils/formBuilder';
 import IconButton from '../components/buttons/iconButton';
 
 import background from '../assets/background.jpg';
+import Snackbar from '../components/animations/notification/snackbar';
 
 const Authentication = ({ history, ToggleLogin = true }) => {
     const [degree, setDegree] = useState(0);
     const [formWidth, setFormWidth] = useState(0);
     const [toggle, setToggle] = useState(ToggleLogin);
+    const [textSnackbar, setTextSnackbar] = useState("");
 
     console.log(history);
 
@@ -25,10 +27,12 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     const onSubmit = (event, values) => {
         event.preventDefault();
         console.log(values);
-        if (values.name == undefined) {
+        if (values.name === undefined) {
+            history.replace("/authentication");
             window.location.href = "http://localhost:3000/dashboard";
         } else {
             setToggle(true);
+            setTextSnackbar("Uw account is aangemaakt!");
         }
     }
 
@@ -39,6 +43,7 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     window.addEventListener("resize", CalculateDegree);
     return (
         <Container background={background} >
+            <Snackbar timeInSeconds={4} text={textSnackbar} setText={setTextSnackbar} />
             <BackgroundImage background={background} />
             <HideOverflow>
                 <ContainerRight degree={degree} toggle={toggle} />
@@ -100,23 +105,23 @@ const BottomContainer = styled.div`
     position: absolute;
     bottom: 3%;
     left: 7%;
+    visibility: ${props => props.toggle ? "visible" : "hidden"};
     opacity: ${props => props.toggle ? 1 : 0}
-    transition: opacity 0.5s ${props => props.toggle ? "ease-in" : "ease-out"};
+    transition: opacity 0.5s ${props => props.toggle ? "0.3s" : "0s"} ${props => props.toggle ? "ease-in" : "ease-out"}, visibility 0.0s ${props => props.toggle ? "0.0s" : "0.8s"} ;
 `
 
 const TopContainer = styled.div`
     position: absolute;
     left: 2%;
     top: 2%;
+    visibility: ${props => props.toggle ? "hidden" : "visible"};
     opacity: ${props => props.toggle ? 0 : 1}
-    transition: opacity 0.5s  ${props => props.toggle ? "ease-out" : "ease-in"};
+    transition: opacity 0.5s ${props => props.toggle ? "0s" : "0.3s"} ${props => props.toggle ? "ease-out" : "ease-in"}, visibility 0.0s ${props => props.toggle ? "0.8s" : "0.0s"} ;
 `
 
-//link
 const Link = styled.a`
     color: black
 `
-//endlink
 
 const HideOverflow = styled.div`
     position: relative;
@@ -130,9 +135,10 @@ const CenterGroupLogin = styled.div`
     margin: 0;
     top: ${props => props.top}%;
     left: 7%;
+    visibility: ${props => props.toggle ? "visible" : "hidden"};
     opacity: ${props => props.toggle ? 1 : 0}
     width: ${props => props.width}%;
-    transition: opacity 0.5s ${props => props.toggle ? "ease-in" : "ease-out"};
+    transition: opacity 0.5s ${props => props.toggle ? "0.3s" : "0s"} ${props => props.toggle ? "ease-in" : "ease-out"}, visibility 0.0s ${props => props.toggle ? "0.0s" : "0.8s"} ;
 
 `
 
@@ -140,10 +146,11 @@ const CenterGroupRegister = styled.div`
     position: absolute;
     margin: 0;
     top: ${props => props.top}%;
+    visibility: ${props => props.toggle ? "hidden" : "visible"};
     left: 7%;
     opacity: ${props => props.toggle ? 0 : 1}
     width: ${props => props.width}%;
-    transition: opacity 0.5s  ${props => props.toggle ? "ease-out" : "ease-in"};
+    transition: opacity 0.5s ${props => props.toggle ? "0s" : "0.3s"} ${props => props.toggle ? "ease-out" : "ease-in"}, visibility 0.0s ${props => props.toggle ? "0.8s" : "0.0s"} ;
 `
 
 const Title = styled.h2`

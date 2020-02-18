@@ -12,7 +12,7 @@ const PrivateRoute = ({ component, ...rest }) => {
                 component={component}
             /> :
             <Redirect
-                to='/'
+                to='/authentication'
             />
     )
 }

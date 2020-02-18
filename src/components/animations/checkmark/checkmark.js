@@ -4,10 +4,11 @@ import colors from '../../../constants/colors';
 
 const Checkmark = ({ size = 52, enable, setEnable, timeInMiliseconds = 0 }) => {
   if (enable === undefined) return null;
-  if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false) }, timeInMiliseconds);
+  if (timeInMiliseconds > 0) setTimeout(() => { setEnable(false); }, timeInMiliseconds);
 
   return (
     <Icon
+      id="checkmark"
       enable={enable}
       size={size}
       xmlns='http://www.w3.org/2000/svg'
@@ -61,13 +62,6 @@ const shrink = keyframes`
   }
 `
 
-
-// -webkit-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -moz-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -ms-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-// -o-animation: ${fill} 0.4s ease-in-out 0.4s forwards, ${scale} 0.3s ease-in-out 0.9s both;
-
-//box-shadow: inset 0 0 0 ${colors.BLUE};
 const Icon = styled.svg`
   display: inline;
   border-radius: 50px;
