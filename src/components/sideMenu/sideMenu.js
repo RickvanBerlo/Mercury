@@ -2,6 +2,7 @@ import React, { memo, useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
+import { mobilecheck } from '../../utils/deviceCheck';
 
 const INIT_LABEL_Y = 85;
 const INIT_SIDEMENU_X = -300;
@@ -12,15 +13,29 @@ const SideMenu = ({ setCurrentPage }) => {
     let sidemenuX = INIT_SIDEMENU_X;
     let mouseY = null;
     let mouseX = null;
+    let lastKnownSideMenuX = null;
+    let lastKnownPosiitonLabelY = null;
     let screenHeight = getScreenResolution().height;
 
     const setOffset = (event) => {
+        event.preventDefault();
         if (drag) {
+            //mouse position
+            const pageX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+            const pageY = mobilecheck() ? event.touches[0].pageY : event.pageY;
+
+            //calculate pixels between begin label and mouse position
             const offsetY = mouseY - labelY;
             const offsetX = mouseX - sidemenuX;
-            const Y = event.pageY - offsetY;
-            const X = event.pageX - offsetX;
+            //calculate new position of label and sidemenu
+            const Y = pageY - offsetY;
+            const X = pageX - offsetX;
 
+            //last known positions
+            lastKnownSideMenuX = X;
+            lastKnownPosiitonLabelY = Y;
+
+            //set styling
             document.getElementById("label").style.cursor = "grab";
             document.getElementById("label").style.top = Y < 85 ? 85 : Y > screenHeight - 75 ? screenHeight - 75 : Y + "px";
             document.getElementById("sideMenu").style.left = X > 0 ? 0 : X < -300 ? -300 : X + "px";
@@ -30,29 +45,31 @@ const SideMenu = ({ setCurrentPage }) => {
     }
 
     const startDrag = (event) => {
-        mouseY = event.pageY;
-        mouseX = event.pageX;
+        event.preventDefault();
+        mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+        mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
         drag = true
     }
 
     const endDrag = (event) => {
+        event.preventDefault();
         if (drag) {
-            const X = event.pageX - (mouseX - sidemenuX);
-
+            const X = mobilecheck() ? lastKnownSideMenuX : event.pageX - (mouseX - sidemenuX);
             drag = false;
             sidemenuX = X >= -150 ? 0 : -300;
-            labelY = (event.pageY - (mouseY - labelY));
+            labelY = lastKnownPosiitonLabelY;
             document.getElementById("label").style.cursor = "pointer";
-            document.getElementById("sideMenu").style.left = X >= -150 ? 0 : -300 + "px";
+            document.getElementById("sideMenu").style.left = sidemenuX + "px";
             document.getElementById("sideMenu").style.transition = "left 0.4s linear";
             ToggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
     }
 
     const onClick = (event) => {
-        if (event.pageX === mouseX) {
+        const pageX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+        if (pageX === mouseX) {
             sidemenuX = sidemenuX === 0 ? -300 : 0;
-            document.getElementById("sideMenu").style.left = sidemenuX >= -150 ? 0 : -300 + "px";
+            document.getElementById("sideMenu").style.left = sidemenuX + "px";
             ToggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
     }
@@ -61,6 +78,9 @@ const SideMenu = ({ setCurrentPage }) => {
         document.getElementById("label").addEventListener("mousedown", startDrag, false);
         window.addEventListener("mouseup", endDrag, false);
         window.addEventListener("mousemove", setOffset, false);
+        document.getElementById("label").addEventListener("touchstart", startDrag, false);
+        window.addEventListener("touchend", endDrag, false);
+        window.addEventListener("touchmove", setOffset, false);
     }, [])
 
     return (
@@ -120,7 +140,7 @@ const Container = styled.div`
 
 const ContainerPages = styled.div`
     overflow:auto;
-    height: 92%;
+    height: calc(100% - 70px);
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none; 
     overflow: -moz-scrollbars-none;
@@ -144,7 +164,7 @@ const Title = styled.h2`
 `
 
 const ContainerTitle = styled.div`
-    height: 8%;
+    height: 70px;
     box-shadow: 0px 3px 10px -1px ${colors.BLACK};
     background-color: ${colors.DARK_WHITE};
     border-top-right-radius: 10px;
