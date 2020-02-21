@@ -7,7 +7,7 @@ import formBuilder from '../utils/formBuilder';
 import IconButton from '../components/buttons/iconButton';
 
 import background from '../assets/background.jpg';
-import Snackbar from '../components/animations/notification/snackbar';
+import Snackbar from '../components/notification/snackbar';
 
 const Authentication = ({ history, ToggleLogin = true }) => {
     const [degree, setDegree] = useState(0);

@@ -4,7 +4,7 @@ import colors from '../../constants/colors';
 import screenResolution from '../../utils/screenResolution';
 import Checkmark from '../animations/checkmark/checkmark';
 import Crossmark from '../animations/crossmark/crossmark';
-import Notification from '../animations/notification/notification';
+import Notification from '../notification/notification';
 import send from '../../utils/emailSender';
 import { ReCaptcha } from 'react-recaptcha-google';
 import './contactSection.css';

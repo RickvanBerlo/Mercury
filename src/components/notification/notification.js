@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import colors from '../../../constants/colors';
+import colors from '../../constants/colors';
 
 const notification = ({ text = undefined, color = colors.WHITE, textSize = "18px", paddingLeft = "0px", enable, setEnable, timeInMiliseconds = 0 }) => {
   if (enable === undefined) return null;

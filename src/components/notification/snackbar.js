@@ -1,18 +1,34 @@
-import React, { useEffect, memo } from 'react';
+import React, { useEffect, memo, useState, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import colors from '../../../constants/colors';
+import colors from '../../constants/colors';
 
 
 const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
+    const [showSnackbar, setShowSnackbar] = useState(null);
+    const timeout = useRef(null);
+
     useEffect(() => {
         document.getElementById("snackbar").addEventListener("animationend", (event) => { if (event.elapsedTime === 0.5) setText("") });
     })
 
+    useEffect(() => {
+        if (text === "") setShowSnackbar(null);
+        else {
+            console.log("hoi");
+            setShowSnackbar(true);
+            timeout.current = (setTimeout(() => { setShowSnackbar(false) }, timeInSeconds * 1000));
+        }
+    }, [text])
     return (
-        <SnackBarContainer id="snackbar" seconds={timeInSeconds} enable={text ? true : false}>
+        <SnackBarContainer id="snackbar" enable={showSnackbar} onTouchStart={() => { disableTimer(timeout, setShowSnackbar) }} onClick={() => { disableTimer(timeout, setShowSnackbar) }}>
             <Text>{text}</Text>
         </SnackBarContainer>
     )
+}
+
+const disableTimer = (timeout, setShowSnackbar) => {
+    timeout.current = clearTimeout(timeout.current);
+    setShowSnackbar(false);
 }
 
 const Show = keyframes`
@@ -36,6 +52,7 @@ const Text = styled.p`
     line-height: 40px;
     font: 20px 'Open Sans Bold',sans-serif;
     padding: 0px 10px;
+    user-select: none; 
 `
 
 const SnackBarContainer = styled.div`
@@ -47,10 +64,10 @@ const SnackBarContainer = styled.div`
     border-radius: 10px;
     background-color: ${colors.WHITE};
     border: 5px solid ${colors.LIGHT_GRAY}
-    z-index: 10;
+    z-index: 8;
     box-shadow: 3px 4px 10px 0px;
     animation-name: hallo;
-    animation: ${props => props.enable ? css`${Show} 0.4s ease-out forwards, ${Hide} 0.5s ease-in ${props => props.seconds}s forwards` : "none"};
+    animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.4s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
 `
 
 const AreEqual = (prevProps, nextProps) => {

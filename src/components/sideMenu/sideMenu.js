@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
 import { mobilecheck } from '../../utils/deviceCheck';
+import LogOut from 'react-ionicons/lib/MdLogOut';
 
-const INIT_LABEL_Y = 85;
+const INIT_LABEL_Y = 75;
 const INIT_SIDEMENU_X = -300;
 
-const SideMenu = ({ setCurrentPage }) => {
+const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     let drag = false;
     let labelY = INIT_LABEL_Y;
     let sidemenuX = INIT_SIDEMENU_X;
@@ -37,10 +38,10 @@ const SideMenu = ({ setCurrentPage }) => {
 
             //set styling
             document.getElementById("label").style.cursor = "grab";
-            document.getElementById("label").style.top = Y < 85 ? 85 : Y > screenHeight - 75 ? screenHeight - 75 : Y + "px";
+            document.getElementById("label").style.top = Y < INIT_LABEL_Y ? INIT_LABEL_Y : Y > screenHeight - 135 ? screenHeight - 135 : Y + "px";
             document.getElementById("sideMenu").style.left = X > 0 ? 0 : X < -300 ? -300 : X + "px";
             document.getElementById("sideMenu").style.transition = "none";
-            ToggleAnimationLabel(X > 0 ? true : false);
+            toggleAnimationLabel(X > 0 ? true : false);
         }
     }
 
@@ -61,16 +62,15 @@ const SideMenu = ({ setCurrentPage }) => {
             document.getElementById("label").style.cursor = "pointer";
             document.getElementById("sideMenu").style.left = sidemenuX + "px";
             document.getElementById("sideMenu").style.transition = "left 0.4s linear";
-            ToggleAnimationLabel(sidemenuX === 0 ? true : false);
+            toggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
     }
 
     const onClick = (event) => {
-        const pageX = mobilecheck() ? event.touches[0].pageX : event.pageX;
-        if (pageX === mouseX) {
+        if (event.pageX === mouseX) {
             sidemenuX = sidemenuX === 0 ? -300 : 0;
             document.getElementById("sideMenu").style.left = sidemenuX + "px";
-            ToggleAnimationLabel(sidemenuX === 0 ? true : false);
+            toggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
     }
 
@@ -93,31 +93,32 @@ const SideMenu = ({ setCurrentPage }) => {
             <ContainerTitle>
                 <Title>Mercury</Title>
             </ContainerTitle>
-            <ContainerPages>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hallo</PageLink>
-                <PageLink>Hsdsd</PageLink>
-                <PageLink>Hsdsd</PageLink>
-                <PageLink>Hsdsd</PageLink>
-                <PageLink>Hsdsd</PageLink>
-            </ContainerPages>
+            <ContainerButtons>
+                {createSideMenuButtons(sideMenuButtons, setCurrentPage)}
+            </ContainerButtons>
+            <ContainerLogoOut onTouchStart={() => { alert("WIP") }} onClick={() => { alert("WIP") }}>
+                <Text>Log out</Text>
+                <LogOut style={{ flex: 1, margin: "auto" }} fontSize="30px" color={colors.BLACK} />
+            </ContainerLogoOut>
         </Container>
     )
 }
 
-const ToggleAnimationLabel = (toggle) => {
+const createSideMenuButtons = (buttons, setCurrentPage) => {
+    let array = [];
+    for (let index of buttons.keys()) {
+        const Icon = buttons[index].ICON;
+        array.push(
+            <ContainerLink key={index} onTouchStart={() => { setCurrentPage(index) }} onClick={() => { setCurrentPage(index) }}>
+                <Text>{buttons[index].NAME}</Text>
+                <Icon style={{ flex: 1, margin: "auto" }} fontSize="30px" color={colors.BLACK} />
+            </ContainerLink>
+        )
+    }
+    return array;
+}
+
+const toggleAnimationLabel = (toggle) => {
     document.getElementById("bar1").style.transform = toggle ? "rotate(-45deg) translate(-9px, 6px)" : "rotate(0deg) translate(0px, 0px)";
     document.getElementById("bar2").style.opacity = toggle ? 0 : 1;
     document.getElementById("bar3").style.transform = toggle ? "rotate(45deg) translate(-9px, -7px)" : "rotate(0deg) translate(0px, 0px)";
@@ -138,9 +139,49 @@ const Container = styled.div`
     transition: left 0.4s linear;
 `
 
-const ContainerPages = styled.div`
+const ContainerLink = styled.div`
+    display: flex;
+    height: 70px;
+    box-shadow: inset 0 0 15px 20px ${colors.WHITE};
+    &:hover{
+        background-color: ${colors.DARK_WHITE};
+        cursor: pointer;
+    }
+    &:active{
+        background-color: ${colors.LIGHT_GRAY};
+    }
+    transition: background-color 0.2s linear ;
+`
+
+const Text = styled.p`
+    flex: 2;
+    line-height: 70px;
+    font-size: 20px;
+    padding-right: 20px;
+    text-align: right;
+    margin: 0;
+    user-select: none; 
+`
+
+const ContainerLogoOut = styled.div`
+    position: relative;
+    z-index: 11;
+    width: 100%;
+    height: 70px;
+    background-color: ${colors.WHITE};
+    display: flex;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0 -3px 10px -2px ${colors.BLACK};
+    &:hover{
+        background-color: ${colors.DARK_WHITE};
+        cursor: pointer;
+    }
+    transition: background-color 0.2s linear;
+`
+
+const ContainerButtons = styled.div`
     overflow:auto;
-    height: calc(100% - 70px);
+    height: calc(100% - 140px);
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none; 
     overflow: -moz-scrollbars-none;
@@ -149,21 +190,18 @@ const ContainerPages = styled.div`
     }
 `
 
-const PageLink = styled.p`
-    padding: 20px 0px;
-    font: 20px 'Open Sans Bold',sans-serif;
-    margin: 0;
-`
-
 const Title = styled.h2`
     font-size: 26px;
     margin: 0;
     line-height: 70px;
     height: 100%;
-    color: ${colors.BLUE}
+    color: ${colors.BLUE};
+    user-select: none; 
 `
 
 const ContainerTitle = styled.div`
+    position: relative;
+    z-index: 11;
     height: 70px;
     box-shadow: 0px 3px 10px -1px ${colors.BLACK};
     background-color: ${colors.DARK_WHITE};
