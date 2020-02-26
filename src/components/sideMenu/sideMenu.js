@@ -88,7 +88,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             </ContainerButtons>
             <ContainerLogoOut onTouchStart={() => { alert("WIP") }} onClick={() => { alert("WIP") }}>
                 <Text>Log out</Text>
-                <LogOut style={{ flex: 1, margin: "auto" }} fontSize="30px" color={colors.BLACK} />
+                <LogOut style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLogoOut>
         </Container>
     )
@@ -101,7 +101,7 @@ const createSideMenuButtons = (buttons, setCurrentPage) => {
         array.push(
             <ContainerLink key={index} onTouchStart={() => { setCurrentPage(index) }} onClick={() => { setCurrentPage(index) }}>
                 <Text>{buttons[index].NAME}</Text>
-                <Icon style={{ flex: 1, margin: "auto" }} fontSize="30px" color={colors.BLACK} />
+                <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>
         )
     }
@@ -130,7 +130,8 @@ const Container = styled.div`
 `
 
 const ContainerLink = styled.div`
-    display: flex;
+    text-align: center;
+    position:relative;
     height: 70px;
     box-shadow: inset 0 0 15px 20px ${colors.WHITE};
     &:hover{
@@ -145,11 +146,9 @@ const ContainerLink = styled.div`
 
 const Text = styled.p`
     flex: 2;
+    margin: auto;
     line-height: 70px;
     font-size: 20px;
-    padding-right: 20px;
-    text-align: right;
-    margin: 0;
     user-select: none; 
 `
 
@@ -159,7 +158,6 @@ const ContainerLogoOut = styled.div`
     width: 100%;
     height: 70px;
     background-color: ${colors.WHITE};
-    display: flex;
     border-bottom-right-radius: 10px;
     box-shadow: 0 -3px 10px -2px ${colors.BLACK};
     &:hover{
