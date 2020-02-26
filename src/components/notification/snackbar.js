@@ -14,7 +14,6 @@ const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
     useEffect(() => {
         if (text === "") setShowSnackbar(null);
         else {
-            console.log("hoi");
             setShowSnackbar(true);
             timeout.current = (setTimeout(() => { setShowSnackbar(false) }, timeInSeconds * 1000));
         }
@@ -66,7 +65,6 @@ const SnackBarContainer = styled.div`
     border: 5px solid ${colors.LIGHT_GRAY}
     z-index: 8;
     box-shadow: 3px 4px 10px 0px;
-    animation-name: hallo;
     animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.4s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
 `
 
