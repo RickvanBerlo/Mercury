@@ -8,40 +8,37 @@ import LogOut from 'react-ionicons/lib/MdLogOut';
 const INIT_LABEL_Y = 75;
 const INIT_SIDEMENU_X = -300;
 
+//this component wil only be rendered once.
 const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     let drag = false;
+    let pressed = false;
     let labelY = INIT_LABEL_Y;
     let sidemenuX = INIT_SIDEMENU_X;
     let mouseY = null;
     let mouseX = null;
-    let lastKnownSideMenuX = null;
-    let lastKnownPosiitonLabelY = null;
     let screenHeight = getScreenResolution().height;
 
     const setOffset = (event) => {
         event.preventDefault();
-        if (drag) {
-            //mouse position
-            const pageX = mobilecheck() ? event.touches[0].pageX : event.pageX;
-            const pageY = mobilecheck() ? event.touches[0].pageY : event.pageY;
+        if (pressed) {
+            drag = true;
 
-            //calculate pixels between begin label and mouse position
-            const offsetY = mouseY - labelY;
-            const offsetX = mouseX - sidemenuX;
+            const newMouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+            const newMouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
+
             //calculate new position of label and sidemenu
-            const Y = pageY - offsetY;
-            const X = pageX - offsetX;
+            //newMousePosition - oldMousePosition = offset for label and sidemenu
+            labelY = labelY + (newMouseY - mouseY);
+            sidemenuX = sidemenuX + (newMouseX - mouseX);
 
-            //last known positions
-            lastKnownSideMenuX = X;
-            lastKnownPosiitonLabelY = Y;
+            mouseX = newMouseX;
+            mouseY = newMouseY;
 
-            //set styling
             document.getElementById("label").style.cursor = "grab";
-            document.getElementById("label").style.top = Y < INIT_LABEL_Y ? INIT_LABEL_Y : Y > screenHeight - 135 ? screenHeight - 135 : Y + "px";
-            document.getElementById("sideMenu").style.left = X > 0 ? 0 : X < -300 ? -300 : X + "px";
+            document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
+            document.getElementById("sideMenu").style.left = sidemenuX > 0 ? 0 : sidemenuX < -300 ? -300 : sidemenuX + "px";
             document.getElementById("sideMenu").style.transition = "none";
-            toggleAnimationLabel(X > 0 ? true : false);
+            toggleAnimationLabel(sidemenuX > 0 ? true : false);
         }
     }
 
@@ -49,27 +46,20 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         event.preventDefault();
         mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
         mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
-        drag = true
+        pressed = true;
     }
 
     const endDrag = (event) => {
         event.preventDefault();
-        if (drag) {
-            const X = mobilecheck() ? lastKnownSideMenuX : event.pageX - (mouseX - sidemenuX);
+        if (pressed) {
+            drag ? sidemenuX = sidemenuX >= -150 ? 0 : -300 : sidemenuX = sidemenuX === 0 ? -300 : 0;
+
+            pressed = false;
             drag = false;
-            sidemenuX = X >= -150 ? 0 : -300;
-            labelY = lastKnownPosiitonLabelY;
+
             document.getElementById("label").style.cursor = "pointer";
             document.getElementById("sideMenu").style.left = sidemenuX + "px";
             document.getElementById("sideMenu").style.transition = "left 0.4s linear";
-            toggleAnimationLabel(sidemenuX === 0 ? true : false);
-        }
-    }
-
-    const onClick = (event) => {
-        if (event.pageX === mouseX) {
-            sidemenuX = sidemenuX === 0 ? -300 : 0;
-            document.getElementById("sideMenu").style.left = sidemenuX + "px";
             toggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
     }
@@ -85,7 +75,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
 
     return (
         <Container id="sideMenu" offsetX={INIT_SIDEMENU_X}>
-            <Label id="label" onClick={onClick} top={INIT_LABEL_Y}>
+            <Label id="label" top={INIT_LABEL_Y}>
                 <Bar1 id="bar1" />
                 <Bar2 id="bar2" />
                 <Bar3 id="bar3" />
