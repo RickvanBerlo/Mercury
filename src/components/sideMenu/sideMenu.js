@@ -172,7 +172,6 @@ const ContainerButtons = styled.div`
     height: calc(100% - 140px);
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none; 
-    overflow: -moz-scrollbars-none;
     &::-webkit-scrollbar { 
         display: none;  /* Safari and Chrome */
     }
@@ -183,7 +182,7 @@ const Title = styled.h2`
     margin: 0;
     line-height: 70px;
     height: 100%;
-    color: ${colors.BLUE};
+    color: ${colors.DARK_GREEN};
     user-select: none; 
 `
 

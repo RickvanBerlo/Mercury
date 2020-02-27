@@ -34,5 +34,10 @@ const Container = styled.div`
 
 `
 
-const MemoPageLoader = memo(PageLoader);
+const areEqual = (prevProps, nextProps) => {
+    if (prevProps.nextPage === nextProps.nextPage) return true;
+    return false;
+}
+
+const MemoPageLoader = memo(PageLoader, areEqual);
 export default MemoPageLoader;
