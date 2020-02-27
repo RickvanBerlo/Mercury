@@ -99,7 +99,7 @@ const createSideMenuButtons = (buttons, setCurrentPage) => {
     for (let index of buttons.keys()) {
         const Icon = buttons[index].ICON;
         array.push(
-            <ContainerLink key={index} onTouchStart={() => { setCurrentPage(index) }} onClick={() => { setCurrentPage(index) }}>
+            <ContainerLink key={index} onTouchStart={() => { setCurrentPage(index); }} onClick={() => { setCurrentPage(index) }}>
                 <Text>{buttons[index].NAME}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>

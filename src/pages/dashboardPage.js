@@ -6,7 +6,7 @@ import PageLoader from './pageLoader';
 import sideMenuButtons from '../constants/sideMenuButtons';
 
 const Dashboard = ({ history }) => {
-    const [snackbarText, setSnackBarText] = useState("Good Morning");
+    const [snackbarText, setSnackBarText] = useState("Goede morgen Rick");
     const [currentPage, setCurrentPage] = useState(0);
     const [previousPage, setPreviousPage] = useState(null);
 
