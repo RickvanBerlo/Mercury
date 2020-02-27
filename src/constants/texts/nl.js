@@ -9,8 +9,7 @@ const NL = {
         `,
     CONTACT_TITLE: "Contact gegevens",
     CONTACT_DESCRIPTION:
-        `${personalInformation.CONTACT_INFORMATION}
-        `
+        personalInformation.CONTACT_INFORMATION
     ,
     NAVIGATION: [
         { PUBLIC_NAME: "HOME", PRIVATE_NAME: undefined },

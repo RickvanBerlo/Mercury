@@ -154,7 +154,8 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
                     </LeftContainer>
                     <RightContainer>
                         <ContactTitle>{contactTitle}</ContactTitle>
-                        <Description>{contactContent}</Description>
+                        <Description>{contactContent.EMAIL}</Description>
+                        <Description>{contactContent.PHONE_NUMBER}</Description>
                     </RightContainer>
                 </CenterContainer >
             </CenterBlock >
@@ -258,7 +259,7 @@ const Description = styled.p`
     color: ${colors.GRAY};
     font: 16px 'Open Sans',sans-serif;
     user-select: none;
-    line-height: 30px;
+    line-height: 10px;
     white-space: pre-line;
 `
 
