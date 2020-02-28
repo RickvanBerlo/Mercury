@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
@@ -13,7 +13,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     let drag = false;
     let pressed = false;
     let labelY = INIT_LABEL_Y;
-    let sidemenuX = INIT_SIDEMENU_X;
+    let sidemenuX = useRef(INIT_SIDEMENU_X);
     let mouseY = null;
     let mouseX = null;
     let screenHeight = getScreenResolution().height;
@@ -29,16 +29,16 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             //calculate new position of label and sidemenu
             //newMousePosition - oldMousePosition = offset for label and sidemenu
             labelY = labelY + (newMouseY - mouseY);
-            sidemenuX = sidemenuX + (newMouseX - mouseX);
+            sidemenuX.current = sidemenuX.current + (newMouseX - mouseX);
 
             mouseX = newMouseX;
             mouseY = newMouseY;
 
             document.getElementById("label").style.cursor = "grab";
             document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
-            document.getElementById("sideMenu").style.left = sidemenuX > 0 ? 0 : sidemenuX < -300 ? -300 : sidemenuX + "px";
+            document.getElementById("sideMenu").style.left = sidemenuX.current > 0 ? 0 : sidemenuX.current < -300 ? -300 : sidemenuX.current + "px";
             document.getElementById("sideMenu").style.transition = "none";
-            toggleAnimationLabel(sidemenuX > 0 ? true : false);
+            toggleAnimationLabel(sidemenuX.current > 0 ? true : false);
         }
     }
 
@@ -52,16 +52,24 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     const endDrag = (event) => {
         event.preventDefault();
         if (pressed) {
-            drag ? sidemenuX = sidemenuX >= -150 ? 0 : -300 : sidemenuX = sidemenuX === 0 ? -300 : 0;
-
+            drag ? sidemenuX.current = sidemenuX.current >= -150 ? 0 : -300 : sidemenuX.current = sidemenuX.current === 0 ? -300 : 0;
+            setPositionSideMenu(sidemenuX.current);
             pressed = false;
             drag = false;
-
-            document.getElementById("label").style.cursor = "pointer";
-            document.getElementById("sideMenu").style.left = sidemenuX + "px";
-            document.getElementById("sideMenu").style.transition = "left 0.4s linear";
-            toggleAnimationLabel(sidemenuX === 0 ? true : false);
         }
+    }
+
+    const setPositionSideMenu = (X) => {
+        document.getElementById("label").style.cursor = "pointer";
+        document.getElementById("sideMenu").style.left = X + "px";
+        document.getElementById("sideMenu").style.transition = "left 0.4s linear";
+        toggleAnimationLabel(X === 0 ? true : false);
+    }
+
+    const changeCurrentPage = (index) => {
+        setCurrentPage(index);
+        sidemenuX.current = -300;
+        setPositionSideMenu(sidemenuX.current);
     }
 
     useEffect(() => {
@@ -84,7 +92,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
                 <Title>Mercury</Title>
             </ContainerTitle>
             <ContainerButtons>
-                {createSideMenuButtons(sideMenuButtons, setCurrentPage)}
+                {createSideMenuButtons(sideMenuButtons, changeCurrentPage)}
             </ContainerButtons>
             <ContainerLogoOut onTouchStart={() => { alert("WIP") }} onClick={() => { alert("WIP") }}>
                 <Text>Log out</Text>
@@ -94,12 +102,12 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     )
 }
 
-const createSideMenuButtons = (buttons, setCurrentPage) => {
+const createSideMenuButtons = (buttons, changeCurrentPage) => {
     let array = [];
     for (let index of buttons.keys()) {
         const Icon = buttons[index].ICON;
         array.push(
-            <ContainerLink key={index} onTouchStart={() => { setCurrentPage(index); }} onClick={() => { setCurrentPage(index) }}>
+            <ContainerLink key={index} onTouchStart={() => { changeCurrentPage(index) }} onClick={() => { changeCurrentPage(index) }}>
                 <Text>{buttons[index].NAME}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>
