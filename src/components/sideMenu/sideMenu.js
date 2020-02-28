@@ -13,7 +13,8 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     let drag = false;
     let pressed = false;
     let labelY = INIT_LABEL_Y;
-    let sidemenuX = useRef(INIT_SIDEMENU_X);
+    let sidemenuX = useRef(INIT_SIDEMENU_X)
+    let scroll = useRef(false);
     let mouseY = null;
     let mouseX = null;
     let screenHeight = getScreenResolution().height;
@@ -56,6 +57,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             setPositionSideMenu(sidemenuX.current);
             pressed = false;
             drag = false;
+            scroll.current = false;
         }
     }
 
@@ -67,9 +69,12 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     }
 
     const changeCurrentPage = (index) => {
-        setCurrentPage(index);
-        sidemenuX.current = -300;
-        setPositionSideMenu(sidemenuX.current);
+        if (!scroll.current) {
+            setCurrentPage(index);
+            sidemenuX.current = -300;
+            setPositionSideMenu(sidemenuX.current);
+        }
+        scroll.current = false;
     }
 
     useEffect(() => {
@@ -79,6 +84,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         document.getElementById("label").addEventListener("touchstart", startDrag, false);
         window.addEventListener("touchend", endDrag, false);
         window.addEventListener("touchmove", setOffset, false);
+        window.addEventListener("touchmove", () => { scroll.current = true; }, false);
     }, [])
 
     return (
@@ -107,7 +113,7 @@ const createSideMenuButtons = (buttons, changeCurrentPage) => {
     for (let index of buttons.keys()) {
         const Icon = buttons[index].ICON;
         array.push(
-            <ContainerLink key={index} onTouchStart={() => { changeCurrentPage(index) }} onClick={() => { changeCurrentPage(index) }}>
+            <ContainerLink key={index} onTouchEnd={() => { changeCurrentPage(index) }} onClick={() => { changeCurrentPage(index) }}>
                 <Text>{buttons[index].NAME}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>

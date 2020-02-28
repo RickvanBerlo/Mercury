@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import backgroundImage from '../assets/background.jpg';
 import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
@@ -7,6 +7,7 @@ import { mobilecheck } from '../utils/deviceCheck';
 
 const Home = () => {
     const [time, setTime] = useState(getTime());
+    let scroll = useRef(false);
 
     const webLinks = [{ NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }]
 
@@ -15,8 +16,17 @@ const Home = () => {
         setTimeout(updateTime, 500);
     }
 
+    const navigateToLink = (link) => {
+        if (!scroll.current) {
+            let win = window.open(link, '_blank');
+            win.focus();
+        }
+        scroll.current = false;
+    }
+
     useEffect(() => {
         updateTime();
+        window.addEventListener("touchmove", () => { scroll.current = true; }, false);
     })
 
     return (
@@ -25,20 +35,20 @@ const Home = () => {
             <Clock>{time}</Clock>
             <CenterContainer>
                 <WebsiteLinksContainer>
-                    {makeWebsiteLinks(webLinks)}
+                    {makeWebsiteLinks(webLinks, navigateToLink)}
                 </WebsiteLinksContainer>
             </CenterContainer>
         </Container>
     )
 }
 
-const makeWebsiteLinks = (webLinks) => {
+const makeWebsiteLinks = (webLinks, navigateToLink) => {
     return webLinks.map((weblink, index) => {
         return (
             <WebsiteLinkContainer key={index}>
                 <WebsiteLink
-                    onClick={(event) => { let win = window.open(weblink.LINK, '_blank'); win.focus(); }}
-                    onTouchEnd={(event) => { let win = window.open(weblink.LINK, '_blank'); win.focus(); }}
+                    onClick={(event) => { navigateToLink(weblink.LINK) }}
+                    onTouchEnd={(event) => { navigateToLink(weblink.LINK) }}
                 >
                     <DefaultIcon>
                         <DefaultIconText>{weblink.NAME.charAt(0)}</DefaultIconText>
@@ -90,6 +100,7 @@ const BackgroundContainer = styled.div`
 
 const Clock = styled.p`
     position: absolute;
+    user-select: none;
     margin: 0;
     font-size: ${mobilecheck() ? "80px" : "100px"};
     color: ${colors.WHITE}
@@ -147,7 +158,8 @@ const WebsiteLink = styled.div`
 `
 const WebsiteName = styled.p`
     margin: 4px;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+    user-select: none;
     display:block;
     white-space: nowrap;
     overflow: hidden;
@@ -165,6 +177,7 @@ const DefaultIcon = styled.div`
 `
 const DefaultIconText = styled.p`
     margin: 0;
+    user-select: none;
     transform: translateY(5px);
     color: ${colors.WHITE};
     font-size: 30px;
