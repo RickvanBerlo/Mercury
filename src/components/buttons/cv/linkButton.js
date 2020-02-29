@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import colors from '../../constants/colors';
+import colors from '../../../constants/colors';
 
 const LinkButton = ({
     name = "No name",

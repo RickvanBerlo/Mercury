@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import NavButton from '../buttons/navButton';
+import NavButton from '../buttons/cv/navButton';
 import colors from '../../constants/colors';
 
 const TopNavbar = ({ buttons }) => {

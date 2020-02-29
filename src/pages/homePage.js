@@ -9,7 +9,7 @@ const Home = () => {
     const [time, setTime] = useState(getTime());
     let scroll = useRef(false);
 
-    const webLinks = [{ NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }, { NAME: "nu", LINK: "https://www.nu.nl/" }]
+    const webLinks = [{ NAME: "nu", LINK: "https://www.nu.nl/" }]
 
     const updateTime = () => {
         setTime(getTime())
@@ -24,10 +24,17 @@ const Home = () => {
         scroll.current = false;
     }
 
+    const setScroll = () => {
+        scroll.current = true;
+    }
+
     useEffect(() => {
         updateTime();
-        window.addEventListener("touchmove", () => { scroll.current = true; }, false);
-    })
+        window.addEventListener("touchmove", setScroll, false);
+        return () => {
+            window.removeEventListener("touchmove", setScroll, false);
+        }
+    }, [])
 
     return (
         <Container>
@@ -119,11 +126,9 @@ const CenterContainer = styled.div`
 
 const WebsiteLinksContainer = styled.div`
     margin: auto;
-    background-color: ${colors.TRANSPARENT_20_WHITE};
     width: 60vw;
     max-height: 400px;
     overflow: auto;
-    border-radius: 10px;
     display: flex;
     flex-wrap: wrap;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */

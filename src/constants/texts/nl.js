@@ -153,7 +153,11 @@ const NL = {
         EMAIL: "Email",
         SUBJECT: "Onderwerp",
         DESCRIPTION: "Omschrijving",
-    }
+    },
+    MONTHS: [
+        "Januari", "Februari", "Maart", "April", "Mei", "Juni",
+        "Juli", "Augustus", "September", "Oktober", "November", "December"
+    ],
 }
 
 export default NL;

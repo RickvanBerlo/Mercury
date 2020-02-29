@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Button from './button';
-import colors from '../../constants/colors';
-import screenResolution from '../../utils/screenResolution';
+import colors from '../../../constants/colors';
+import screenResolution from '../../../utils/screenResolution';
 
 const NavButton = ({ name = "No name", onClick, color = colors.WHITE }) => {
     const width = screenResolution().width;

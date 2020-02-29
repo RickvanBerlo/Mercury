@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import colors from '../../constants/colors';
+import colors from '../../../constants/colors';
 
 const Button = ({ name = "No name", padding = "20px", height = "50px", color = colors.DARK_GRAY, onClick = () => { console.log("no function") } }) => {
     return (

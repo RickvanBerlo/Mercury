@@ -123,7 +123,7 @@ export const easings = {
     },
 };
 
-export const tween = (start, end, duration, easing, w) => {
+export const tween = (start, end, duration, easing, w, callback = () => { }) => {
     const delta = end - start;
     let startTime;
     if (window.performance && window.performance.now) {
@@ -139,8 +139,11 @@ export const tween = (start, end, duration, easing, w) => {
         let t = (!time ? 0 : time - startTime);
         let factor = easing(null, t, 0, 1, duration);
         w.scrollLeft = start + delta * factor;
-        if (t < duration && w.scrollLeft != end)
+        if (t < duration && w.scrollLeft != end) {
             requestAnimationFrame(tweenLoop);
+        } else {
+            callback();
+        }
     }
     tweenLoop();
 };

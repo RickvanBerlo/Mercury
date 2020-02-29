@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import colors from '../../constants/colors';
-import LinkButton from '../../components/buttons/linkButton';
+import LinkButton from '../../components/buttons/cv/linkButton';
 
 const ProjectSection = ({ content, name }) => {
     const [opacity, setopacity] = useState(0);

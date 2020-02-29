@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import image from '../../assets/profilepic.png';
 import colors from '../../constants/colors';
-import LinkButton from '../../components/buttons/linkButton';
+import LinkButton from '../../components/buttons/cv/linkButton';
 
 const AboutMeSection = ({ name, content, infoTitle, infoContent }) => {
     const [opacity, setopacity] = useState(0);

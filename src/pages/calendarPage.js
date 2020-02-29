@@ -1,39 +1,84 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useReducer } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import { easings, tween } from '../utils/scrollAnimation';
 import screenResolution from '../utils/screenResolution';
+import IconButton from '../components/buttons/dasboard/iconButton';
+import languageSelector from '../utils/languageSelector';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
 
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'nextMonth':
+            state.selectedDate.setMonth(state.selectedDate.getMonth() + 1);
+            return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
+        case 'prevMonth':
+            state.selectedDate.setMonth(state.selectedDate.getMonth() - 1);
+            return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
+        default:
+            throw new Error();
+    }
+}
+
 const Calendar = () => {
-    let scrollwidth = useRef(0);
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    let width = screenResolution().width;
+    const initialState = { currentMonth: new Date().getMonth(), currentYear: new Date().getFullYear(), selectedDate: new Date(), screenWidth: screenResolution().width, months: languageSelector().MONTHS };
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const scroll = (e) => {
+        if (e.deltaY > 0) nextMonth();
+        else previousMonth();
+    }
+
+    const nextMonth = () => {
+        let w = document.getElementById("monthsContainer");
+        tween(state.screenWidth, state.screenWidth + state.screenWidth, 500, easings.easeInOutCubic, w, () => { dispatch({ type: 'nextMonth' }) });
+
+    }
+
+    const previousMonth = () => {
+        let w = document.getElementById("monthsContainer");
+        tween(state.screenWidth, 0, 500, easings.easeInOutCubic, w, () => { dispatch({ type: 'prevMonth' }) });
+    }
 
     useEffect(() => {
-        let item = document.getElementById("monthsContainer");
-        window.addEventListener('wheel', function (e) {
-            let item = document.getElementById("monthsContainer");
-            if (e.deltaY > 0) item.scrollLeft += 10;
-            else item.scrollLeft -= 10;
-        });
-        item.style.right = "0px";
+        let calendarNext = document.getElementById("calendar_next");
+        let calendarPrev = document.getElementById("calendar_prev");
+        window.addEventListener('wheel', scroll, false);
+        calendarNext.addEventListener("click", nextMonth, false);
+        calendarNext.addEventListener("touchend", nextMonth, false);
+        calendarPrev.addEventListener("click", previousMonth, false);
+        calendarPrev.addEventListener("touchend", previousMonth, false);
+        return () => {
+            window.removeEventListener('wheel', scroll, false);
+            calendarNext.removeEventListener("click", nextMonth, false);
+            calendarNext.removeEventListener("touchend", nextMonth, false);
+            calendarPrev.removeEventListener("click", previousMonth, false);
+            calendarPrev.removeEventListener("touchend", previousMonth, false);
+        }
     }, []);
 
+    useEffect(() => {
+        document.getElementById("monthsContainer").scrollLeft = state.screenWidth;
+    }, [state])
     return (
         <Container>
-            <ButtonContainer>
-                <StyledPreviousIcon fontSize="40px" color={colors.DARK_GREEN} onClick={() => { previousMonth(scrollwidth, width) }} />
-                <StyledNextIcon fontSize="40px" color={colors.DARK_GREEN} onClick={() => { nextMonth(scrollwidth, width) }} />
-            </ButtonContainer>
-            <SelectedDateContainer>
-                <SelectedDateButton>
-                    <SelectedDate>{selectedDate.toLocaleDateString('nl')}</SelectedDate>
-                </SelectedDateButton>
-            </SelectedDateContainer>
+            <TopBarContainer>
+                <Button>
+                    <Year>{state.currentYear}</Year>
+                </Button>
+                <Button>
+                    <Month>{state.months[state.currentMonth]}</Month>
+                </Button>
+                <ButtonContainer>
+                    <RightFloat>
+                        <IconButton id="calendar_prev" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                        <IconButton id="calendar_next" icon={NextIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                    </RightFloat>
+                </ButtonContainer>
+            </TopBarContainer>
             <DateNamesContainer>
                 <DateNames>
                     <DateName>Maandag</DateName>
@@ -46,17 +91,17 @@ const Calendar = () => {
                 </DateNames>
             </DateNamesContainer>
             <MonthsContainer id="monthsContainer">
-                {createAllMonths(selectedDate)}
+                {createAllMonths(state.currentYear, state.currentMonth)}
             </MonthsContainer>
         </Container>
     )
 }
 
-const createAllMonths = (selectedDate) => {
+const createAllMonths = (currentYear, currentMonth) => {
     let months = [];
-    let firstDayOfSelectedYearAndMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-    firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() - 12);
-    for (let i = -12; i < 12; i++) {
+    let firstDayOfSelectedYearAndMonth = new Date(currentYear, currentMonth, 1);
+    firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() - 1);
+    for (let i = -1; i < 2; i++) {
         months.push(
             <MonthContainer key={i}>
                 <DaysContainer>
@@ -70,18 +115,6 @@ const createAllMonths = (selectedDate) => {
         firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() + 1);
     }
     return months;
-}
-
-const nextMonth = (scrollwidth, width) => {
-    let w = document.getElementById("monthsContainer");
-    tween(scrollwidth.current, scrollwidth.current + width, 1000, easings.easeInOutCubic, w);
-    scrollwidth.current = scrollwidth.current + width;
-}
-
-const previousMonth = (scrollwidth, width) => {
-    let w = document.getElementById("monthsContainer");
-    tween(scrollwidth.current, scrollwidth.current - width, 1000, easings.easeInOutCubic, w);
-    scrollwidth.current = scrollwidth.current - width;
 }
 
 const createWeekDates = (selectedDate) => {
@@ -102,11 +135,12 @@ const getCorrectWeekNumber = (now) => {
 const createMonth = (selectedDate) => {
     let grid = [];
     let firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    const month = selectedDate.getMonth();
     firstDayOfMonth.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay() + 1);
     for (let i = 0; i < 6; i++) {
         grid.push(
             <WeekContainer key={i}>
-                {createDays(firstDayOfMonth)}
+                {createDays(firstDayOfMonth, month)}
             </WeekContainer>
         )
         firstDayOfMonth.setDate(firstDayOfMonth.getDate() + 7);
@@ -114,12 +148,14 @@ const createMonth = (selectedDate) => {
     return grid;
 }
 
-const createDays = (begin) => {
+const createDays = (begin, month) => {
     let days = [];
     let firstDayOfThisWeek = new Date(begin);
+    let today = new Date().toLocaleDateString('nl');
 
     for (let i = 0; i < 7; i++) {
-        days.push(<Day key={i}><DayNumber>{firstDayOfThisWeek.getDate()}</DayNumber></Day>)
+        let day = firstDayOfThisWeek.getDate();
+        days.push(<Day key={i}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
         firstDayOfThisWeek.setDate(firstDayOfThisWeek.getDate() + 1);
     }
     return days;
@@ -131,24 +167,45 @@ const Container = styled.div`
     text-align: center;
 `
 
-const SelectedDateContainer = styled.div`
+const TopBarContainer = styled.div`
     height: 50px;
     width: calc(100vw - 15px);
     background-color: ${colors.WHITE};
     text-align: center;
+    display: flex;
 `
 
-const SelectedDate = styled.p`
+const Month = styled.p`
     color: ${colors.DARK_GREEN};
     line-height: 50px;
     font-size: 25px;
     user-select: none;
     margin: 0;
+    &:hover{
+        cursor: pointer;
+    }
 `
 
-const SelectedDateButton = styled.div`
-    width: 200px;
-    margin:auto;
+const RightFloat = styled.div`
+    float: right;
+    margin-top: 10px;
+`
+
+const Year = styled.p`
+    color: ${colors.DARK_GREEN};
+    line-height: 50px;
+    font-size: 25px;
+    user-select: none;
+    margin: 0;
+    margin-left: 20px;
+    float: left;
+    &:hover{
+        cursor: pointer;
+    }
+`
+
+const Button = styled.div`
+    flex: 1;
 `
 const DateNamesContainer = styled.div`
     height: 40px;
@@ -216,58 +273,17 @@ const Day = styled.div`
 const DayNumber = styled.p`
     user-select: none;
     position: absolute;
-    bottom: 0;
+    bottom: 2px;
     right: 5px;
     margin: 0;
+    color: ${props => props.toggle ? props.today ? colors.WHITE : colors.BLACK : colors.LIGHT_GRAY}
+    background-color: ${props => props.today ? colors.DARK_GREEN : colors.WHITE};
+    padding: 1px 3px;
+    border-radius: 10px;
 `
 
 const ButtonContainer = styled.div`
-    position: absolute;
-    z-index: 2;
-    right: 15px;
-    top: 5px;
-`
-
-const StyledNextIcon = styled(NextIcon)`
-    transition: background-color 0.2s linear;
-    box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
-    -webkit-tap-highlight-color: transparent;
-    &:hover{
-        background-color: ${colors.GRAY}
-        cursor: pointer;
-    }
-    &:active{
-        background-color: ${colors.DARK_GRAY};
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.GRAY};
-        }
-    }
-`
-
-const StyledPreviousIcon = styled(PreviousIcon)`
-    transition: background-color 0.2s linear;
-    box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
-    -webkit-tap-highlight-color: transparent;
-    &:hover{
-        background-color: ${colors.GRAY}
-        cursor: pointer;
-    }
-    &:active{
-        background-color: ${colors.DARK_GRAY};
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.GRAY};
-        }
-    }
+    flex: 1;
 `
 
 const MonthContainer = styled.div`

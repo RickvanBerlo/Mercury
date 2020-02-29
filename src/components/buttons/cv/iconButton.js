@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import colors from '../../constants/colors';
+import colors from '../../../constants/colors';
 
 const IconButton = ({ icon = ['fab', 'github'], padding = "20px", size = "2x", color = colors.DARK_GRAY, onClick = () => { console.log("no function") } }) => {
     return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import IconButton from '../buttons/iconButton';
+import IconButton from '../buttons/cv/iconButton';
 import colors from '../../constants/colors';
 import { ParallaxBanner } from 'react-scroll-parallax';
 import { mobilecheck } from '../../utils/deviceCheck';

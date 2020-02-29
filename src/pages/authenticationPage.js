@@ -4,7 +4,7 @@ import colors from '../constants/colors';
 import { lerp, invlerp } from '../utils/lerp';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
-import IconButton from '../components/buttons/iconButton';
+import IconButton from '../components/buttons/cv/iconButton';
 
 import background from '../assets/background.jpg';
 import Snackbar from '../components/notification/snackbar';
