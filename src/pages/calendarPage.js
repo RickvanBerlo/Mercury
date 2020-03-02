@@ -31,7 +31,7 @@ const reducer = (state, action) => {
             state.selectedDate.setMonth(state.selectedDate.getMonth() - 1);
             return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
         case 'createMonths':
-            return { ...state, months: createAllMonths(new Date().getFullYear(), new Date().getMonth(), action.setCurrentPage) }
+            return { ...state, months: createAllMonths(new Date().getFullYear(), new Date().getMonth(), action.navigateToDayPage) }
         default:
             throw new Error();
     }
@@ -107,6 +107,14 @@ const Calendar = ({ setCurrentPage }) => {
                         dispatch({ type: direction ? 'nextMonth' : 'prevMonth' })
                 }
             );
+            isPressing.current = false;
+            isDragging.current = false;
+        }
+    }
+
+    const navigateToDayPage = (day) => {
+        if (!isDragging.current) {
+            setCurrentPage(pageNames.HOME);
         }
     }
 
@@ -123,7 +131,7 @@ const Calendar = ({ setCurrentPage }) => {
         monthContainer.addEventListener("touchstart", startDrag, false);
         monthContainer.addEventListener("touchmove", moveDrag, false);
         window.addEventListener("touchend", endDrag, false);
-        dispatch({ type: 'createMonths', setCurrentPage: setCurrentPage })
+        dispatch({ type: 'createMonths', navigateToDayPage: navigateToDayPage })
         return () => {
             window.removeEventListener('wheel', scroll, false);
             calendarNext.removeEventListener("click", nextMonth, false);
@@ -177,7 +185,7 @@ const getDayNames = (state) => {
     return names;
 }
 
-const createAllMonths = (currentYear, currentMonth, setCurrentPage) => {
+const createAllMonths = (currentYear, currentMonth, callback) => {
     let months = [];
     let firstDayOfSelectedYearAndMonth = new Date(currentYear, currentMonth, 1);
     firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() - initMonths / 2);
@@ -185,7 +193,7 @@ const createAllMonths = (currentYear, currentMonth, setCurrentPage) => {
         months.push(
             <MonthContainer key={i}>
                 <DaysContainer>
-                    {createMonth(firstDayOfSelectedYearAndMonth, setCurrentPage)}
+                    {createMonth(firstDayOfSelectedYearAndMonth, callback)}
                 </DaysContainer>
                 <WeekDates>
                     {createWeekDates(firstDayOfSelectedYearAndMonth)}
@@ -212,7 +220,7 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createMonth = (selectedDate, setCurrentPage) => {
+const createMonth = (selectedDate, callback) => {
     let grid = [];
     let firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
     const month = selectedDate.getMonth();
@@ -220,7 +228,7 @@ const createMonth = (selectedDate, setCurrentPage) => {
     for (let i = 0; i < 6; i++) {
         grid.push(
             <WeekContainer key={i}>
-                {createDays(firstDayOfMonth, month, setCurrentPage)}
+                {createDays(firstDayOfMonth, month, callback)}
             </WeekContainer>
         )
         firstDayOfMonth.setDate(firstDayOfMonth.getDate() + 7);
@@ -228,14 +236,14 @@ const createMonth = (selectedDate, setCurrentPage) => {
     return grid;
 }
 
-const createDays = (begin, month, setCurrentPage) => {
+const createDays = (begin, month, callback) => {
     let days = [];
     let firstDayOfThisWeek = new Date(begin);
     let today = new Date().toLocaleDateString('nl');
 
     for (let i = 0; i < 7; i++) {
         let day = firstDayOfThisWeek.getDate();
-        days.push(<Day key={i} onClick={() => { setCurrentPage(pageNames.HOME) }} onTouchEnd={() => { }}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
+        days.push(<Day key={i} onClick={() => { callback(firstDayOfThisWeek) }} onTouchEnd={() => { callback(firstDayOfThisWeek) }}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
         firstDayOfThisWeek.setDate(firstDayOfThisWeek.getDate() + 1);
     }
     return days;
