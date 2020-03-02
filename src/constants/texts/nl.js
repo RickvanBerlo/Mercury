@@ -158,6 +158,9 @@ const NL = {
         "Januari", "Februari", "Maart", "April", "Mei", "Juni",
         "Juli", "Augustus", "September", "Oktober", "November", "December"
     ],
+    DAYS: [
+        "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"
+    ]
 }
 
 export default NL;

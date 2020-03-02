@@ -4,7 +4,7 @@ import sideMenuButtons from '../constants/sideMenuButtons';
 
 const ANIM_TIME = 400;
 
-const PageLoader = ({ history, nextPage, previousPage }) => {
+const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPageParam }) => {
     const [page, setPage] = useState(previousPage);
     const [visible, setVisible] = useState(true);
 
@@ -23,7 +23,7 @@ const PageLoader = ({ history, nextPage, previousPage }) => {
     const Page = page === null ? null : sideMenuButtons[page].PAGE;
     return (
         <Container id="refresher" visible={visible} seconds={ANIM_TIME}>
-            {Page && <Page />}
+            {Page && <Page setCurrentPage={setCurrentPage} {...currentPageParam} />}
         </Container>
     )
 }
