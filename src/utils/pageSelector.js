@@ -1,10 +1,18 @@
-import sideMenuButtons from '../constants/sideMenuButtons';
+import { pages } from '../constants/pages';
 
 export const getCorrectPageByName = (name) => {
-    let pageIndex = -1;
-    sideMenuButtons.forEach((item, index) => {
-        if (name === item.NAME) pageIndex = index;
+    let page = undefined;
+    pages.forEach((item) => {
+        if (item.NAME === name) page = item.PAGE;
     })
-    if (pageIndex === -1) throw new Error("getCorrectPageByName: did not find the correct page");
-    return pageIndex;
+    if (page === undefined) throw new Error("getCorrectPageByName: no page found by this name")
+    return page;
+}
+
+export const getAllSideMenuButtonPages = () => {
+    let buttons = [];
+    pages.forEach((item) => {
+        if (item.ICON != undefined) buttons.push(item);
+    })
+    return buttons;
 }

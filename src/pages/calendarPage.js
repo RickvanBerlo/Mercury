@@ -6,7 +6,7 @@ import { easings, tween } from '../utils/scrollAnimation';
 import screenResolution from '../utils/screenResolution';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
-import { getCorrectPageByName } from '../utils/pageSelector';
+import { pageNames } from '../constants/pages';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -235,7 +235,7 @@ const createDays = (begin, month, setCurrentPage) => {
 
     for (let i = 0; i < 7; i++) {
         let day = firstDayOfThisWeek.getDate();
-        days.push(<Day key={i} onClick={() => { setCurrentPage(getCorrectPageByName("Home")) }} onTouchEnd={() => { }}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
+        days.push(<Day key={i} onClick={() => { setCurrentPage(pageNames.HOME) }} onTouchEnd={() => { }}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
         firstDayOfThisWeek.setDate(firstDayOfThisWeek.getDate() + 1);
     }
     return days;

@@ -68,9 +68,9 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         toggleAnimationLabel(X === 0 ? true : false);
     }
 
-    const changeCurrentPage = (index) => {
+    const changeCurrentPage = (name) => {
         if (!scroll.current) {
-            setCurrentPage(index);
+            setCurrentPage(name);
             sidemenuX.current = -300;
             setPositionSideMenu(sidemenuX.current);
         }
@@ -113,7 +113,7 @@ const createSideMenuButtons = (buttons, changeCurrentPage) => {
     for (let index of buttons.keys()) {
         const Icon = buttons[index].ICON;
         array.push(
-            <ContainerLink key={index} onTouchEnd={() => { changeCurrentPage(index) }} onClick={() => { changeCurrentPage(index) }}>
+            <ContainerLink key={index} onTouchEnd={() => { changeCurrentPage(buttons[index].NAME) }} onClick={() => { changeCurrentPage(buttons[index].NAME) }}>
                 <Text>{buttons[index].NAME}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>

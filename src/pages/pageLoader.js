@@ -1,6 +1,7 @@
 import React, { useEffect, useState, memo } from "react";
 import styled from 'styled-components';
-import sideMenuButtons from '../constants/sideMenuButtons';
+import { pages } from '../constants/pages';
+import { getCorrectPageByName } from '../utils/pageSelector';
 
 const ANIM_TIME = 400;
 
@@ -20,7 +21,7 @@ const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPa
         }
     }, [page])
 
-    const Page = page === null ? null : sideMenuButtons[page].PAGE;
+    const Page = page === null ? null : getCorrectPageByName(page);
     return (
         <Container id="refresher" visible={visible} seconds={ANIM_TIME}>
             {Page && <Page setCurrentPage={setCurrentPage} {...currentPageParam} />}
