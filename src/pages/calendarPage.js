@@ -163,7 +163,7 @@ const Calendar = ({ setCurrentPage }) => {
             monthContainer.removeEventListener("touchstart", startDrag, false);
             monthContainer.removeEventListener("touchmove", moveDrag, false);
             window.removeEventListener("touchend", endDrag, false);
-            window.addEventListener('resize', changeWidth, false);
+            window.removeEventListener('resize', changeWidth, false);
         }
     }, []);
 
