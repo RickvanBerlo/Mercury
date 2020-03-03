@@ -20,6 +20,7 @@ const colors = {
 
 
 
+    ACTIVE_COLOR: '#b8b8b8',
     HEADER_BACKGROUND_COLOR: '#caf2f2',
 }
 

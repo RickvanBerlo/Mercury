@@ -8,12 +8,13 @@ import { mobilecheck } from '../utils/deviceCheck';
 const Home = () => {
     const [time, setTime] = useState(getTime());
     let scroll = useRef(false);
+    let timeout = null;
 
     const webLinks = [{ NAME: "nu", LINK: "https://www.nu.nl/" }]
 
     const updateTime = () => {
         setTime(getTime())
-        setTimeout(updateTime, 500);
+        timeout = setTimeout(updateTime, 500);
     }
 
     const navigateToLink = (link) => {
@@ -33,6 +34,7 @@ const Home = () => {
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
+            clearTimeout(timeout);
         }
     }, [])
 

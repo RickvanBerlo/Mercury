@@ -7,6 +7,7 @@ import screenResolution from '../utils/screenResolution';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
 import { pageNames } from '../constants/pages';
+import MonthSelector from '../components/monthSelector/monthSelector';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -18,6 +19,7 @@ const initialState = {
     monthNames: languageSelector().MONTHS,
     dayNames: languageSelector().DAYS,
     months: null,
+    monthSelectorToggle: null,
 };
 const initMonths = 24;
 const initDeadZoneScroll = 0.2;
@@ -32,6 +34,10 @@ const reducer = (state, action) => {
             return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
         case 'createMonths':
             return { ...state, months: createAllMonths(new Date().getFullYear(), new Date().getMonth(), action.navigateToDayPage) }
+        case 'newMonth':
+            return { ...state, months: createAllMonths(action.year, action.month, action.navigateToDayPage), currentYear: action.year, currentMonth: action.month, monthSelectorToggle: false };
+        case 'openMonthSelector':
+            return { ...state, monthSelectorToggle: true }
         default:
             throw new Error();
     }
@@ -42,9 +48,9 @@ const Calendar = ({ setCurrentPage }) => {
     const isAnimRunning = useRef(false);
     const isDragging = useRef(false);
     const isPressing = useRef(false);
-    const width = screenResolution().width;
+    let width = window.innerWidth;
     let mouseX = null;
-    let currentposition = null;
+    let currentposition = initMonths / 2;
 
     const scroll = (e) => {
         if (e.deltaY > 0) nextMonth();
@@ -53,17 +59,21 @@ const Calendar = ({ setCurrentPage }) => {
 
     const nextMonth = () => {
         if (!isAnimRunning.current) {
-            isAnimRunning.current = true;
             const monthContainer = document.getElementById("monthsContainer");
-            tween(monthContainer.scrollLeft, monthContainer.scrollLeft + width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'nextMonth' }) });
+            if (monthContainer.scrollLeft !== (width * (initMonths - 1))) {
+                isAnimRunning.current = true;
+                tween(monthContainer.scrollLeft, monthContainer.scrollLeft + width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'nextMonth' }) });
+            }
         }
     }
 
     const previousMonth = () => {
         if (!isAnimRunning.current) {
-            isAnimRunning.current = true;
             const monthContainer = document.getElementById("monthsContainer");
-            tween(monthContainer.scrollLeft, monthContainer.scrollLeft - width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'prevMonth' }) });
+            if (monthContainer.scrollLeft !== 0) {
+                isAnimRunning.current = true;
+                tween(monthContainer.scrollLeft, monthContainer.scrollLeft - width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'prevMonth' }) });
+            }
         }
     }
 
@@ -96,6 +106,7 @@ const Calendar = ({ setCurrentPage }) => {
             if ((monthContainer.scrollLeft / width) - currentposition > initDeadZoneScroll) direction = true;
             if ((monthContainer.scrollLeft / width) - currentposition < -initDeadZoneScroll) direction = false;
             if (direction != null) direction ? nextposition += 1 : nextposition -= 1;
+            currentposition = nextposition;
             tween(
                 monthContainer.scrollLeft,
                 nextposition * width, 500,
@@ -112,10 +123,20 @@ const Calendar = ({ setCurrentPage }) => {
         }
     }
 
+    const changeWidth = () => {
+        width = window.innerWidth;
+        const monthContainer = document.getElementById("monthsContainer");
+        monthContainer.scrollLeft = (currentposition * width);
+    }
+
     const navigateToDayPage = (day) => {
         if (!isDragging.current) {
             setCurrentPage(pageNames.HOME);
         }
+    }
+
+    const CallbackMonthSelector = (newYear, newMonth) => {
+        dispatch({ type: "newMonth", month: newMonth, year: newYear, navigateToDayPage: navigateToDayPage })
     }
 
 
@@ -123,7 +144,7 @@ const Calendar = ({ setCurrentPage }) => {
         const calendarNext = document.getElementById("calendar_next");
         const calendarPrev = document.getElementById("calendar_prev");
         const monthContainer = document.getElementById("monthsContainer");
-        window.addEventListener('wheel', scroll, false);
+        monthContainer.addEventListener('wheel', scroll, false);
         calendarNext.addEventListener("click", nextMonth, false);
         calendarNext.addEventListener("touchend", nextMonth, false);
         calendarPrev.addEventListener("click", previousMonth, false);
@@ -131,9 +152,10 @@ const Calendar = ({ setCurrentPage }) => {
         monthContainer.addEventListener("touchstart", startDrag, false);
         monthContainer.addEventListener("touchmove", moveDrag, false);
         window.addEventListener("touchend", endDrag, false);
+        window.addEventListener('resize', changeWidth, false);
         dispatch({ type: 'createMonths', navigateToDayPage: navigateToDayPage })
         return () => {
-            window.removeEventListener('wheel', scroll, false);
+            monthContainer.removeEventListener('wheel', scroll, false);
             calendarNext.removeEventListener("click", nextMonth, false);
             calendarNext.removeEventListener("touchend", nextMonth, false);
             calendarPrev.removeEventListener("click", previousMonth, false);
@@ -141,6 +163,7 @@ const Calendar = ({ setCurrentPage }) => {
             monthContainer.removeEventListener("touchstart", startDrag, false);
             monthContainer.removeEventListener("touchmove", moveDrag, false);
             window.removeEventListener("touchend", endDrag, false);
+            window.addEventListener('resize', changeWidth, false);
         }
     }, []);
 
@@ -151,13 +174,18 @@ const Calendar = ({ setCurrentPage }) => {
 
     return (
         <Container>
+            <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentMonth} currentYear={state.currentYear} callback={CallbackMonthSelector} />
             <TopBarContainer>
-                <Button>
-                    <Year>{state.currentYear}</Year>
-                </Button>
-                <Button>
-                    <Month>{state.monthNames[state.currentMonth]}</Month>
-                </Button>
+                <FlexContainer>
+                    <ButtonYear onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
+                        <Year>{state.currentYear}</Year>
+                    </ButtonYear>
+                </FlexContainer>
+                <FlexContainer>
+                    <ButtonMonth onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
+                        <Month>{state.monthNames[state.currentMonth]}</Month>
+                    </ButtonMonth>
+                </FlexContainer>
                 <ButtonContainer>
                     <RightFloat>
                         <IconButton id="calendar_prev" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
@@ -173,7 +201,7 @@ const Calendar = ({ setCurrentPage }) => {
             <MonthsContainer id="monthsContainer">
                 {state.months}
             </MonthsContainer>
-        </Container>
+        </Container >
     )
 }
 
@@ -285,16 +313,22 @@ const Year = styled.p`
     font-size: 25px;
     user-select: none;
     margin: 0;
-    margin-left: 20px;
-    float: left;
     &:hover{
         cursor: pointer;
     }
 `
-
-const Button = styled.div`
+const FlexContainer = styled.div`
     flex: 1;
 `
+const ButtonMonth = styled.div`
+    margin: auto;
+    width: fit-content;
+`
+const ButtonYear = styled.div`
+    width: fit-content;
+    margin-left: 20px;
+`
+
 const DayNamesContainer = styled.div`
     position: relative;
     z-index: 1;
