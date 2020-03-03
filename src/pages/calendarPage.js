@@ -35,7 +35,7 @@ const reducer = (state, action) => {
         case 'createMonths':
             return { ...state, months: createAllMonths(new Date().getFullYear(), new Date().getMonth(), action.navigateToDayPage) }
         case 'newMonth':
-            return { ...state, months: createAllMonths(action.year, action.month, action.navigateToDayPage), currentYear: action.year, currentMonth: action.month, monthSelectorToggle: false };
+            return { ...state, months: createAllMonths(action.year, action.month, action.navigateToDayPage), currentYear: action.year, currentMonth: action.month, monthSelectorToggle: false, selectedDate: new Date(action.year, action.month, 1) };
         case 'openMonthSelector':
             return { ...state, monthSelectorToggle: true }
         default:
