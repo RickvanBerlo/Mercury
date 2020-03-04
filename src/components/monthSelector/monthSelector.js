@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import languageSelector from '../../utils/languageSelector';
+import GenerateUUID from '../../utils/GenerateUUID';
 
 const INIT_ITEM_HEIGHT = 60;
 
@@ -44,7 +45,7 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
             callback(selectedYear, selectedMonth);
             setSend(false);
         }
-    }, [send])
+    }, [send, callback, selectedYear, selectedMonth])
 
     const setYear = (year) => {
         if (!isDragging)
@@ -98,7 +99,7 @@ const createYears = (names, selected, callback) => {
 
     for (let i = 0; i < names.length; i++) {
         years.push(
-            <Item key={i} onClick={() => { callback(names[i]) }} onTouchEnd={() => { callback(names[i]) }}>
+            <Item key={GenerateUUID()} onClick={() => { callback(names[i]) }} onTouchEnd={() => { callback(names[i]) }}>
                 <Name toggle={i === selected - 1920}>{names[i]}</Name>
             </Item>
         )
@@ -111,7 +112,7 @@ const createMonths = (names, selected, callback) => {
 
     for (let i = 0; i < names.length; i++) {
         months.push(
-            <Item key={i} onClick={() => { callback(i) }} onTouchEnd={() => { callback(i) }}>
+            <Item key={GenerateUUID()} onClick={() => { callback(i) }} onTouchEnd={() => { callback(i) }}>
                 <Name toggle={i === selected}>{names[i]}</Name>
             </Item>
         )
@@ -159,8 +160,7 @@ const Item = styled.div`
     position: relative;
     z-index: 2;
     width: 100%;
-    height: ${INIT_ITEM_HEIGHT}px;
-    font-size: 20px;
+    height: ${INIT_ITEM_HEIGHT}px;  
     transition: background-color 0.3s linear;
     &:hover{
         cursor: pointer;
@@ -203,7 +203,7 @@ const BottomBar = styled.div`
 const MiddleContainer = styled.div`
     position: relative;
     top: -45%;
-    width: 500px;
+    width: 400px;
     height: 400px;
     margin: auto;
     max-width: 80%;
@@ -220,7 +220,7 @@ const Bar = styled.div`
 const SelectorContainer = styled.div`
     position: relative;
     z-index: 100;
-    flex: 5;
+    flex: 8;
     box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
     overflow: auto;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */

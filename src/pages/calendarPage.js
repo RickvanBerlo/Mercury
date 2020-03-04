@@ -1,16 +1,17 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import { easings, tween } from '../utils/scrollAnimation';
-import screenResolution from '../utils/screenResolution';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
 import { pageNames } from '../constants/pages';
 import MonthSelector from '../components/monthSelector/monthSelector';
+import UUID from '../utils/GenerateUUID';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
+import AddIcon from 'react-ionicons/lib/MdAdd';
 
 const initialState = {
     currentMonth: new Date().getMonth(),
@@ -33,7 +34,7 @@ const reducer = (state, action) => {
             state.selectedDate.setMonth(state.selectedDate.getMonth() - 1);
             return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
         case 'createMonths':
-            return { ...state, months: createAllMonths(new Date().getFullYear(), new Date().getMonth(), action.navigateToDayPage) }
+            return { ...state, months: createAllMonths(action.selectedDay.getFullYear(), action.selectedDay.getMonth(), action.navigateToDayPage), selectedDate: action.selectedDay, currentYear: action.selectedDay.getFullYear(), currentMonth: action.selectedDay.getMonth(), }
         case 'newMonth':
             return { ...state, months: createAllMonths(action.year, action.month, action.navigateToDayPage), currentYear: action.year, currentMonth: action.month, monthSelectorToggle: false, selectedDate: new Date(action.year, action.month, 1) };
         case 'openMonthSelector':
@@ -43,7 +44,7 @@ const reducer = (state, action) => {
     }
 }
 
-const Calendar = ({ setCurrentPage }) => {
+const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const isAnimRunning = useRef(false);
     const isDragging = useRef(false);
@@ -131,7 +132,7 @@ const Calendar = ({ setCurrentPage }) => {
 
     const navigateToDayPage = (day) => {
         if (!isDragging.current) {
-            setCurrentPage(pageNames.HOME);
+            setCurrentPage(pageNames.DAY, { selectedDay: day });
         }
     }
 
@@ -153,7 +154,7 @@ const Calendar = ({ setCurrentPage }) => {
         monthContainer.addEventListener("touchmove", moveDrag, false);
         window.addEventListener("touchend", endDrag, false);
         window.addEventListener('resize', changeWidth, false);
-        dispatch({ type: 'createMonths', navigateToDayPage: navigateToDayPage })
+        dispatch({ type: 'createMonths', selectedDay: selectedDay, navigateToDayPage: navigateToDayPage })
         return () => {
             monthContainer.removeEventListener('wheel', scroll, false);
             calendarNext.removeEventListener("click", nextMonth, false);
@@ -201,6 +202,9 @@ const Calendar = ({ setCurrentPage }) => {
             <MonthsContainer id="monthsContainer">
                 {state.months}
             </MonthsContainer>
+            <AddButton onClick={() => { setCurrentPage(pageNames.EVENT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENT); }}>
+                <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
+            </AddButton>
         </Container >
     )
 }
@@ -208,7 +212,7 @@ const Calendar = ({ setCurrentPage }) => {
 const getDayNames = (state) => {
     let names = [];
     for (let i = 0; i < state.dayNames.length; i++) {
-        names.push(<DateName key={i}>{state.dayNames[i]}</DateName>)
+        names.push(<DateName key={UUID()}>{state.dayNames[i]}</DateName>)
     }
     return names;
 }
@@ -219,7 +223,7 @@ const createAllMonths = (currentYear, currentMonth, callback) => {
     firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() - initMonths / 2);
     for (let i = -initMonths / 2; i < initMonths / 2; i++) {
         months.push(
-            <MonthContainer key={i}>
+            <MonthContainer key={UUID()}>
                 <DaysContainer>
                     {createMonth(firstDayOfSelectedYearAndMonth, callback)}
                 </DaysContainer>
@@ -237,7 +241,7 @@ const createWeekDates = (selectedDate) => {
     let weekDates = [];
     let firstDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
     for (let i = 0; i < 6; i++) {
-        weekDates.push(<WeekDate key={i}>{getCorrectWeekNumber(firstDay)}</WeekDate>);
+        weekDates.push(<WeekDate key={UUID()}>{getCorrectWeekNumber(firstDay)}</WeekDate>);
         firstDay.setDate(firstDay.getDate() + 7);
     }
     return weekDates;
@@ -255,7 +259,7 @@ const createMonth = (selectedDate, callback) => {
     firstDayOfMonth.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
     for (let i = 0; i < 6; i++) {
         grid.push(
-            <WeekContainer key={i}>
+            <WeekContainer key={UUID()}>
                 {createDays(firstDayOfMonth, month, callback)}
             </WeekContainer>
         )
@@ -270,8 +274,19 @@ const createDays = (begin, month, callback) => {
     let today = new Date().toLocaleDateString('nl');
 
     for (let i = 0; i < 7; i++) {
-        let day = firstDayOfThisWeek.getDate();
-        days.push(<Day key={i} onClick={() => { callback(firstDayOfThisWeek) }} onTouchEnd={() => { callback(firstDayOfThisWeek) }}><DayNumber today={firstDayOfThisWeek.toLocaleDateString('nl') === today ? true : false} toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>{day}</DayNumber></Day>)
+        const currentDate = new Date(firstDayOfThisWeek);
+        days.push(
+            <Day
+                key={UUID()}
+                onClick={() => { callback(currentDate) }}
+                onTouchEnd={() => { callback(currentDate) }}>
+                <DayNumber
+                    today={currentDate.toLocaleDateString('nl') === today ? true : false}
+                    toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>
+                    {currentDate.getDate()}
+                </DayNumber>
+            </Day>
+        )
         firstDayOfThisWeek.setDate(firstDayOfThisWeek.getDate() + 1);
     }
     return days;
@@ -304,6 +319,7 @@ const Month = styled.p`
 
 const RightFloat = styled.div`
     float: right;
+    display: flex;
     margin-top: 10px;
 `
 
@@ -388,6 +404,16 @@ const WeekContainer = styled.div`
     flex: 1;
 `
 
+const AddButton = styled.div`
+    position: absolute;
+    z-index: 3;
+    bottom: 20px;
+    right: 30px;
+    border-radius: 100px;
+    background-color: ${colors.WHITE};
+    box-shadow: 0px 2px 10px 0px ${colors.BLACK};
+`
+
 const Day = styled.div`
     border: 0.5px solid ${colors.LIGHT_GRAY};
     flex: 1;
@@ -440,4 +466,12 @@ const MonthsContainer = styled.div`
         display: none;  /* Safari and Chrome */
     }
 `
-export default Calendar;
+
+const areEqual = (prevProps, nextProps) => {
+    if (prevProps.selectedDay === undefined) return true;
+    if (prevProps.selectedDay === nextProps.selectedDay) return true;
+    return false;
+}
+
+const MemoCalendar = memo(Calendar, areEqual);
+export default MemoCalendar;

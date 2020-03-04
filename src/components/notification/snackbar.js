@@ -8,8 +8,15 @@ const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
     const timeout = useRef(null);
 
     useEffect(() => {
-        document.getElementById("snackbar").addEventListener("animationend", (event) => { if (event.elapsedTime === 0.5) setText("") });
-    })
+        const setTextToEmpty = (event) => {
+            if (event.elapsedTime === 0.5) setText("");
+        }
+        const snackbar = document.getElementById("snackbar");
+        snackbar.addEventListener("animationend", setTextToEmpty, false);
+        return () => {
+            snackbar.removeEventListener("animationend", setTextToEmpty, false);
+        }
+    }, [setText])
 
     useEffect(() => {
         if (text === "") setShowSnackbar(null);
@@ -17,7 +24,7 @@ const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
             setShowSnackbar(true);
             timeout.current = (setTimeout(() => { setShowSnackbar(false) }, timeInSeconds * 1000));
         }
-    }, [text])
+    }, [text, timeInSeconds])
     return (
         <SnackBarContainer id="snackbar" enable={showSnackbar} onTouchStart={() => { disableTimer(timeout, setShowSnackbar) }} onClick={() => { disableTimer(timeout, setShowSnackbar) }}>
             <Text>{text}</Text>
@@ -68,10 +75,10 @@ const SnackBarContainer = styled.div`
     animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.4s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
 `
 
-const AreEqual = (prevProps, nextProps) => {
+const areEqual = (prevProps, nextProps) => {
     if (prevProps.text === nextProps.text) return true;
     return false;
 }
 
-const MemoSnackbar = memo(Snackbar, AreEqual);
+const MemoSnackbar = memo(Snackbar, areEqual);
 export default MemoSnackbar;

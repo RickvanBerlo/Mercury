@@ -1,6 +1,5 @@
 import React, { useEffect, useState, memo } from "react";
 import styled from 'styled-components';
-import { pages } from '../constants/pages';
 import { getCorrectPageByName } from '../utils/pageSelector';
 
 const ANIM_TIME = 400;
@@ -20,7 +19,6 @@ const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPa
             setVisible(true);
         }
     }, [page])
-
     const Page = page === null ? null : getCorrectPageByName(page);
     return (
         <Container id="refresher" visible={visible} seconds={ANIM_TIME}>

@@ -12,7 +12,7 @@ export const getCorrectPageByName = (name) => {
 export const getAllSideMenuButtonPages = () => {
     let buttons = [];
     pages.forEach((item) => {
-        if (item.ICON != undefined) buttons.push(item);
+        if (item.ICON !== undefined) buttons.push(item);
     })
     return buttons;
 }

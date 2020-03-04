@@ -8,14 +8,9 @@ import { mobilecheck } from '../utils/deviceCheck';
 const Home = () => {
     const [time, setTime] = useState(getTime());
     let scroll = useRef(false);
-    let timeout = null;
+    let timeout = useRef(null);
 
     const webLinks = [{ NAME: "nu", LINK: "https://www.nu.nl/" }]
-
-    const updateTime = () => {
-        setTime(getTime())
-        timeout = setTimeout(updateTime, 500);
-    }
 
     const navigateToLink = (link) => {
         if (!scroll.current) {
@@ -30,11 +25,20 @@ const Home = () => {
     }
 
     useEffect(() => {
+        const updateTime = () => {
+            setTime(getTime())
+            timeout.current = setTimeout(updateTime, 500);
+        }
         updateTime();
+        return () => {
+            clearTimeout(timeout.current);
+        }
+    }, [timeout, setTime]);
+
+    useEffect(() => {
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
-            clearTimeout(timeout);
         }
     }, [])
 

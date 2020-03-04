@@ -5,6 +5,8 @@ import StoragePage from '../pages/storagePage';
 import ScrumboardsPage from '../pages/scrumboardsPage';
 import BillsPage from '../pages/billsPage';
 import ConfigPage from '../pages/configPage';
+import DayPage from '../pages/dayPage';
+import EventPage from '../pages/eventPage';
 
 import CalanderIcon from 'react-ionicons/lib/MdCalendar';
 import HomeIcon from 'react-ionicons/lib/MdHome';
@@ -22,6 +24,8 @@ export const pageNames = {
     SCRUMBOARDS: "Srumboards",
     BILLS: "Bills",
     CONFIG: "Config",
+    DAY: "Day",
+    EVENT: "Event",
 }
 
 export const pages = [
@@ -32,4 +36,6 @@ export const pages = [
     { NAME: pageNames.SCRUMBOARDS, PAGE: ScrumboardsPage, ICON: ScrumboardsIcon },
     { NAME: pageNames.BILLS, PAGE: BillsPage, ICON: BillsIcon },
     { NAME: pageNames.CONFIG, PAGE: ConfigPage, ICON: ConfigIcon },
+    { NAME: pageNames.DAY, PAGE: DayPage },
+    { NAME: pageNames.EVENT, PAGE: EventPage },
 ]
