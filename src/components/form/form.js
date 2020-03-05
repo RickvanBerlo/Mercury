@@ -1,27 +1,27 @@
-import React, { useState, cloneElement } from "react";
+import React, { useState, cloneElement, useRef } from "react";
 import styled from 'styled-components';
 
 import SubmitButton from './submitButton';
 
 
 const FormWrapper = ({ submitButtonName, elements, onSubmit }) => {
-    const [validations, setvalidations] = useState(new Array(elements.length).fill(false));
-    const [values, setvalues] = useState({});
-    const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations));
-    const getValues = (index, name, value, valid) => {
-        let tmpValidations = validations;
-        let tmpValues = values;
+    const validations = useRef(new Array(elements.length).fill(false));
+    const values = useRef({});
+    const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations.current));
 
+    const getValues = (index, name, value, valid) => {
+        let tmpValidations = validations.current;
+        let tmpValues = values.current;
         tmpValidations[index] = valid;
         tmpValues[name] = value;
 
-        setvalidations(tmpValidations);
-        setvalues(tmpValues);
-        setEnableSubmit(CheckIfAllAreValid(validations));
+        validations.current = tmpValidations
+        values.current = tmpValues;
+        setEnableSubmit(CheckIfAllAreValid(validations.current));
     }
 
     return (
-        <Form onSubmit={(event) => { handleSubmit(event, values, onSubmit) }}>
+        <Form onSubmit={(event) => { handleSubmit(event, values.current, onSubmit) }}>
             {elements.map((element, index) => {
                 return cloneElement(element, { key: index, getValues: getValues }, null);
             })}
@@ -29,6 +29,7 @@ const FormWrapper = ({ submitButtonName, elements, onSubmit }) => {
         </Form>
     )
 }
+
 
 const handleSubmit = (event, values, onSubmit) => {
     onSubmit(event, values);

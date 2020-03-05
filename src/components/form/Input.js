@@ -1,15 +1,20 @@
-import React from "react";
+import React, { memo, useState } from "react";
 import styled from 'styled-components';
 
-const InputWrapper = ({ index, type, name, validation = (value) => { return true }, getValues, props }) => {
+const InputWrapper = ({ index, type, name, validation = () => { return true }, getValues, props }) => {
+    const [value, setValue] = useState(props.value === undefined ? "" : props.value);
+
+    getValues(index, name, value, validation(value))
+
     return (
         <Input
+            {...props}
             type={type}
             name={name}
-            onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)) }}
-            {...props}
+            value={value}
+            onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)); setValue(event.target.value) }}
         >
-        </Input>
+        </Input >
     )
 }
 
@@ -23,4 +28,9 @@ const Input = styled.input`
     margin-bottom: 20px;
 `
 
-export default InputWrapper;
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+const MemoInputWrapper = memo(InputWrapper, areEqual)
+export default MemoInputWrapper;

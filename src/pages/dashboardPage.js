@@ -8,7 +8,7 @@ import { pageNames } from '../constants/pages';
 
 const Dashboard = ({ history }) => {
     const [snackbarText, setSnackBarText] = useState("Goede morgen Rick");
-    const [currentPage, setCurrentPage] = useState(pageNames.CALENDAR);
+    const [currentPage, setCurrentPage] = useState(pageNames.EVENT);
     const [previousPage, setPreviousPage] = useState(null);
     const [currentPageParam, setCurrentPageParam] = useState({});
 

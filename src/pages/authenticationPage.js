@@ -15,8 +15,6 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     const [toggle, setToggle] = useState(ToggleLogin);
     const [textSnackbar, setTextSnackbar] = useState("");
 
-    console.log(history);
-
     const CalculateDegree = () => {
         const percent = invlerp(700, 1250, window.innerWidth);
         const limit = percent > 1 ? 1 : percent < 0 ? 0 : percent;
@@ -26,7 +24,6 @@ const Authentication = ({ history, ToggleLogin = true }) => {
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        console.log(values);
         if (values.name === undefined) {
             history.replace("/authentication");
             window.location.href = "http://localhost:3000/dashboard";

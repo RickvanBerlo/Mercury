@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 
 const SubmitButtonWrapper = ({ name, submitButtonEnable, props }) => {
-
     return (
         <SubmitButton
             type="submit"

@@ -51,7 +51,6 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     }
 
     const endDrag = (event) => {
-        event.preventDefault();
         if (pressed) {
             drag ? sidemenuX.current = sidemenuX.current >= -150 ? 0 : -300 : sidemenuX.current = sidemenuX.current === 0 ? -300 : 0;
             setPositionSideMenu(sidemenuX.current);
