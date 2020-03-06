@@ -10,16 +10,14 @@ import background from '../assets/background.jpg';
 import Snackbar from '../components/notification/snackbar';
 
 const Authentication = ({ history, ToggleLogin = true }) => {
-    const [degree, setDegree] = useState(0);
-    const [formWidth, setFormWidth] = useState(0);
+    const [degree, setDegree] = useState(calculateFormWitdh());
+    const [formWidth, setFormWidth] = useState(calculateDegree());
     const [toggle, setToggle] = useState(ToggleLogin);
     const [textSnackbar, setTextSnackbar] = useState("");
 
-    const CalculateDegree = () => {
-        const percent = invlerp(700, 1250, window.innerWidth);
-        const limit = percent > 1 ? 1 : percent < 0 ? 0 : percent;
-        setDegree(lerp(0, 30, limit));
-        setFormWidth(lerp(35, 60, 1 - limit));
+    const calculateDegreeAndFormWith = () => {
+        setDegree(calculateDegree());
+        setFormWidth(calculateFormWitdh());
     }
 
     const onSubmit = (event, values) => {
@@ -34,10 +32,20 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     }
 
     useEffect(() => {
-        CalculateDegree();
-    })
+        window.addEventListener("resize", calculateDegreeAndFormWith, false);
+        return () => {
+            window.removeEventListener("resize", calculateDegreeAndFormWith, false);
+        }
+    }, [])
 
-    window.addEventListener("resize", CalculateDegree);
+    useEffect(() => {
+        if (toggle) {
+            history.push("/login")
+        } else {
+            history.push("/register")
+        }
+    }, [toggle])
+
     return (
         <Container background={background} >
             <Snackbar timeInSeconds={4} text={textSnackbar} setText={setTextSnackbar} />
@@ -65,6 +73,18 @@ const Authentication = ({ history, ToggleLogin = true }) => {
             </HideOverflow>
         </Container >
     )
+}
+
+const calculateFormWitdh = () => {
+    const percent = invlerp(700, 1250, window.innerWidth);
+    const limit = percent > 1 ? 1 : percent < 0 ? 0 : percent;
+    return lerp(35, 60, 1 - limit);
+}
+
+const calculateDegree = () => {
+    const percent = invlerp(700, 1250, window.innerWidth);
+    const limit = percent > 1 ? 1 : percent < 0 ? 0 : percent;
+    return lerp(0, 30, limit);
 }
 
 const TogglePages = (toggle, setToggle) => {

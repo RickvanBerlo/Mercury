@@ -14,8 +14,11 @@ const Routes = () => {
     return (
         <Switch>
             <PublicRoute exact path="/" component={CurriculemVitae} />
-            <PublicRoute path="/authentication" render={(routeProps) => {
+            <PublicRoute path="/login" render={(routeProps) => {
                 return <Authentication ToggleLogin={true} {...routeProps} />
+            }} />
+            <PublicRoute path="/register" render={(routeProps) => {
+                return <Authentication ToggleLogin={false} {...routeProps} />
             }} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
             <PublicRoute component={CurriculemVitae} />
