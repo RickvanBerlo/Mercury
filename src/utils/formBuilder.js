@@ -3,6 +3,7 @@ import React from "react";
 import Form from '../components/form/form';
 import Input from '../components/form/Input';
 import Checkbox from '../components/form/checkbox';
+import TimePicker from '../components/form/timePicker';
 
 class FormBuilder {
     #elements;
@@ -17,19 +18,24 @@ class FormBuilder {
         return true;
     }
 
-    addTextInput(name, validation = undefined, props = {}) {
+    addTextInput(name, label = undefined, validation = undefined, props = {}) {
         const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} type="text" name={name} validation={val} props={props}></Input>)
+        this.elements.push(<Input index={this.elements.length} label={label} type="text" name={name} validation={val} props={props}></Input>)
     }
 
-    addPasswordInput(name, validation = undefined, props = {}) {
+    addPasswordInput(name, label = undefined, validation = undefined, props = {}) {
         const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} type="password" name={name} validation={val} props={props}></Input>)
+        this.elements.push(<Input index={this.elements.length} label={label} type="password" name={name} validation={val} props={props}></Input>)
     }
 
-    addDateInput(name, validation = undefined, props = {}) {
+    addDateInput(name, label = undefined, validation = undefined, props = {}) {
         const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} type="date" name={name} validation={val} props={props}></Input>)
+        this.elements.push(<Input index={this.elements.length} label={label} type="date" name={name} validation={val} props={props}></Input>)
+    }
+
+    addTimeInput(name, label = undefined, validation = undefined, props = {}) {
+        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
+        this.elements.push(<TimePicker index={this.elements.length} label={label} name={name} validation={val} props={props}></TimePicker>)
     }
 
     addCheckboxInput(name, label, props = {}) {

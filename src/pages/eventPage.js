@@ -46,11 +46,13 @@ const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
 const buildForm = (formBuilder, onSubmit, selectedDay) => {
     let value = selectedDay.toLocaleDateString('en-CA');
     const builder = new formBuilder();
-    builder.addTextInput("title", undefined, { required: true, placeholder: "Title" });
-    builder.addTextInput("description", undefined, { required: true, placeholder: "Description" });
-    builder.addDateInput("startDate", undefined, { required: true, value: value });
-    builder.addDateInput("endDate", undefined, { required: true, value: value });
+    builder.addTextInput("title", "Titel", undefined, { required: true, placeholder: "Title" });
+    builder.addTextInput("description", "Beschrijving", undefined, { required: true, placeholder: "Description" });
+    builder.addDateInput("startDate", "Start datum", undefined, { required: true, value: value });
+    builder.addDateInput("endDate", "Eind datum", undefined, { required: true, value: value });
     builder.addCheckboxInput("AllDay", "Hele dag");
+    builder.addTimeInput("startTime", "Begin tijd", undefined);
+    builder.addTimeInput("endTime", "Eind tijd", undefined)
     return builder.getForm("Verzenden", onSubmit);
 }
 
@@ -83,11 +85,11 @@ const TopBar = styled.div`
 `
 
 const EventContainer = styled.div`
-    padding-top: 30px;
     margin: auto;
+    margin-top: 30px;
     width: 700px;
     max-width: 80%;
-    height: calc(100% - 50px);
+    height: calc(100% - 80px);
 `
 
 export default Event;
