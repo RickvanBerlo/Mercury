@@ -2,6 +2,7 @@ import React from "react";
 
 import Form from '../components/form/form';
 import Input from '../components/form/Input';
+import TextArea from '../components/form/textArea';
 import Checkbox from '../components/form/checkbox';
 import TimePicker from '../components/form/timePicker';
 
@@ -21,6 +22,11 @@ class FormBuilder {
     addTextInput(name, label = undefined, validation = undefined, props = {}) {
         const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
         this.elements.push(<Input index={this.elements.length} label={label} type="text" name={name} validation={val} props={props}></Input>)
+    }
+
+    addTextAreaInput(name, label = undefined, validation = undefined, props = {}) {
+        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
+        this.elements.push(<TextArea index={this.elements.length} label={label} name={name} validation={val} props={props}></TextArea>)
     }
 
     addPasswordInput(name, label = undefined, validation = undefined, props = {}) {
@@ -43,8 +49,8 @@ class FormBuilder {
     }
 
 
-    getForm(submitButtonName, onSubmit) {
-        return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit}></Form>;
+    getForm(submitButtonName, onSubmit, dependencies = []) {
+        return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit} dependencies={dependencies}></Form>;
     }
 }
 

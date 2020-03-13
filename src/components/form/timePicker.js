@@ -3,15 +3,20 @@ import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import GenerateUUID from '../../utils/GenerateUUID';
 
-const InputWrapper = ({ index, label, name, validation = () => { return true }, getValues, props }) => {
+const TimePickerWrapper = ({ index, label, name, validation = () => { return true }, getValues, dependencyValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
     const [toggle, setToggle] = useState(null);
+    const show = dependencyValues.every(checkIstruthy);
 
     getValues(index, name, value, validation(value))
 
     const changeToggle = () => {
         setToggle(!toggle);
     }
+
+    useEffect(() => {
+        if (!show) setValue("00:00");
+    }, [show])
 
     useEffect(() => {
         if (toggle) {
@@ -29,13 +34,14 @@ const InputWrapper = ({ index, label, name, validation = () => { return true }, 
     }, [])
 
     return (
-        <Container>
+        <Container show={show}>
             {label !== undefined ? <Label>{label}</Label> : null}
             <HiddenCheckbox
                 {...props}
                 type="time"
                 name={name}
                 value={value}
+                disabled={!show}
                 onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)); setValue(event.target.value) }}
             >
             </HiddenCheckbox >
@@ -53,6 +59,11 @@ const InputWrapper = ({ index, label, name, validation = () => { return true }, 
             </ContainerPopup>
         </Container>
     )
+}
+
+const checkIstruthy = (value) => {
+    if (value) return true;
+    return false;
 }
 
 const createGrid = (value, callback) => {
@@ -103,6 +114,7 @@ const ContainerPopup = styled.div`
 
 const Container = styled.div`
     margin-bottom: 20px;
+    display: ${props => props.show ? "block" : "none"}
 `
 
 const TopBar = styled.div`
@@ -247,8 +259,15 @@ const Time = styled.p`
 `
 
 const areEqual = (prevProps, nextProps) => {
-    return true;
+    let areEqual = true;
+    nextProps.dependencyValues.forEach((element, index) => {
+        if (element != prevProps.dependencyValues[index]) {
+            areEqual = false;
+            return;
+        }
+    });
+    return areEqual;
 }
 
-const MemoInputWrapper = memo(InputWrapper, areEqual)
-export default MemoInputWrapper;
+const MemoTimePickerWrapper = memo(TimePickerWrapper, areEqual)
+export default MemoTimePickerWrapper;

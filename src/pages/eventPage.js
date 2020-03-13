@@ -44,16 +44,16 @@ const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
 }
 
 const buildForm = (formBuilder, onSubmit, selectedDay) => {
-    let value = selectedDay.toLocaleDateString('en-CA');
+    const value = selectedDay.toLocaleDateString('en-CA');
     const builder = new formBuilder();
     builder.addTextInput("title", "Titel", undefined, { required: true, placeholder: "Title" });
-    builder.addTextInput("description", "Beschrijving", undefined, { required: true, placeholder: "Description" });
     builder.addDateInput("startDate", "Start datum", undefined, { required: true, value: value });
     builder.addDateInput("endDate", "Eind datum", undefined, { required: true, value: value });
-    builder.addCheckboxInput("AllDay", "Hele dag");
+    builder.addCheckboxInput("time", "Tijdsindeling");
     builder.addTimeInput("startTime", "Begin tijd", undefined);
-    builder.addTimeInput("endTime", "Eind tijd", undefined)
-    return builder.getForm("Verzenden", onSubmit);
+    builder.addTimeInput("endTime", "Eind tijd", undefined, undefined);
+    builder.addTextAreaInput("description", "Beschrijving", undefined, { required: true, placeholder: "Description", rows: "10" });
+    return builder.getForm("Verzenden", onSubmit, { "startTime": ["time"], "endTime": ["time"] });
 }
 
 const Container = styled.div`
