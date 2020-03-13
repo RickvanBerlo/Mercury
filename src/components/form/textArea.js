@@ -35,7 +35,7 @@ const Input = styled.textarea`
     border: 1px solid gray;
     border-radius: 5px;
     padding: 8px;
-    width: 100%;
+    width: calc(100% - 16px);
     outline: none;
     margin-bottom: 20px;
 `
