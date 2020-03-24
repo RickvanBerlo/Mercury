@@ -3,6 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import languageSelector from '../../utils/languageSelector';
 import GenerateUUID from '../../utils/GenerateUUID';
+import Model from '../model/model';
 
 const INIT_ITEM_HEIGHT = 60;
 
@@ -65,14 +66,10 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
         setIsDragging(false);
     }
 
-    return (
-        <Container enable={enable}>
-            <MiddleContainer enable={enable}>
-                <TopBar>
-                    <Title>Selecteer uw datum</Title>
-                </TopBar>
+    const createContent = () => {
+        return (
+            <Container>
                 <SelectorsContainer>
-                    <Bar />
                     <SelectorContainer id="yearSelector">
                         {createYears(years, selectedYear, setYear)}
                     </SelectorContainer>
@@ -80,7 +77,6 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
                     <SelectorContainer id="monthSelector">
                         {createMonths(months, selectedMonth, setMonth)}
                     </SelectorContainer>
-                    <Bar />
                 </SelectorsContainer>
                 <BottomBar>
                     <Button onClick={() => { setSend(true) }} onTouchEnd={() => { setSend(true) }}>
@@ -89,8 +85,12 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
                         </ButtonText>
                     </Button>
                 </BottomBar>
-            </MiddleContainer>
-        </Container >
+            </Container>
+        )
+    }
+
+    return (
+        <Model toggle={enable} setToggle={() => { setSend(true) }} title={"selecteer een maand"} content={createContent()} />
     )
 }
 
@@ -120,40 +120,7 @@ const createMonths = (names, selected, callback) => {
     return months;
 }
 
-const Show = keyframes`
-    from{
-        top: -45%;
-    }
-    to {
-        top 10%;
-    }
-`
-const Hide = keyframes`
-    from{
-        top: 10%;
-    }
-    to {
-        top -45%;
-    }
-`
-
 const Container = styled.div`
-    position: absolute;
-    z-index: 2;
-    height: 100vh;
-    width: 100vw;
-    background-color: ${colors.TRANSPARENT};
-    visibility: ${props => props.enable ? "visible" : "hidden"}
-    transition: visibility 0.1s ${props => props.enable ? "0s" : "0.5s"} linear;
-`
-
-const Title = styled.p`
-    margin: 0;
-    font-size: 25px;
-    padding-top: 15px;
-    height: 100%;
-    user-select: none;
-    color: ${colors.DARK_GREEN}
 `
 
 const Item = styled.div`
@@ -171,6 +138,7 @@ const Name = styled.p`
     margin: 0;
     color: ${colors.DARK_GREEN}
     line-height: 60px;
+    text-align: center;
     font-size: ${props => props.toggle ? "30px" : "20px"}
     text-decoration: ${props => props.toggle ? "underline" : "none"};
     transition: font-size 0.3s linear;
@@ -178,13 +146,6 @@ const Name = styled.p`
     &:hover{
         font-size: 30px;
     }
-`
-
-const TopBar = styled.div`
-    width: 100%;
-    height: 60px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
 `
 
 const SelectorsContainer = styled.div`
@@ -195,22 +156,9 @@ const SelectorsContainer = styled.div`
 
 const BottomBar = styled.div`
     width: 100%;
-    height: 60px;
+    height: 50px;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-`
-
-const MiddleContainer = styled.div`
-    position: relative;
-    top: -45%;
-    width: 400px;
-    height: 400px;
-    margin: auto;
-    max-width: 80%;
-    border-radius: 20px;
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
-    animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.6s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
 `
 
 const Bar = styled.div`
@@ -221,6 +169,7 @@ const SelectorContainer = styled.div`
     position: relative;
     z-index: 100;
     flex: 8;
+    height: 300px;
     box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
     overflow: auto;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -257,6 +206,7 @@ const ButtonText = styled.p`
     margin: 0;
     font-size: 20px;
     line-height: 40px;
+    text-align: center;
     color: ${colors.DARK_GREEN}
 `
 

@@ -20,6 +20,7 @@ const SubmitButton = styled.input`
     min-height: 40px;
     border-radius: 10px;
     padding: 5px 20px;
+    margin-bottom: 10px;
     color: ${colors.BLACK}
     outline: none;
     font: 18px 'Open Sans Bold',sans-serif;
