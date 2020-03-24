@@ -5,6 +5,7 @@ import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
+import Model from '../components/model/model';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
@@ -81,17 +82,7 @@ const Home = () => {
                     {makeWebsiteLinks(webLinks.current, navigateToLink, changeToggle)}
                 </WebsiteLinksContainer>
             </CenterContainer>
-            <ContainerPopup enable={toggle}>
-                <Popup enable={toggle}>
-
-                    <TopBar><Title>Add a shortcut</Title></TopBar>
-                    <MiddleContainer>
-                        <FormContainer>
-                            {buildForm(onSubmit)}
-                        </FormContainer>
-                    </MiddleContainer>
-                </Popup>
-            </ContainerPopup>
+            <Model toggle={toggle} setToggle={setToggle} title="Snelkoppeling toevoegen" content={buildForm(onSubmit)} />
         </Container>
     )
 }
@@ -143,23 +134,6 @@ const getTime = () => {
     s = s < 10 ? "0" + s : s;
     return h + ":" + m + ":" + s;
 }
-
-const Show = keyframes`
-    from{
-        top: -450px;
-    }
-    to {
-        top 10%;
-    }
-`
-const Hide = keyframes`
-    from{
-        top: 10%;
-    }
-    to {
-        top -450px;
-    }
-`
 
 const Container = styled.div`
     width: 100vw;
@@ -282,54 +256,6 @@ const DefaultIconText = styled.p`
     transform: translateY(5px);
     color: ${colors.WHITE};
     font-size: 30px;
-`
-
-const Popup = styled.div`
-    position: absolute;
-    text-align: left;
-    width: 700px;
-    padding-bottom: 30px;
-    top: -450px;
-    z-index: 4;
-    border-radius: 10px;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
-    animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.6s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
-
-`
-const TopBar = styled.div`
-    width: 100%;
-    height: 50px;
-`
-
-const Title = styled.p`
-    font-size: 25px;
-    margin: 0;
-    text-align: center;
-    line-height: 50px;
-    color: ${colors.DARK_GREEN};
-    user-select: none;
-`
-
-const FormContainer = styled.div`
-`
-
-const MiddleContainer = styled.div`
-    width: 90%;
-    margin: auto;
-`
-
-const ContainerPopup = styled.div`
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    visibility: ${props => props.enable ? "visible" : "hidden"}
-    transition: visibility 0.1s ${props => props.enable ? "0s" : "0.5s"} linear;
 `
 
 export default Home;
