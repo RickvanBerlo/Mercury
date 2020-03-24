@@ -10,11 +10,12 @@ import background from '../assets/background.jpg';
 import Snackbar from '../components/notification/snackbar';
 
 const Authentication = ({ history, ToggleLogin = true }) => {
-    const [degree, setDegree] = useState(calculateFormWitdh());
-    const [formWidth, setFormWidth] = useState(calculateDegree());
+    const [degree, setDegree] = useState(calculateDegree());
+    const [formWidth, setFormWidth] = useState(calculateFormWitdh());
     const [toggle, setToggle] = useState(ToggleLogin);
     const [textSnackbar, setTextSnackbar] = useState("");
 
+    console.log(degree);
     const calculateDegreeAndFormWith = () => {
         setDegree(calculateDegree());
         setFormWidth(calculateFormWitdh());
@@ -94,21 +95,17 @@ const TogglePages = (toggle, setToggle) => {
 
 const buildFormLogin = (formBuilder, onSubmit) => {
     const builder = new formBuilder();
-    builder.addTextInput("username", validation, { required: true, placeholder: "e-mail" });
-    builder.addPasswordInput("password", validation, { required: true, placeholder: "wachtwoord" });
+    builder.addTextInput("username", undefined, undefined, { required: true, placeholder: "e-mail" });
+    builder.addPasswordInput("password", undefined, undefined, { required: true, placeholder: "wachtwoord" });
     return builder.getForm("inloggen", onSubmit);
 }
 
 const buildFormRegister = (formBuilder, onSubmit) => {
     const builder = new formBuilder();
-    builder.addTextInput("name", validation, { required: true, placeholder: "naam" });
-    builder.addTextInput("username", validation, { required: true, placeholder: "e-mail" });
-    builder.addPasswordInput("password", validation, { required: true, placeholder: "wachtwoord" });
+    builder.addTextInput("name", undefined, undefined, { required: true, placeholder: "naam" });
+    builder.addTextInput("username", undefined, undefined, { required: true, placeholder: "e-mail" });
+    builder.addPasswordInput("password", undefined, undefined, { required: true, placeholder: "wachtwoord" });
     return builder.getForm("Aanmelden", onSubmit);
-}
-
-const validation = (value) => {
-    return value ? true : false;
 }
 
 const Container = styled.div`
