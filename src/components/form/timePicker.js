@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect } from "react";
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import GenerateUUID from '../../utils/GenerateUUID';
+import Model from '../model/model';
 
 const TimePickerWrapper = ({ index, label, name, validation = () => { return true }, getValues, dependencyValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
@@ -33,6 +34,17 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
         }
     }, [])
 
+    const createContent = () => {
+        return (
+            <div>
+                <SelectorContainer id={name + "Selector"}>
+                    {createGrid(value, setValue)}
+                </SelectorContainer>
+                <BottomBar><Button onClick={changeToggle} onTouchEnd={changeToggle}><ButtonText>Accepteren</ButtonText></Button></BottomBar>
+            </div >
+        )
+    }
+
     return (
         <Container show={show}>
             {label !== undefined ? <Label>{label}</Label> : null}
@@ -48,16 +60,8 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
             <StyledTimePicker id={name} >
                 <Time>{value}</Time>
             </StyledTimePicker>
-            <ContainerPopup enable={toggle}>
-                <Popup enable={toggle}>
-                    <TopBar><Title>Select a time</Title></TopBar>
-                    <SelectorContainer id={name + "Selector"}>
-                        {createGrid(value, setValue)}
-                    </SelectorContainer>
-                    <BottomBar><Button onClick={changeToggle} onTouchEnd={changeToggle}><ButtonText>Accepteren</ButtonText></Button></BottomBar>
-                </Popup>
-            </ContainerPopup>
-        </Container>
+            <Model toggle={toggle} setToggle={setToggle} title="Selecteer een tijd" content={createContent()} />
+        </Container >
     )
 }
 
@@ -83,43 +87,10 @@ const createGrid = (value, callback) => {
     return array;
 }
 
-const Show = keyframes`
-    from{
-        top: -450px;
-    }
-    to {
-        top 10%;
-    }
-`
-const Hide = keyframes`
-    from{
-        top: 10%;
-    }
-    to {
-        top -450px;
-    }
-`
-
-const ContainerPopup = styled.div`
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    visibility: ${props => props.enable ? "visible" : "hidden"}
-    transition: visibility 0.1s ${props => props.enable ? "0s" : "0.5s"} linear;
-`
-
 
 const Container = styled.div`
     margin-bottom: 20px;
     display: ${props => props.show ? "block" : "none"}
-`
-
-const TopBar = styled.div`
-    width: 100%;
-    height: 50px;
 `
 
 const Item = styled.div`
@@ -148,9 +119,9 @@ const Name = styled.p`
 `
 
 const SelectorContainer = styled.div`
-    margin-left: 5%;
-    width: 90%;
-    height: calc(100% - 100px);
+    height: 300px;
+    width: 250px;
+    margin: auto;
     box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
     overflow: auto;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -195,30 +166,6 @@ const Button = styled.div`
             background-color: ${colors.DARK_WHITE};
         }
     }
-`
-
-const Title = styled.p`
-    font-size: 25px;
-    margin: 0;
-    text-align: center;
-    line-height: 50px;
-    color: ${colors.DARK_GREEN};
-    user-select: none;
-`
-
-const Popup = styled.div`
-    position: absolute;
-    width: 250px;
-    height: 400px;
-    top: -450px;
-    z-index: 4;
-    border-radius: 10px;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
-    animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.6s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
-
 `
 
 const Label = styled.div`

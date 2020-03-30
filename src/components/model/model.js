@@ -71,7 +71,6 @@ const Popup = styled.div`
     position: absolute;
     text-align: left;
     max-width: 70%;
-    min-width: 35%
     top: -100%;
     z-index: 3;
     border-radius: 10px;
@@ -97,8 +96,8 @@ const Title = styled.p`
 `
 
 const MiddleContainer = styled.div`
-    width: 90%;
-    margin: auto;
+    margin-left:20px;
+    margin-right: 20px;
 `
 
 const BackgroundPopup = styled.div`

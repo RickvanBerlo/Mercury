@@ -162,13 +162,13 @@ const BottomBar = styled.div`
 `
 
 const Bar = styled.div`
-    flex:1;
+    width: 10px;
 `
 
 const SelectorContainer = styled.div`
     position: relative;
     z-index: 100;
-    flex: 8;
+    width: 150px;
     height: 300px;
     box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
     overflow: auto;

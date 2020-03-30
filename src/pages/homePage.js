@@ -92,7 +92,11 @@ const buildForm = (onSubmit) => {
     const builder = new formBuilder();
     builder.addTextInput("NAME", "Titel", undefined, { required: true, placeholder: "Title" });
     builder.addTextInput("LINK", "Link", (value) => { if (value.match(regex) !== null) return true; return false; }, { required: true, placeholder: "www.website.com" });
-    return builder.getForm("Aanmaken", onSubmit);
+    return (
+        <ContentContainer>
+            {builder.getForm("Aanmaken", onSubmit)}
+        </ContentContainer>
+    )
 }
 
 const makeWebsiteLinks = (webLinks, navigateToLink, changeToggle) => {
@@ -140,6 +144,10 @@ const Container = styled.div`
     height: 100vh;
     text-align: center;
     background-image: linear-gradient(${colors.HEADER_BACKGROUND_COLOR} 80%, ${colors.DARK_GRAY} 1%, ${colors.DARK_GRAY});
+`
+
+const ContentContainer = styled.div`
+    width: 400px;
 `
 
 const SearchBar = styled.input`
