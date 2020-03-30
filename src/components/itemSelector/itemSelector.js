@@ -14,7 +14,7 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
             const Selector = document.getElementById(ID);
             Selector.scrollTop = (items.indexOf(defaultItem) * 50) - 125;
         }
-    }, [toggle, defaultItem])
+    }, [toggle])
 
     useEffect(() => {
         callback(selectedItem);

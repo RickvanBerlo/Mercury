@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
-import { easings, tween } from '../utils/scrollAnimation';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
 import { pageNames } from '../constants/pages';
@@ -13,30 +12,23 @@ import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const initialState = {
-    currentMonth: new Date().getMonth(),
-    currentYear: new Date().getFullYear(),
-    selectedDate: new Date(),
-    monthNames: languageSelector().MONTHS,
-    dayNames: languageSelector().DAYS,
-    months: null,
-    monthSelectorToggle: null,
-};
-const initMonths = 24;
-const initDeadZoneScroll = 0.2;
+//const initMonths = 3;
+
+const DEAD_ZONE_SCROLL = 150;
+const ANIM_TIME = 501;
+const monthNames = languageSelector().MONTHS;
+const dayNames = languageSelector().DAYS;
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'nextMonth':
-            state.selectedDate.setMonth(state.selectedDate.getMonth() + 1);
-            return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
+            state.currentDate.setMonth(state.currentDate.getMonth() + 1);
+            return { ...state };
         case 'prevMonth':
-            state.selectedDate.setMonth(state.selectedDate.getMonth() - 1);
-            return { ...state, currentMonth: state.selectedDate.getMonth(), currentYear: state.selectedDate.getFullYear() };
-        case 'createMonths':
-            return { ...state, months: createAllMonths(action.selectedDay.getFullYear(), action.selectedDay.getMonth(), action.navigateToDayPage), selectedDate: action.selectedDay, currentYear: action.selectedDay.getFullYear(), currentMonth: action.selectedDay.getMonth(), }
+            state.currentDate.setMonth(state.currentDate.getMonth() - 1);
+            return { ...state };
         case 'newMonth':
-            return { ...state, months: createAllMonths(action.year, action.month, action.navigateToDayPage), currentYear: action.year, currentMonth: action.month, monthSelectorToggle: false, selectedDate: new Date(action.year, action.month, 1) };
+            return { ...state, monthSelectorToggle: false, currentDate: new Date(action.year, action.month, 1) };
         case 'openMonthSelector':
             return { ...state, monthSelectorToggle: true }
         default:
@@ -45,146 +37,134 @@ const reducer = (state, action) => {
 }
 
 const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const isAnimRunning = useRef(false);
-    const isDragging = useRef(false);
     const isPressing = useRef(false);
-    let width = window.innerWidth;
-    let mouseX = null;
-    let currentposition = initMonths / 2;
+    const isDragging = useRef(false);
+    let mouseX = 0;
+    let scrollmovement = 0;
+    const monthContainerPositions = useRef([-100, 0, 100]);
+    let timeout = useRef(null);
+    const initialState = (selectedDay) => {
+        return ({
+            currentDate: selectedDay,
+            monthSelectorToggle: null,
+        })
+    };
+
+    const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
+
+    const navigateToDayPage = (day) => {
+        if (timeout.current === null)
+            setCurrentPage(pageNames.DAY, { selectedDay: day });
+    }
 
     const scroll = (e) => {
-        if (e.deltaY > 0) nextMonth();
-        else previousMonth();
+        if (e.deltaY > 0) goToNextMonth();
+        else goToPreviousMonth();
     }
 
-    const nextMonth = () => {
-        if (!isAnimRunning.current) {
-            const monthContainer = document.getElementById("monthsContainer");
-            if (monthContainer.scrollLeft !== (width * (initMonths - 1))) {
-                isAnimRunning.current = true;
-                tween(monthContainer.scrollLeft, monthContainer.scrollLeft + width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'nextMonth' }) });
-            }
+    const goToNextMonth = () => {
+        if (timeout.current === null) {
+            AnimCalendar(-1, monthContainerPositions);
+            timeout.current = setTimeout(() => { dispatch({ type: "nextMonth" }); timeout.current = null; }, ANIM_TIME);
         }
     }
 
-    const previousMonth = () => {
-        if (!isAnimRunning.current) {
-            const monthContainer = document.getElementById("monthsContainer");
-            if (monthContainer.scrollLeft !== 0) {
-                isAnimRunning.current = true;
-                tween(monthContainer.scrollLeft, monthContainer.scrollLeft - width, 500, easings.easeInOutCubic, monthContainer, () => { isAnimRunning.current = false; dispatch({ type: 'prevMonth' }) });
-            }
+    const goToPreviousMonth = () => {
+        if (timeout.current === null) {
+            AnimCalendar(1, monthContainerPositions);
+            timeout.current = setTimeout(() => { dispatch({ type: "prevMonth" }); timeout.current = null; }, ANIM_TIME);
         }
     }
 
-    const startDrag = (e) => {
+    const animBegin = (e) => {
         e.preventDefault();
-        const monthContainer = document.getElementById("monthsContainer");
-        currentposition = Math.round(monthContainer.scrollLeft / width);
-        mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
         isPressing.current = true;
+        mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
     }
 
-    const moveDrag = (e) => {
+    const drag = (e) => {
         e.preventDefault();
         if (isPressing.current) {
             isDragging.current = true;
-            const monthContainer = document.getElementById("monthsContainer");
-
             const newMouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
-            monthContainer.scrollLeft = monthContainer.scrollLeft + (mouseX - newMouseX);
-            mouseX = newMouseX;
+            const monthContainers = document.getElementsByClassName("monthContainer");
+            Array.from(monthContainers).forEach((monthContainer, index) => {
+                monthContainer.style.transition = "none";
+                monthContainer.style.left = `calc(${monthContainerPositions.current[index]}% + ${newMouseX - mouseX}px)`;
+            })
+            scrollmovement = newMouseX - mouseX;
         }
     }
 
-    const endDrag = (e) => {
+    const animEnd = (e) => {
         e.preventDefault();
         if (isPressing.current && isDragging.current) {
-            const monthContainer = document.getElementById("monthsContainer");
-            let direction = null;
-            let nextposition = currentposition;
-            if ((monthContainer.scrollLeft / width) - currentposition > initDeadZoneScroll) direction = true;
-            if ((monthContainer.scrollLeft / width) - currentposition < -initDeadZoneScroll) direction = false;
-            if (direction != null) direction ? nextposition += 1 : nextposition -= 1;
-            currentposition = nextposition;
-            tween(
-                monthContainer.scrollLeft,
-                nextposition * width, 500,
-                easings.easeOutCubic,
-                monthContainer,
-                () => {
-                    isAnimRunning.current = false;
-                    if (direction != null)
-                        dispatch({ type: direction ? 'nextMonth' : 'prevMonth' })
-                }
-            );
             isPressing.current = false;
             isDragging.current = false;
-        }
-    }
-
-    const changeWidth = () => {
-        width = window.innerWidth;
-        const monthContainer = document.getElementById("monthsContainer");
-        monthContainer.scrollLeft = (currentposition * width);
-    }
-
-    const navigateToDayPage = (day) => {
-        if (!isDragging.current) {
-            setCurrentPage(pageNames.DAY, { selectedDay: day });
+            const direction = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
+            AnimCalendar(direction, monthContainerPositions);
+            scrollmovement = 0;
+            timeout.current = setTimeout(() => {
+                if (direction === 1) dispatch({ type: "prevMonth" });
+                if (direction === -1) dispatch({ type: "nextMonth" })
+                timeout.current = null;
+            }, ANIM_TIME);
         }
     }
 
     const CallbackMonthSelector = (newYear, newMonth) => {
-        dispatch({ type: "newMonth", month: newMonth, year: newYear, navigateToDayPage: navigateToDayPage })
+        dispatch({ type: "newMonth", month: newMonth, year: newYear })
     }
 
 
     useEffect(() => {
         const calendarNext = document.getElementById("calendar_next");
         const calendarPrev = document.getElementById("calendar_prev");
-        const monthContainer = document.getElementById("monthsContainer");
-        monthContainer.addEventListener('wheel', scroll, false);
-        calendarNext.addEventListener("click", nextMonth, false);
-        calendarNext.addEventListener("touchend", nextMonth, false);
-        calendarPrev.addEventListener("click", previousMonth, false);
-        calendarPrev.addEventListener("touchend", previousMonth, false);
-        monthContainer.addEventListener("touchstart", startDrag, false);
-        monthContainer.addEventListener("touchmove", moveDrag, false);
-        window.addEventListener("touchend", endDrag, false);
-        window.addEventListener('resize', changeWidth, false);
-        dispatch({ type: 'createMonths', selectedDay: selectedDay, navigateToDayPage: navigateToDayPage })
+        const monthContainers = document.getElementsByClassName("monthContainer");
+        Array.from(monthContainers).forEach(monthContainer => {
+            monthContainer.addEventListener('wheel', scroll, false);
+            monthContainer.addEventListener('mousedown', animBegin, false);
+            monthContainer.addEventListener('mousemove', drag, false);
+            monthContainer.addEventListener('mouseup', animEnd, false);
+        });
+        calendarNext.addEventListener("click", goToNextMonth, false);
+        calendarNext.addEventListener("touchend", goToNextMonth, false);
+        calendarPrev.addEventListener("click", goToPreviousMonth, false);
+        calendarPrev.addEventListener("touchend", goToPreviousMonth, false);
+        // monthContainer.addEventListener("touchstart", startDrag, false);
+        // monthContainer.addEventListener("touchmove", moveDrag, false);
+        // window.addEventListener("touchend", endDrag, false);
         return () => {
-            monthContainer.removeEventListener('wheel', scroll, false);
-            calendarNext.removeEventListener("click", nextMonth, false);
-            calendarNext.removeEventListener("touchend", nextMonth, false);
-            calendarPrev.removeEventListener("click", previousMonth, false);
-            calendarPrev.removeEventListener("touchend", previousMonth, false);
-            monthContainer.removeEventListener("touchstart", startDrag, false);
-            monthContainer.removeEventListener("touchmove", moveDrag, false);
-            window.removeEventListener("touchend", endDrag, false);
-            window.removeEventListener('resize', changeWidth, false);
+            Array.from(monthContainers).forEach(monthContainer => {
+                monthContainer.removeEventListener('wheel', scroll, false);
+                monthContainer.removeEventListener('mousedown', animBegin, false);
+                monthContainer.removeEventListener('mousemove', drag, false);
+                monthContainer.removeEventListener('mouseup', animEnd, false);
+            });
+            calendarNext.removeEventListener("click", goToNextMonth, false);
+            calendarNext.removeEventListener("touchend", goToNextMonth, false);
+            calendarPrev.removeEventListener("click", goToPreviousMonth, false);
+            calendarPrev.removeEventListener("touchend", goToPreviousMonth, false);
+            // monthContainer.removeEventListener("touchstart", startDrag, false);
+            // monthContainer.removeEventListener("touchmove", moveDrag, false);
+            // window.removeEventListener("touchend", endDrag, false);
         }
     }, []);
 
-    useEffect(() => {
-        const monthContainer = document.getElementById("monthsContainer");
-        monthContainer.scrollLeft = width * (initMonths / 2);
-    }, [state.months])
-
+    let nextMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() + 1, state.currentDate.getDate());
+    let prevMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() - 1, state.currentDate.getDate());
     return (
         <Container>
-            <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentMonth} currentYear={state.currentYear} callback={CallbackMonthSelector} />
+            <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentDate.getMonth()} currentYear={state.currentDate.getFullYear()} callback={CallbackMonthSelector} />
             <TopBarContainer>
                 <FlexContainer>
                     <ButtonYear onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
-                        <Year>{state.currentYear}</Year>
+                        <Year>{state.currentDate.getFullYear()}</Year>
                     </ButtonYear>
                 </FlexContainer>
                 <FlexContainer>
                     <ButtonMonth onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
-                        <Month>{state.monthNames[state.currentMonth]}</Month>
+                        <Month>{monthNames[state.currentDate.getMonth()]}</Month>
                     </ButtonMonth>
                 </FlexContainer>
                 <ButtonContainer>
@@ -196,12 +176,21 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
             </TopBarContainer>
             <DayNamesContainer>
                 <DayNames>
-                    {getDayNames(state)}
+                    {getDayNames()}
                 </DayNames>
             </DayNamesContainer>
-            <MonthsContainer id="monthsContainer">
-                {state.months}
-            </MonthsContainer>
+
+            <AnimationContainer className="monthContainer" left="-100%">
+                {createMonth(monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+            </AnimationContainer>
+            <AnimationContainer className="monthContainer" left="0%">
+                {createMonth(monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+            </AnimationContainer>
+            <AnimationContainer className="monthContainer" left="100%">
+                {createMonth(monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+            </AnimationContainer>
+
+
             <AddButton onClick={() => { setCurrentPage(pageNames.EVENT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENT); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
@@ -209,42 +198,64 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
     )
 }
 
-const getDayNames = (state) => {
+const AnimCalendar = (direction, monthContainerPositions) => {
+    const monthContainers = document.getElementsByClassName("monthContainer");
+    Array.from(monthContainers).forEach((monthContainer, index) => {
+        switch (direction) {
+            case 1:
+                monthContainer.style.left = `calc(${monthContainerPositions.current[index] + 100}%)`;
+                if ((monthContainerPositions.current[index] + 100) === 200)
+                    monthContainerPositions.current[index] = -100;
+                else
+                    monthContainerPositions.current[index] += 100;
+                break;
+            case -1:
+                monthContainer.style.left = `calc(${monthContainerPositions.current[index] - 100}%)`;
+                if ((monthContainerPositions.current[index] - 100) === -200)
+                    monthContainerPositions.current[index] = 100;
+                else
+                    monthContainerPositions.current[index] -= 100;
+                break;
+            case 0:
+                monthContainer.style.left = `calc(${monthContainerPositions.current[index]}%)`;
+                break;
+        }
+        monthContainer.style.transition = "left 0.5s ease-out";
+    })
+}
+
+const getDayNames = () => {
     let names = [];
-    for (let i = 0; i < state.dayNames.length; i++) {
-        names.push(<DateName key={UUID()}>{state.dayNames[i]}</DateName>)
+    for (let i = 0; i < dayNames.length; i++) {
+        names.push(<DateName key={UUID()}>{dayNames[i]}</DateName>)
     }
     return names;
 }
 
-const createAllMonths = (currentYear, currentMonth, callback) => {
-    let months = [];
-    let firstDayOfSelectedYearAndMonth = new Date(currentYear, currentMonth, 1);
-    firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() - initMonths / 2);
-    for (let i = -initMonths / 2; i < initMonths / 2; i++) {
-        months.push(
-            <MonthContainer key={UUID()}>
-                <DaysContainer>
-                    {createMonth(firstDayOfSelectedYearAndMonth, callback)}
-                </DaysContainer>
-                <WeekDates>
-                    {createWeekDates(firstDayOfSelectedYearAndMonth)}
-                </WeekDates>
-            </MonthContainer>
+const createMonth = (currentDate, callback) => {
+    let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
+    let weeks = [];
+    for (let i = 0; i < 6; i++) {
+        weeks.push(
+            <WeekContainer key={UUID()}>
+                {createWeek(firstDayOfMonth, currentDate.getMonth(), callback)}
+                {createWeekDate(firstDayOfMonth)}
+            </WeekContainer>
         )
-        firstDayOfSelectedYearAndMonth.setMonth(firstDayOfSelectedYearAndMonth.getMonth() + 1);
     }
-    return months;
+    return (
+        <MonthContainer key={UUID()}>
+            {weeks}
+        </MonthContainer>
+    )
 }
 
-const createWeekDates = (selectedDate) => {
-    let weekDates = [];
-    let firstDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-    for (let i = 0; i < 6; i++) {
-        weekDates.push(<WeekDate key={UUID()}>{getCorrectWeekNumber(firstDay)}</WeekDate>);
-        firstDay.setDate(firstDay.getDate() + 7);
-    }
-    return weekDates;
+const createWeekDate = (selectedDate) => {
+    return (
+        <WeekDate>
+            {getCorrectWeekNumber(selectedDate)}
+        </WeekDate>)
 }
 
 const getCorrectWeekNumber = (now) => {
@@ -252,42 +263,33 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createMonth = (selectedDate, callback) => {
-    let grid = [];
-    let firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-    const month = selectedDate.getMonth();
-    firstDayOfMonth.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
-    for (let i = 0; i < 6; i++) {
-        grid.push(
-            <WeekContainer key={UUID()}>
-                {createDays(firstDayOfMonth, month, callback)}
-            </WeekContainer>
-        )
-        firstDayOfMonth.setDate(firstDayOfMonth.getDate() + 7);
-    }
-    return grid;
+const createWeek = (firstDayOfWeek, month, callback) => {
+    return (
+        <DaysContainer>
+            {createDays(firstDayOfWeek, month, callback)}
+        </DaysContainer>
+    )
 }
 
-const createDays = (begin, month, callback) => {
+const createDays = (firstDayOfWeek, month, callback) => {
     let days = [];
-    let firstDayOfThisWeek = new Date(begin);
-    let today = new Date().toLocaleDateString('nl');
-
+    const date = new Date();
+    const today = date.toLocaleDateString('nl');
     for (let i = 0; i < 7; i++) {
-        const currentDate = new Date(firstDayOfThisWeek);
+        const date = new Date(firstDayOfWeek);
         days.push(
             <Day
                 key={UUID()}
-                onClick={() => { callback(currentDate) }}
-                onTouchEnd={() => { callback(currentDate) }}>
+                onClick={() => { callback(date) }}
+                onTouchEnd={() => { callback(date) }}>
                 <DayNumber
-                    today={currentDate.toLocaleDateString('nl') === today ? true : false}
-                    toggle={firstDayOfThisWeek.getMonth() === month ? true : false}>
-                    {currentDate.getDate()}
+                    today={firstDayOfWeek.toLocaleDateString('nl') === today ? true : false}
+                    toggle={firstDayOfWeek.getMonth() === month ? true : false}>
+                    {firstDayOfWeek.getDate()}
                 </DayNumber>
             </Day>
         )
-        firstDayOfThisWeek.setDate(firstDayOfThisWeek.getDate() + 1);
+        firstDayOfWeek.setDate(firstDayOfWeek.getDate() + 1);
     }
     return days;
 }
@@ -370,35 +372,25 @@ const DateName = styled.p`
     margin: 0;
 `
 
-const WeekDates = styled.div`
-    height: calc(100vh - 90px);
-    width: 15px;
-    display: flex;
-    flex-direction: column;
-    white-space: pre-line;
-    background-color: ${colors.GRAY}
-`
-
 const WeekDate = styled.p`
+    padding-top: 5px;
     color: ${colors.WHITE};
     font-size: 18px;
     user-select: none;
     word-wrap: break-word;
-    flex: 1;
+    white-space: pre-line;
     margin: 0;
-    margin-top: 5px;
+    width: 15px;
+    background-color: ${colors.GRAY}
     
 `
 
-const DaysContainer = styled.div`
+const WeekContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    width: calc(100vw - 15px);
-    height: calc(100vh - 90px);
-    background-color: ${colors.WHITE};
+    flex: 1;
 `
 
-const WeekContainer = styled.div`
+const DaysContainer = styled.div`
     display: flex;
     flex-direction: row;
     flex: 1;
@@ -452,20 +444,15 @@ const ButtonContainer = styled.div`
 const MonthContainer = styled.div`
     width: 100vw;
     height: calc(100vh - 90px);
-    position: relative;
     display: flex;
+    flex-direction: column;
 `
 
-const MonthsContainer = styled.div`
-    white-space: nowrap;
-    overflow-x: auto;
-    display: flex;
-    height: calc(100vh - 90px);
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    &::-webkit-scrollbar { 
-        display: none;  /* Safari and Chrome */
-    }
+const AnimationContainer = styled.div`
+    position: absolute;
+    left: ${props => props.left};
 `
+
 
 const areEqual = (prevProps, nextProps) => {
     if (prevProps.selectedDay === undefined) return true;

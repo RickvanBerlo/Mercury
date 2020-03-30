@@ -5,7 +5,6 @@ import colors from '../../constants/colors';
 const InputWrapper = ({ index, label, type, name, validation = () => { return true }, getValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
 
-    console.log(validation);
     getValues(index, name, value, validation(value))
     return (
         <Container>

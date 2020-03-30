@@ -167,7 +167,7 @@ const Button = styled.div`
 const areEqual = (prevProps, nextProps) => {
     let areEqual = true;
     nextProps.dependencyValues.forEach((element, index) => {
-        if (element != prevProps.dependencyValues[index]) {
+        if (element !== prevProps.dependencyValues[index]) {
             areEqual = false;
             return;
         }

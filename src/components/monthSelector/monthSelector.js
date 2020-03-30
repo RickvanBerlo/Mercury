@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import colors from '../../constants/colors';
 import languageSelector from '../../utils/languageSelector';
-import GenerateUUID from '../../utils/GenerateUUID';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 
@@ -60,31 +59,6 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
 }
 
 const Container = styled.div`
-`
-
-const Item = styled.div`
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: ${INIT_ITEM_HEIGHT}px;  
-    transition: background-color 0.3s linear;
-    &:hover{
-        cursor: pointer;
-    }
-`
-
-const Name = styled.p`
-    margin: 0;
-    color: ${colors.DARK_GREEN}
-    line-height: 60px;
-    text-align: center;
-    font-size: ${props => props.toggle ? "30px" : "20px"}
-    text-decoration: ${props => props.toggle ? "underline" : "none"};
-    transition: font-size 0.3s linear;
-    user-select: none;
-    &:hover{
-        font-size: 30px;
-    }
 `
 
 const SelectorsContainer = styled.div`
