@@ -4,13 +4,13 @@ import colors from '../../constants/colors';
 import languageSelector from '../../utils/languageSelector';
 import GenerateUUID from '../../utils/GenerateUUID';
 import Model from '../model/model';
+import ItemSelector from '../itemSelector/itemSelector';
 
 const INIT_ITEM_HEIGHT = 60;
 
 const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [selectedYear, setSelectedYear] = useState(currentYear);
-    const [isDragging, setIsDragging] = useState(false);
     const [send, setSend] = useState(false);
     const months = languageSelector().MONTHS;
     const years = [];
@@ -20,26 +20,9 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
     }
 
     useEffect(() => {
-        const yearSelector = document.getElementById("yearSelector");
-        const monthSelector = document.getElementById("monthSelector");
-        monthSelector.scrollTop = (selectedMonth - 2) * INIT_ITEM_HEIGHT;
-        yearSelector.scrollTop = (selectedYear - 1922) * INIT_ITEM_HEIGHT;
         setSelectedMonth(currentMonth);
         setSelectedYear(currentYear);
     }, [enable])
-
-    useEffect(() => {
-        const yearSelector = document.getElementById("yearSelector");
-        const monthSelector = document.getElementById("monthSelector");
-        monthSelector.addEventListener("touchmove", onDrag, false);
-        yearSelector.addEventListener("touchmove", onDrag, false);
-        window.addEventListener("touchend", onEnd, false);
-        return () => {
-            monthSelector.removeEventListener("touchmove", onDrag, false);
-            yearSelector.removeEventListener("touchmove", onDrag, false);
-            window.removeEventListener("touchend", onEnd, false);
-        }
-    }, [])
 
     useEffect(() => {
         if (send) {
@@ -48,35 +31,17 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
         }
     }, [send, callback, selectedYear, selectedMonth])
 
-    const setYear = (year) => {
-        if (!isDragging)
-            setSelectedYear(year);
-    }
-
     const setMonth = (month) => {
-        if (!isDragging)
-            setSelectedMonth(month);
-    }
-
-    const onDrag = () => {
-        setIsDragging(true);
-    }
-
-    const onEnd = () => {
-        setIsDragging(false);
+        setSelectedMonth(months.indexOf(month));
     }
 
     const createContent = () => {
         return (
             <Container>
                 <SelectorsContainer>
-                    <SelectorContainer id="yearSelector">
-                        {createYears(years, selectedYear, setYear)}
-                    </SelectorContainer>
+                    <ItemSelector items={years} defaultItem={selectedYear} callback={setSelectedYear} toggle={enable} />
                     <Bar />
-                    <SelectorContainer id="monthSelector">
-                        {createMonths(months, selectedMonth, setMonth)}
-                    </SelectorContainer>
+                    <ItemSelector items={months} defaultItem={months[selectedMonth]} callback={setMonth} toggle={enable} />
                 </SelectorsContainer>
                 <BottomBar>
                     <Button onClick={() => { setSend(true) }} onTouchEnd={() => { setSend(true) }}>
@@ -92,32 +57,6 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
     return (
         <Model toggle={enable} setToggle={() => { setSend(true) }} title={"selecteer een maand"} content={createContent()} />
     )
-}
-
-const createYears = (names, selected, callback) => {
-    const years = [];
-
-    for (let i = 0; i < names.length; i++) {
-        years.push(
-            <Item key={GenerateUUID()} onClick={() => { callback(names[i]) }} onTouchEnd={() => { callback(names[i]) }}>
-                <Name toggle={i === selected - 1920}>{names[i]}</Name>
-            </Item>
-        )
-    }
-    return years;
-}
-
-const createMonths = (names, selected, callback) => {
-    const months = [];
-
-    for (let i = 0; i < names.length; i++) {
-        months.push(
-            <Item key={GenerateUUID()} onClick={() => { callback(i) }} onTouchEnd={() => { callback(i) }}>
-                <Name toggle={i === selected}>{names[i]}</Name>
-            </Item>
-        )
-    }
-    return months;
 }
 
 const Container = styled.div`
@@ -164,20 +103,6 @@ const BottomBar = styled.div`
 const Bar = styled.div`
     width: 10px;
 `
-
-const SelectorContainer = styled.div`
-    position: relative;
-    z-index: 100;
-    width: 150px;
-    height: 300px;
-    box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
-    overflow: auto;
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    &::-webkit-scrollbar { 
-        display: none;  /* Safari and Chrome */
-    }
-`
-
 const Button = styled.div`
     margin: auto;
     width: 80%;

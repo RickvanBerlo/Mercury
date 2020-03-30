@@ -1,8 +1,8 @@
 import React, { memo, useState, useEffect } from "react";
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import colors from '../../constants/colors';
-import GenerateUUID from '../../utils/GenerateUUID';
 import Model from '../model/model';
+import ItemSelector from '../itemSelector/itemSelector';
 
 const TimePickerWrapper = ({ index, label, name, validation = () => { return true }, getValues, dependencyValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
@@ -16,15 +16,11 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
     }
 
     useEffect(() => {
-        if (!show) setValue("00:00");
-    }, [show])
-
-    useEffect(() => {
-        if (toggle) {
-            const Selector = document.getElementById(name + "Selector");
-            Selector.scrollTop = (((parseInt(value.substring(0, 2)) * 4) + (parseInt(value.substring(3, 5)) / 15)) - 2.5) * 50;
+        if (!show) {
+            setValue("00:00");
+            setToggle(null);
         }
-    }, [toggle])
+    }, [show])
 
     useEffect(() => {
         const timePicker = document.getElementById(name);
@@ -34,17 +30,18 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
         }
     }, [])
 
+    const modelOnsubmit = (newValue) => {
+        setValue(newValue);
+        changeToggle();
+    }
+
     const createContent = () => {
         return (
             <div>
-                <SelectorContainer id={name + "Selector"}>
-                    {createGrid(value, setValue)}
-                </SelectorContainer>
-                <BottomBar><Button onClick={changeToggle} onTouchEnd={changeToggle}><ButtonText>Accepteren</ButtonText></Button></BottomBar>
-            </div >
+                <ItemSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} toggle={toggle} marginBottom={"20px"} />
+            </div>
         )
     }
-
     return (
         <Container show={show}>
             {label !== undefined ? <Label>{label}</Label> : null}
@@ -60,7 +57,12 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
             <StyledTimePicker id={name} >
                 <Time>{value}</Time>
             </StyledTimePicker>
-            <Model toggle={toggle} setToggle={setToggle} title="Selecteer een tijd" content={createContent()} />
+            <Model
+                toggle={toggle}
+                setToggle={setToggle}
+                title="Selecteer een tijd"
+                content={createContent()}
+            />
         </Container >
     )
 }
@@ -70,102 +72,20 @@ const checkIstruthy = (value) => {
     return false;
 }
 
-const createGrid = (value, callback) => {
+const createItems = () => {
     let array = [];
-
     for (let i = 0; i < (24 * 4); i++) {
         const hours = (i / 4) < 10 ? "0" + Math.floor(i / 4) : Math.floor(i / 4);
         let minutes = (((i / 4) - Math.floor(i / 4)) * 4) * 15;
         if (minutes === 0) minutes = "00"
-        array.push(
-            <Item key={GenerateUUID()} onClick={() => { callback(hours + ":" + minutes) }} onTouchEnd={() => { callback(hours + ":" + minutes) }}>
-                <Name toggle={value === hours + ":" + minutes}>{hours + ":" + minutes}</Name>
-            </Item>
-        )
+        array.push(hours + ":" + minutes)
     }
-
     return array;
 }
-
 
 const Container = styled.div`
     margin-bottom: 20px;
     display: ${props => props.show ? "block" : "none"}
-`
-
-const Item = styled.div`
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 50px;  
-    transition: background-color 0.3s linear;
-    &:hover{
-        cursor: pointer;
-    }
-`
-
-const Name = styled.p`
-    margin: 0;
-    color: ${colors.DARK_GREEN}
-    line-height: 60px;
-    font-size: ${props => props.toggle ? "30px" : "20px"}
-    text-decoration: ${props => props.toggle ? "underline" : "none"};
-    transition: font-size 0.3s linear;
-    user-select: none;
-    text-align: center;
-    &:hover{
-        font-size: 30px;
-    }
-`
-
-const SelectorContainer = styled.div`
-    height: 300px;
-    width: 250px;
-    margin: auto;
-    box-shadow: inset 0px 0px 10px 0px ${colors.BLACK};
-    overflow: auto;
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    &::-webkit-scrollbar { 
-        display: none;  /* Safari and Chrome */
-    }
-
-`
-const BottomBar = styled.div`
-    width: 100%;
-    height: 50px;
-`
-
-const ButtonText = styled.p`
-    margin: 0;
-    line-height: 50px;
-    text-align: center;
-    color: ${colors.DARK_GREEN};
-    font-size: 20px;
-    user-select: none;
-`
-
-const Button = styled.div`
-    width: 100%;
-    height: 50px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    box-shadow: inset 0px 0px 15px 15px ${colors.WHITE};
-    background-color: ${colors.WHITE};
-    &:hover{
-        background-color: ${colors.DARK_WHITE}
-        cursor: pointer;
-    }
-    &:active{
-        background-color: ${colors.ACTIVE_COLOR};
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.DARK_WHITE};
-        }
-    }
 `
 
 const Label = styled.div`
@@ -203,6 +123,45 @@ const Time = styled.p`
     font: 18px 'Open Sans Bold',sans-serif;
     margin: 0;
     padding: 2px;
+`
+
+
+const BottomBar = styled.div`
+    width: 100%;
+    height: 50px;
+`
+
+const ButtonText = styled.p`
+    margin: 0;
+    line-height: 50px;
+    text-align: center;
+    color: ${colors.DARK_GREEN};
+    font-size: 20px;
+    user-select: none;
+`
+
+const Button = styled.div`
+    width: 100%;
+    height: 50px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: inset 0px 0px 15px 15px ${colors.WHITE};
+    background-color: ${colors.WHITE};
+    &:hover{
+        background-color: ${colors.DARK_WHITE}
+        cursor: pointer;
+    }
+    &:active{
+        background-color: ${colors.ACTIVE_COLOR};
+    }
+    @media (max-width: 767px) {
+        &:hover{
+            background-color: ${colors.WHITE};
+        }
+        &:active{
+            background-color: ${colors.DARK_WHITE};
+        }
+    }
 `
 
 const areEqual = (prevProps, nextProps) => {
