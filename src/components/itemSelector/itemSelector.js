@@ -7,15 +7,15 @@ import GenerateUUID from '../../utils/GenerateUUID';
 const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
     const ID = GenerateUUID();
-
+    console.log(toggle);
+    console.log(defaultItem);
     useEffect(() => {
         if (toggle) {
-            console.log(ID);
             setSelectedItem(defaultItem);
             const Selector = document.getElementById(ID);
             Selector.scrollTop = (items.indexOf(defaultItem) * 50) - 125;
         }
-    }, [toggle])
+    }, [toggle, defaultItem])
 
     useEffect(() => {
         callback(selectedItem);
