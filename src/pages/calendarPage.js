@@ -12,12 +12,10 @@ import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-//const initMonths = 3;
-
 const DEAD_ZONE_SCROLL = 150;
 const ANIM_TIME = 520;
-const monthNames = languageSelector().MONTHS;
-const dayNames = languageSelector().DAYS;
+const MONTH_NAMES = languageSelector().MONTHS;
+const DAY_NAMES = languageSelector().DAYS;
 
 const reducer = (state, action) => {
     let date;
@@ -174,7 +172,7 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
                 </FlexContainer>
                 <FlexContainer>
                     <ButtonMonth onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
-                        <Month>{monthNames[state.currentDate.getMonth()]}</Month>
+                        <Month>{MONTH_NAMES[state.currentDate.getMonth()]}</Month>
                     </ButtonMonth>
                 </FlexContainer>
                 <ButtonContainer>
@@ -244,8 +242,8 @@ const AnimCalendar = (direction, monthContainerPositions) => {
 
 const getDayNames = () => {
     let names = [];
-    for (let i = 0; i < dayNames.length; i++) {
-        names.push(<DateName key={UUID()}>{dayNames[i]}</DateName>)
+    for (let i = 0; i < DAY_NAMES.length; i++) {
+        names.push(<DateName key={UUID()}>{DAY_NAMES[i]}</DateName>)
     }
     return names;
 }
