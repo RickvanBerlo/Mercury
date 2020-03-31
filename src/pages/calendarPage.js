@@ -20,11 +20,18 @@ const monthNames = languageSelector().MONTHS;
 const dayNames = languageSelector().DAYS;
 
 const reducer = (state, action) => {
+    let date;
     switch (action.type) {
         case 'nextMonth':
+            date = state.currentDate.getDate()
+            if (date > 29)
+                state.currentDate.setDate(date - 5);
             state.currentDate.setMonth(state.currentDate.getMonth() + 1);
             return { ...state };
         case 'prevMonth':
+            date = state.currentDate.getDate()
+            if (date > 29)
+                state.currentDate.setDate(date - 5);
             state.currentDate.setMonth(state.currentDate.getMonth() - 1);
             return { ...state };
         case 'newMonth':
@@ -203,24 +210,32 @@ const AnimCalendar = (direction, monthContainerPositions) => {
     Array.from(monthContainers).forEach((monthContainer, index) => {
         switch (direction) {
             case 1:
-                monthContainer.style.left = `calc(${monthContainerPositions.current[index] + 100}%)`;
-                if ((monthContainerPositions.current[index] + 100) === 200)
+                monthContainer.style.left = `${monthContainerPositions.current[index] + 100}%`;
+                if ((monthContainerPositions.current[index] + 100) === 200) {
                     monthContainerPositions.current[index] = -100;
-                else
+                    monthContainer.style.left = `-100%`;
+                    monthContainer.style.transition = "none";
+                } else {
                     monthContainerPositions.current[index] += 100;
+                    monthContainer.style.transition = "left 0.5s ease-out";
+                }
                 break;
             case -1:
-                monthContainer.style.left = `calc(${monthContainerPositions.current[index] - 100}%)`;
-                if ((monthContainerPositions.current[index] - 100) === -200)
+                monthContainer.style.left = `${monthContainerPositions.current[index] - 100}%`;
+                if ((monthContainerPositions.current[index] - 100) === -200) {
                     monthContainerPositions.current[index] = 100;
-                else
+                    monthContainer.style.left = `100%`;
+                    monthContainer.style.transition = "none";
+                } else {
                     monthContainerPositions.current[index] -= 100;
+                    monthContainer.style.transition = "left 0.5s ease-out";
+                }
                 break;
             case 0:
-                monthContainer.style.left = `calc(${monthContainerPositions.current[index]}%)`;
+                monthContainer.style.left = `${monthContainerPositions.current[index]}%`;
+                monthContainer.style.transition = "left 0.5s ease-out";
                 break;
         }
-        monthContainer.style.transition = "left 0.5s ease-out";
     })
 }
 
