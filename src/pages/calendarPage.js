@@ -51,6 +51,8 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
     const monthContainerPositions = useRef([-100, 0, 100]);
     let timeout = useRef(null);
     const initialState = (selectedDay) => {
+        if (selectedDay.getDate() > 29)
+            selectedDay.setDate(selectedDay.getDate() - 3);
         return ({
             currentDate: selectedDay,
             monthSelectorToggle: null,
@@ -160,6 +162,7 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     let nextMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() + 1, state.currentDate.getDate());
     let prevMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() - 1, state.currentDate.getDate());
+    console.log(nextMonth);
     return (
         <Container>
             <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentDate.getMonth()} currentYear={state.currentDate.getFullYear()} callback={CallbackMonthSelector} />
@@ -313,10 +316,6 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
-`
-
-const OverflowContainer = styled.div`
-overflow-x: auto;
 `
 
 const TopBarContainer = styled.div`
