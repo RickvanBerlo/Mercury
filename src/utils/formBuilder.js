@@ -13,44 +13,48 @@ class FormBuilder {
         this.elements = [];
     }
 
-    canNotBeEmptyValidation(value) {
-        if (value === undefined) return false;
-        if (value.length === 0) return false;
-        return true;
+    addTextInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<Input index={this.elements.length} type="text" name={name} props={props}></Input>)
     }
 
-    addTextInput(name, label = undefined, validation = undefined, props = {}) {
-        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} label={label} type="text" name={name} validation={val} props={props}></Input>)
+    addTextAreaInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<TextArea index={this.elements.length} name={name} props={props}></TextArea>)
     }
 
-    addTextAreaInput(name, label = undefined, validation = undefined, props = {}) {
-        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<TextArea index={this.elements.length} label={label} name={name} validation={val} props={props}></TextArea>)
+    addPasswordInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<Input index={this.elements.length} type="password" name={name} props={props}></Input>)
     }
 
-    addPasswordInput(name, label = undefined, validation = undefined, props = {}) {
-        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} label={label} type="password" name={name} validation={val} props={props}></Input>)
+    addDateInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<Input index={this.elements.length} type="date" name={name} props={props}></Input>)
     }
 
-    addDateInput(name, label = undefined, validation = undefined, props = {}) {
-        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<Input index={this.elements.length} label={label} type="date" name={name} validation={val} props={props}></Input>)
+    addTimeInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<TimePicker index={this.elements.length} name={name} props={props}></TimePicker>)
     }
 
-    addTimeInput(name, label = undefined, validation = undefined, props = {}) {
-        const val = validation === undefined && props.required ? this.canNotBeEmptyValidation : validation;
-        this.elements.push(<TimePicker index={this.elements.length} label={label} name={name} validation={val} props={props}></TimePicker>)
-    }
-
-    addCheckboxInput(name, label, props = {}) {
-        this.elements.push(<Checkbox index={this.elements.length} type="checkbox" name={name} label={label} props={props}></Checkbox>)
+    addCheckboxInput(name, props = {}) {
+        this.elements.push(<Checkbox index={this.elements.length} type="checkbox" name={name} props={props}></Checkbox>)
     }
 
 
     getForm(submitButtonName, onSubmit, dependencies = []) {
         return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit} dependencies={dependencies}></Form>;
+    }
+
+    _getValidation(props) {
+        return props.validation === undefined && props.required ? this._canNotBeEmptyValidation : props.validation === undefined ? () => { return true } : props.validation;
+    }
+
+    _canNotBeEmptyValidation(value) {
+        if (value === undefined) return false;
+        if (value.length === 0) return false;
+        return true;
     }
 }
 

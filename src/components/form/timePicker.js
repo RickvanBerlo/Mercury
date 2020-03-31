@@ -4,12 +4,12 @@ import colors from '../../constants/colors';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 
-const TimePickerWrapper = ({ index, label, name, validation = () => { return true }, getValues, dependencyValues, props }) => {
+const TimePickerWrapper = ({ index, name, getValues, dependencyValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
     const [toggle, setToggle] = useState(null);
     const show = dependencyValues.every(checkIstruthy);
 
-    getValues(index, name, value, validation(value))
+    getValues(index, name, value, props.validation(value))
 
     const changeToggle = () => {
         setToggle(!toggle);
@@ -44,14 +44,14 @@ const TimePickerWrapper = ({ index, label, name, validation = () => { return tru
     }
     return (
         <Container show={show}>
-            {label !== undefined ? <Label>{label}</Label> : null}
+            {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <HiddenCheckbox
                 {...props}
                 type="time"
                 name={name}
                 value={value}
                 disabled={!show}
-                onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)); setValue(event.target.value) }}
+                onChange={(event) => { getValues(index, name, event.target.value, props.validation(event.target.value)); setValue(event.target.value) }}
             >
             </HiddenCheckbox >
             <StyledTimePicker id={name} >

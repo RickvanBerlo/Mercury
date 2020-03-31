@@ -2,7 +2,7 @@ import React, { useState, memo } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const CheckboxWrapper = ({ index, name, label, getValues, props }) => {
+const CheckboxWrapper = ({ index, name, getValues, props }) => {
     const [check, setCheck] = useState(props.checked !== undefined ? props.checked : false);
 
     getValues(index, name, check, true);
@@ -20,7 +20,7 @@ const CheckboxWrapper = ({ index, name, label, getValues, props }) => {
                         </Icon>
                     </StyledCheckbox>
                 </CheckboxContainer>
-                <Name>: {label}</Name>
+                <Name>: {props.label === undefined ? "no Label" : props.label}</Name>
             </Label>
         </Container >
     )

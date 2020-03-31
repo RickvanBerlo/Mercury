@@ -95,16 +95,16 @@ const TogglePages = (toggle, setToggle) => {
 
 const buildFormLogin = (formBuilder, onSubmit) => {
     const builder = new formBuilder();
-    builder.addTextInput("username", undefined, undefined, { required: true, placeholder: "e-mail" });
-    builder.addPasswordInput("password", undefined, undefined, { required: true, placeholder: "wachtwoord" });
+    builder.addTextInput("username", { required: true, placeholder: "E-mail" });
+    builder.addPasswordInput("password", { required: true, placeholder: "Wachtwoord" });
     return builder.getForm("inloggen", onSubmit);
 }
 
 const buildFormRegister = (formBuilder, onSubmit) => {
     const builder = new formBuilder();
-    builder.addTextInput("name", undefined, undefined, { required: true, placeholder: "naam" });
-    builder.addTextInput("username", undefined, undefined, { required: true, placeholder: "e-mail" });
-    builder.addPasswordInput("password", undefined, undefined, { required: true, placeholder: "wachtwoord" });
+    builder.addTextInput("name", { required: true, placeholder: "Naam" });
+    builder.addTextInput("username", { required: true, placeholder: "E-mail" });
+    builder.addPasswordInput("password", { required: true, placeholder: "Wachtwoord" });
     return builder.getForm("Aanmelden", onSubmit);
 }
 

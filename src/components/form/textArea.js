@@ -2,19 +2,19 @@ import React, { memo, useState } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const TextAreaWrapper = ({ index, label, type, name, validation = () => { return true }, getValues, props }) => {
+const TextAreaWrapper = ({ index, type, name, getValues, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
 
-    getValues(index, name, value, validation(value))
+    getValues(index, name, value, props.validation(value))
     return (
         <Container>
-            {label !== undefined ? <Label>{label}</Label> : null}
+            {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <Input
                 {...props}
                 type={type}
                 name={name}
                 value={value}
-                onChange={(event) => { getValues(index, name, event.target.value, validation(event.target.value)); setValue(event.target.value) }}
+                onChange={(event) => { getValues(index, name, event.target.value, props.validation(event.target.value)); setValue(event.target.value) }}
             >
             </Input >
         </Container >

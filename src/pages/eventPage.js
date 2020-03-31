@@ -46,13 +46,13 @@ const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
 const buildForm = (formBuilder, onSubmit, selectedDay) => {
     const value = selectedDay.toLocaleDateString('en-CA');
     const builder = new formBuilder();
-    builder.addTextInput("title", "Titel", undefined, { required: true, placeholder: "Title" });
-    builder.addDateInput("startDate", "Start datum", undefined, { required: true, value: value });
-    builder.addDateInput("endDate", "Eind datum", undefined, { required: true, value: value });
-    builder.addCheckboxInput("time", "Tijdsindeling");
-    builder.addTimeInput("startTime", "Begin tijd", undefined);
-    builder.addTimeInput("endTime", "Eind tijd", undefined, undefined);
-    builder.addTextAreaInput("description", "Beschrijving", undefined, { required: true, placeholder: "Description", rows: "10" });
+    builder.addTextInput("title", { required: true, placeholder: "Title", label: "Titel" });
+    builder.addDateInput("startDate", { required: true, value: value, label: "Start datum" });
+    builder.addDateInput("endDate", { required: true, value: value, label: "Eind datum" });
+    builder.addCheckboxInput("time", { label: "Tijdsindeling" });
+    builder.addTimeInput("startTime", { label: "Begin tijd" });
+    builder.addTimeInput("endTime", { label: "Eind tijd" });
+    builder.addTextAreaInput("description", { required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("Verzenden", onSubmit, { "startTime": ["time"], "endTime": ["time"] });
 }
 
