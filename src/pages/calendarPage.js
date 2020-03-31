@@ -15,7 +15,7 @@ import AddIcon from 'react-ionicons/lib/MdAdd';
 //const initMonths = 3;
 
 const DEAD_ZONE_SCROLL = 150;
-const ANIM_TIME = 501;
+const ANIM_TIME = 520;
 const monthNames = languageSelector().MONTHS;
 const dayNames = languageSelector().DAYS;
 
@@ -315,6 +315,10 @@ const Container = styled.div`
     text-align: center;
 `
 
+const OverflowContainer = styled.div`
+overflow-x: auto;
+`
+
 const TopBarContainer = styled.div`
     height: 50px;
     width: calc(100vw - 15px);
@@ -464,7 +468,7 @@ const MonthContainer = styled.div`
 `
 
 const AnimationContainer = styled.div`
-    position: absolute;
+    position: fixed;
     left: ${props => props.left};
 `
 
