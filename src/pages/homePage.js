@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import backgroundImage from '../assets/background.jpg';
 import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
 import colors from '../constants/colors';
@@ -220,7 +220,7 @@ const WebsiteLinkContainer = styled.div`
     width: ${mobilecheck() ? "80px" : "100px"};
     height: 100px;
     background-color: ${colors.TRANSPARENT};
-    transition: background-color 0.3s linear
+    transition: background-color 0.3s linear;
     &:hover{
         background-color: ${colors.TRANSPARENT_20_WHITE};
         cursor: pointer;

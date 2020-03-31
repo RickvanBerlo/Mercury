@@ -5,8 +5,6 @@ import languageSelector from '../../utils/languageSelector';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 
-const INIT_ITEM_HEIGHT = 60;
-
 const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [selectedYear, setSelectedYear] = useState(currentYear);
