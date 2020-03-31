@@ -1,9 +1,14 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const InputWrapper = ({ index, type, name, getValues, props }) => {
+const InputWrapper = ({ index, type, name, getValues, refresh, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
+
+    useEffect(() => {
+        if (refresh)
+            setValue("");
+    }, [refresh]);
 
     getValues(index, name, value, props.validation(value))
     return (
@@ -41,6 +46,7 @@ const Input = styled.input`
 `
 
 const areEqual = (prevProps, nextProps) => {
+    if (nextProps.refresh) return false;
     return true;
 }
 

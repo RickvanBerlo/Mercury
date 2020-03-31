@@ -6,6 +6,7 @@ import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
 import Model from '../components/model/model';
+import getRandomColor from '../utils/randomColor';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
@@ -17,14 +18,12 @@ const StyledIcon = styled(AddIcon)`
         padding-top: 12px;
     `
 
-const Home = () => {
+const Home = ({ storage }) => {
     const [time, setTime] = useState(getTime());
     const [toggle, setToggle] = useState(null);
     let scroll = useRef(false);
     let timeout = useRef(null);
     let searchText = useRef("");
-
-    let webLinks = useRef([{ NAME: "nu", LINK: "https://www.nu.nl/" }]);
 
     const changeToggle = () => {
         setToggle(!toggle);
@@ -44,7 +43,7 @@ const Home = () => {
 
     const onSubmit = (event, value) => {
         event.preventDefault();
-        webLinks.current.push(value);
+        storage.weblinks.push({ ...value, COLOR: getRandomColor() });
         changeToggle();
     }
 
@@ -79,7 +78,7 @@ const Home = () => {
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 <WebsiteLinksContainer>
-                    {makeWebsiteLinks(webLinks.current, navigateToLink, changeToggle)}
+                    {makeWebsiteLinks(storage.weblinks, navigateToLink, changeToggle)}
                 </WebsiteLinksContainer>
             </CenterContainer>
             <Model toggle={toggle} setToggle={setToggle} title="Snelkoppeling toevoegen" content={buildForm(onSubmit)} />
@@ -94,20 +93,20 @@ const buildForm = (onSubmit) => {
     builder.addTextInput("LINK", { required: true, placeholder: "www.website.com", label: "Link", validation: (value) => { if (value.match(regex) !== null) return true; return false; } });
     return (
         <ContentContainer>
-            {builder.getForm("Aanmaken", onSubmit)}
+            {builder.getForm("Aanmaken", onSubmit, { reset: true })}
         </ContentContainer>
     )
 }
 
-const makeWebsiteLinks = (webLinks, navigateToLink, changeToggle) => {
-    const links = webLinks.map((weblink, index) => {
+const makeWebsiteLinks = (weblinks, navigateToLink, changeToggle) => {
+    const links = weblinks.map((weblink, index) => {
         return (
             <WebsiteLinkContainer key={"weblink" + index}>
                 <WebsiteLink
                     onClick={(event) => { navigateToLink(weblink.LINK, true) }}
                     onTouchEnd={(event) => { navigateToLink(weblink.LINK, true) }}
                 >
-                    <DefaultIcon>
+                    <DefaultIcon color={weblink.COLOR}>
                         <DefaultIconText>{weblink.NAME.charAt(0)}</DefaultIconText>
                     </DefaultIcon>
                 </WebsiteLink>
@@ -252,7 +251,7 @@ const WebsiteName = styled.p`
 
 const DefaultIcon = styled.div`
     margin: auto;
-    background-color: ${colors.RED};
+    background-color: ${props => props.color};
     width: 50px;
     height: 50px;
     border-radius: 25px;

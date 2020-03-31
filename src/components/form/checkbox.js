@@ -1,9 +1,14 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const CheckboxWrapper = ({ index, name, getValues, props }) => {
+const CheckboxWrapper = ({ index, name, getValues, refresh, props }) => {
     const [check, setCheck] = useState(props.checked !== undefined ? props.checked : false);
+
+    useEffect(() => {
+        if (refresh)
+            setCheck(false);
+    }, [refresh]);
 
     getValues(index, name, check, true);
 
@@ -82,6 +87,7 @@ const Name = styled.p`
 `
 
 const areEqual = (prevProps, nextProps) => {
+    if (nextProps.refresh) return false;
     return true;
 }
 

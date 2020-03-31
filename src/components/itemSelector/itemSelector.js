@@ -17,7 +17,8 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
     }, [toggle])
 
     useEffect(() => {
-        callback(selectedItem);
+        if (defaultItem !== selectedItem)
+            callback(selectedItem);
     }, [selectedItem])
 
     const createItems = () => {

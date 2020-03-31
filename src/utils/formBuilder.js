@@ -43,8 +43,8 @@ class FormBuilder {
     }
 
 
-    getForm(submitButtonName, onSubmit, dependencies = []) {
-        return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit} dependencies={dependencies}></Form>;
+    getForm(submitButtonName, onSubmit, props = {}) {
+        return <Form submitButtonName={submitButtonName} elements={this.elements} onSubmit={onSubmit} props={props}></Form>;
     }
 
     _getValidation(props) {

@@ -15,6 +15,7 @@ const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     const onSubmit = (event, values) => {
         event.preventDefault();
+        console.log("uitkomst ");
         console.log(values);
     }
 
@@ -53,7 +54,7 @@ const buildForm = (formBuilder, onSubmit, selectedDay) => {
     builder.addTimeInput("startTime", { label: "Begin tijd" });
     builder.addTimeInput("endTime", { label: "Eind tijd" });
     builder.addTextAreaInput("description", { required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
-    return builder.getForm("Verzenden", onSubmit, { "startTime": ["time"], "endTime": ["time"] });
+    return builder.getForm("Verzenden", onSubmit, { dependencies: { "startTime": ["time"], "endTime": ["time"] }, reset: true });
 }
 
 const Container = styled.div`

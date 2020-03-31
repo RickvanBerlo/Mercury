@@ -4,16 +4,21 @@ import colors from '../../constants/colors';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 
-const TimePickerWrapper = ({ index, name, getValues, dependencyValues, props }) => {
+const TimePickerWrapper = ({ index, name, getValues, refresh, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
     const [toggle, setToggle] = useState(null);
-    const show = dependencyValues.every(checkIstruthy);
+    const show = true;
 
     getValues(index, name, value, props.validation(value))
 
     const changeToggle = () => {
         setToggle(!toggle);
     }
+
+    useEffect(() => {
+        if (refresh)
+            setValue("00:00");
+    }, [refresh]);
 
     useEffect(() => {
         if (!show) {
@@ -67,10 +72,10 @@ const TimePickerWrapper = ({ index, name, getValues, dependencyValues, props }) 
     )
 }
 
-const checkIstruthy = (value) => {
-    if (value) return true;
-    return false;
-}
+// const checkIstruthy = (value) => {
+//     if (value) return true;
+//     return false;
+// }
 
 const createItems = () => {
     let array = [];
@@ -125,54 +130,15 @@ const Time = styled.p`
     padding: 2px;
 `
 
-
-const BottomBar = styled.div`
-    width: 100%;
-    height: 50px;
-`
-
-const ButtonText = styled.p`
-    margin: 0;
-    line-height: 50px;
-    text-align: center;
-    color: ${colors.DARK_GREEN};
-    font-size: 20px;
-    user-select: none;
-`
-
-const Button = styled.div`
-    width: 100%;
-    height: 50px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    box-shadow: inset 0px 0px 15px 15px ${colors.WHITE};
-    background-color: ${colors.WHITE};
-    &:hover{
-        background-color: ${colors.DARK_WHITE}
-        cursor: pointer;
-    }
-    &:active{
-        background-color: ${colors.ACTIVE_COLOR};
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.DARK_WHITE};
-        }
-    }
-`
-
 const areEqual = (prevProps, nextProps) => {
-    let areEqual = true;
-    nextProps.dependencyValues.forEach((element, index) => {
-        if (element !== prevProps.dependencyValues[index]) {
-            areEqual = false;
-            return;
-        }
-    });
-    return areEqual;
+    if (nextProps.refresh) return false;
+    // nextProps.dependencyValues.forEach((element, index) => {
+    //     if (element !== prevProps.dependencyValues[index]) {
+    //         areEqual = false;
+    //         return;
+    //     }
+    // });
+    return true;
 }
 
 const MemoTimePickerWrapper = memo(TimePickerWrapper, areEqual)
