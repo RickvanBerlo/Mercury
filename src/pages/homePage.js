@@ -93,7 +93,7 @@ const buildForm = (onSubmit) => {
     builder.addTextInput("LINK", { required: true, placeholder: "www.website.com", label: "Link", validation: (value) => { if (value.match(regex) !== null) return true; return false; } });
     return (
         <ContentContainer>
-            {builder.getForm("Aanmaken", onSubmit, { reset: true })}
+            {builder.getForm("weblinkForm", "Aanmaken", onSubmit, { reset: true })}
         </ContentContainer>
     )
 }

@@ -1,14 +1,16 @@
-import React, { useState, cloneElement, useRef } from "react";
+import React, { useState, cloneElement, useRef, useEffect } from "react";
 import styled from 'styled-components';
 
 import SubmitButton from './submitButton';
 
 
-const FormWrapper = ({ submitButtonName, elements, onSubmit, props }) => {
+const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
     const validations = useRef(new Array(elements.length).fill(false));
     const [values, setValues] = useState({});
     const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations.current));
     const [refresh, setRefresh] = useState(false);
+    const dependencies = useRef([]);
+    const inputs = useRef([]);
 
     const getValues = (index, name, value, valid) => {
         let tmpValidations = validations.current;
@@ -19,19 +21,11 @@ const FormWrapper = ({ submitButtonName, elements, onSubmit, props }) => {
         validations.current = tmpValidations;
         setValues({ ...tmpValues });
         setEnableSubmit(CheckIfAllAreValid(validations.current));
+        if (inputs.current.length !== 0)
+            checkDependencies(name, value, dependencies.current, inputs.current);
         if (refresh)
             setRefresh(false);
     }
-
-    // const getDependencyValues = (name) => {
-    //     const dependencyValues = []
-    //     if (props.dependencies[name]) {
-    //         props.dependencies[name].forEach(element => {
-    //             dependencyValues.push(values[element]);
-    //         })
-    //     }
-    //     return dependencyValues;
-    // }
 
     const handleSubmit = (event) => {
         onSubmit(event, { ...values });
@@ -39,15 +33,35 @@ const FormWrapper = ({ submitButtonName, elements, onSubmit, props }) => {
             setRefresh(true);
         }
     }
+
+    useEffect(() => {
+        inputs.current = document.getElementsByClassName(name);
+    }, [name])
+
     return (
         <Form onSubmit={handleSubmit}>
             {elements.map((element, index) => {
-                return cloneElement(element, { key: index, getValues: getValues, refresh: refresh }, null);
-                // dependencyValues: getDependencyValues(element.props.name)
+                if (!dependencies.current[index])
+                    dependencies.current[index] = element.props.props.dependencies;
+                return cloneElement(element, { key: index, getValues: getValues, refresh: refresh, classname: name }, null);
             })}
             <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
         </Form>
     )
+}
+
+const checkDependencies = (name, value, dependencies, inputs) => {
+    dependencies.forEach((inputDependencies, index) => {
+        if (inputDependencies !== undefined) {
+            inputDependencies.forEach((dependency) => {
+                if (dependency.valueOf === name) {
+                    dependency.functions.forEach((f) => {
+                        f(value, inputs[index]);
+                    })
+                }
+            })
+        }
+    })
 }
 
 const CheckIfAllAreValid = (validations) => {

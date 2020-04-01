@@ -1,18 +1,28 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
+import generateUUID from '../../utils/GenerateUUID';
 
-const TimePickerWrapper = ({ index, name, getValues, refresh, props }) => {
+const TimePickerWrapper = ({ index, name, getValues, refresh, classname, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
     const [toggle, setToggle] = useState(null);
-    const show = true;
+    const UUID = useRef(generateUUID());
 
     getValues(index, name, value, props.validation(value))
 
     const changeToggle = () => {
         setToggle(!toggle);
+    }
+
+    const onChange = (value) => {
+        switch (value) {
+            case "hide":
+                setValue("00:00");
+                setToggle(null);
+                break;
+        }
     }
 
     useEffect(() => {
@@ -21,13 +31,7 @@ const TimePickerWrapper = ({ index, name, getValues, refresh, props }) => {
     }, [refresh]);
 
     useEffect(() => {
-        if (!show) {
-            setValue("00:00");
-            setToggle(null);
-        }
-    }, [show])
-
-    useEffect(() => {
+        document.getElementById(UUID.current).onchange = onChange;
         const timePicker = document.getElementById(name);
         timePicker.addEventListener("click", changeToggle, false);
         return () => {
@@ -48,18 +52,17 @@ const TimePickerWrapper = ({ index, name, getValues, refresh, props }) => {
         )
     }
     return (
-        <Container show={show}>
+        <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <HiddenCheckbox
                 {...props}
                 type="time"
                 name={name}
                 value={value}
-                disabled={!show}
                 onChange={(event) => { getValues(index, name, event.target.value, props.validation(event.target.value)); setValue(event.target.value) }}
             >
             </HiddenCheckbox >
-            <StyledTimePicker id={name} >
+            <StyledTimePicker id={name} title={`Selecteer een "${props.label}".`}>
                 <Time>{value}</Time>
             </StyledTimePicker>
             <Model
@@ -71,11 +74,6 @@ const TimePickerWrapper = ({ index, name, getValues, refresh, props }) => {
         </Container >
     )
 }
-
-// const checkIstruthy = (value) => {
-//     if (value) return true;
-//     return false;
-// }
 
 const createItems = () => {
     let array = [];
@@ -90,7 +88,6 @@ const createItems = () => {
 
 const Container = styled.div`
     margin-bottom: 20px;
-    display: ${props => props.show ? "block" : "none"}
 `
 
 const Label = styled.div`

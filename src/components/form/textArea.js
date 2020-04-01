@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const TextAreaWrapper = ({ index, type, name, getValues, refresh, props }) => {
+const TextAreaWrapper = ({ index, type, name, getValues, refresh, classname, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
 
     useEffect(() => {
@@ -12,13 +12,14 @@ const TextAreaWrapper = ({ index, type, name, getValues, refresh, props }) => {
 
     getValues(index, name, value, props.validation(value))
     return (
-        <Container>
+        <Container className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <Input
                 {...props}
                 type={type}
                 name={name}
                 value={value}
+                title={`vul hier uw "${props.label}" in`}
                 onChange={(event) => { getValues(index, name, event.target.value, props.validation(event.target.value)); setValue(event.target.value) }}
             >
             </Input >

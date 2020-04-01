@@ -97,7 +97,7 @@ const buildFormLogin = (formBuilder, onSubmit) => {
     const builder = new formBuilder();
     builder.addTextInput("username", { required: true, placeholder: "E-mail" });
     builder.addPasswordInput("password", { required: true, placeholder: "Wachtwoord" });
-    return builder.getForm("inloggen", onSubmit);
+    return builder.getForm("loginForm", "inloggen", onSubmit);
 }
 
 const buildFormRegister = (formBuilder, onSubmit) => {
@@ -105,7 +105,7 @@ const buildFormRegister = (formBuilder, onSubmit) => {
     builder.addTextInput("name", { required: true, placeholder: "Naam" });
     builder.addTextInput("username", { required: true, placeholder: "E-mail" });
     builder.addPasswordInput("password", { required: true, placeholder: "Wachtwoord" });
-    return builder.getForm("Aanmelden", onSubmit);
+    return builder.getForm("registerForm", "Aanmelden", onSubmit);
 }
 
 const Container = styled.div`

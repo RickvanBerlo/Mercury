@@ -4,6 +4,7 @@ import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import formBuilder from '../utils/formBuilder';
+import { hideObjectIfTrue } from '../components/form/dependencieFunctions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
@@ -51,11 +52,12 @@ const buildForm = (formBuilder, onSubmit, selectedDay) => {
     builder.addDateInput("startDate", { required: true, value: value, label: "Start datum" });
     builder.addDateInput("endDate", { required: true, value: value, label: "Eind datum" });
     builder.addCheckboxInput("time", { label: "Tijdsindeling" });
-    builder.addTimeInput("startTime", { label: "Begin tijd" });
-    builder.addTimeInput("endTime", { label: "Eind tijd" });
+    builder.addTimeInput("startTime", { label: "Begin tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
+    builder.addTimeInput("endTime", { label: "Eind tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
     builder.addTextAreaInput("description", { required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
-    return builder.getForm("Verzenden", onSubmit, { dependencies: { "startTime": ["time"], "endTime": ["time"] }, reset: true });
+    return builder.getForm("eventForm", "Verzenden", onSubmit, { reset: true });
 }
+
 
 const Container = styled.div`
     width: 100vw;
