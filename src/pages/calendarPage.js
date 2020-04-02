@@ -125,7 +125,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
 
 
     useEffect(() => {
-        console.log(storage.shared.events);
         const calendarNext = document.getElementById("calendar_next");
         const calendarPrev = document.getElementById("calendar_prev");
         const monthContainers = document.getElementsByClassName("monthContainer");
