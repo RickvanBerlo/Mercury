@@ -4,7 +4,7 @@ import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import formBuilder from '../utils/formBuilder';
-import { hideObjectIfTrue } from '../components/form/dependencieFunctions';
+import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
@@ -49,13 +49,13 @@ const buildForm = (formBuilder, onSubmit, selectedDay) => {
     const value = selectedDay.toLocaleDateString('en-CA');
     const builder = new formBuilder();
     builder.addTextInput("title", { required: true, placeholder: "Title", label: "Titel" });
-    builder.addDateInput("startDate", { required: true, value: value, label: "Start datum" });
-    builder.addDateInput("endDate", { required: true, value: value, label: "Eind datum" });
-    builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true });
-    builder.addTimeInput("startTime", { label: "Begin tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
-    builder.addTimeInput("endTime", { label: "Eind tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
+    builder.addDateInput("startDate", { required: true, value: value, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen] }] });
+    builder.addDateInput("endDate", { required: true, value: value, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen] }] });
+    builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
+    builder.addTimeInput("startTime", { label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
+    builder.addTimeInput("endTime", { label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
     builder.addTextAreaInput("description", { required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
-    return builder.getForm("eventForm", "Verzenden", onSubmit, { reset: true });
+    return builder.getForm("eventForm", "Verzenden", onSubmit);
 }
 
 

@@ -5,12 +5,14 @@ import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 import generateUUID from '../../utils/GenerateUUID';
 
-const TimePickerWrapper = ({ index, name, getValues, refresh, classname, props }) => {
+const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
     const [toggle, setToggle] = useState(null);
     const UUID = useRef(generateUUID());
 
-    getValues(index, name, value, props.validation(value))
+    useEffect(() => {
+        getValues(name, value, props.validation(value))
+    }, [value])
 
     const changeToggle = () => {
         setToggle(!toggle);
@@ -18,7 +20,7 @@ const TimePickerWrapper = ({ index, name, getValues, refresh, classname, props }
 
     const onChange = (value) => {
         switch (value) {
-            case "hide":
+            case "toggleVisibility":
                 setValue("00:00");
                 setToggle(null);
                 break;
@@ -54,15 +56,15 @@ const TimePickerWrapper = ({ index, name, getValues, refresh, classname, props }
     return (
         <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
-            <HiddenCheckbox
+            <HiddenInput
                 {...props}
                 type="time"
                 name={name}
                 value={value}
-                onChange={(event) => { getValues(index, name, event.target.value, props.validation(event.target.value)); setValue(event.target.value) }}
+                onChange={(event) => { setValue(event.target.value) }}
             >
-            </HiddenCheckbox >
-            <StyledTimePicker id={name} title={`Selecteer een "${props.label}".`}>
+            </HiddenInput >
+            <StyledTimePicker id={name} className="input" title={`Selecteer een tijd.`}>
                 <Time>{value}</Time>
             </StyledTimePicker>
             <Model
@@ -96,7 +98,7 @@ const Label = styled.div`
     margin-bottom:2px;
 `
 
-const HiddenCheckbox = styled.input.attrs({ type: 'time' })`
+const HiddenInput = styled.input.attrs({ type: 'time' })`
     border: 0;
     clip: rect(0 0 0 0);
     clippath: inset(50%);
@@ -129,12 +131,6 @@ const Time = styled.p`
 
 const areEqual = (prevProps, nextProps) => {
     if (nextProps.refresh) return false;
-    // nextProps.dependencyValues.forEach((element, index) => {
-    //     if (element !== prevProps.dependencyValues[index]) {
-    //         areEqual = false;
-    //         return;
-    //     }
-    // });
     return true;
 }
 

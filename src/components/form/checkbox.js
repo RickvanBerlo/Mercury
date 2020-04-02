@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 
-const CheckboxWrapper = ({ index, name, getValues, refresh, classname, props }) => {
+const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
     const [check, setCheck] = useState(props.value !== undefined ? props.value : false);
 
     useEffect(() => {
@@ -10,17 +10,20 @@ const CheckboxWrapper = ({ index, name, getValues, refresh, classname, props }) 
             setCheck(false);
     }, [refresh]);
 
-    getValues(index, name, check, true);
+    useEffect(() => {
+        getValues(name, check, true);
+    }, [check]);
 
     return (
         <Container className={classname}>
             <Label>
                 <CheckboxContainer>
-                    <HiddenCheckbox type="checkbox" {...props} checked={check} onChange={(event) => {
-                        console.log(event.target.checked);
-                        getValues(index, name, event.target.checked, true); setCheck(event.target.checked)
-                    }} />
-                    <StyledCheckbox checked={check} title={`Toggle de knop "${props.label}" aan of uit`}>
+                    <HiddenCheckbox type="checkbox" {...props} checked={check}
+                        onChange={(event) => {
+                            setCheck(event.target.checked)
+                        }}
+                    />
+                    <StyledCheckbox checked={check} className="input" title={`Toggle het vlak aan of uit.`}>
                         <Icon viewBox="0 0 24 24">
                             <polyline points="20 6 9 17 4 12" />
                         </Icon>

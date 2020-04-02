@@ -5,24 +5,25 @@ import SubmitButton from './submitButton';
 
 
 const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
-    const validations = useRef(new Array(elements.length).fill(false));
+    const validations = useRef({});
     const [values, setValues] = useState({});
     const [enableSubmit, setEnableSubmit] = useState(CheckIfAllAreValid(validations.current));
     const [refresh, setRefresh] = useState(false);
-    const dependencies = useRef([]);
-    const inputs = useRef([]);
+    const dependencies = useRef({});
+    const inputs = useRef({});
 
-    const getValues = (index, name, value, valid) => {
+    const getValues = (name, value, valid) => {
         let tmpValidations = validations.current;
         let tmpValues = values;
-        tmpValidations[index] = valid;
+        tmpValidations[name] = valid;
         tmpValues[name] = value;
 
         validations.current = tmpValidations;
         setValues({ ...tmpValues });
         setEnableSubmit(CheckIfAllAreValid(validations.current));
-        if (inputs.current.length !== 0)
-            checkDependencies(name, value, dependencies.current, inputs.current);
+
+        if (inputs.current.length !== 0 && dependencies.current.length !== 0)
+            checkDependencies(name, value);
         if (refresh)
             setRefresh(false);
     }
@@ -34,41 +35,58 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
         }
     }
 
+    const changeValidation = (name) => {
+        return (value) => {
+            validations.current[name] = value;
+            setEnableSubmit(CheckIfAllAreValid(validations.current));
+        }
+    }
+
+    const checkDependencies = (name, value) => {
+        for (const key in dependencies.current) {
+            dependencies.current[key].forEach((dependency) => {
+                dependency.functions.forEach((f) => {
+                    if (dependency.valueOf === name) {
+                        if (dependencies.current[name].some((dependency) => { return dependency.valueOf === key })) {
+                            f(values[key], value, inputs.current[dependency.valueOf], changeValidation(dependency.valueOf))
+                        }
+                    } else if (name === key) {
+                        f(value, values[dependency.valueOf], inputs.current[dependency.valueOf], changeValidation(dependency.valueOf))
+                    }
+                })
+            })
+        }
+    }
+
     useEffect(() => {
-        inputs.current = document.getElementsByClassName(name);
+        elements.forEach((element) => {
+            if (element.props.props.dependencies !== undefined)
+                dependencies.current[element.props.name] = element.props.props.dependencies;
+        });
+    }, [elements])
+
+    useEffect(() => {
+        const tmpElements = document.getElementsByClassName(name);
+        elements.forEach((element, index) => {
+            inputs.current[element.props.name] = tmpElements[index];
+        });
     }, [name])
 
     return (
         <Form onSubmit={handleSubmit}>
             {elements.map((element, index) => {
-                if (!dependencies.current[index])
-                    dependencies.current[index] = element.props.props.dependencies;
-                return cloneElement(element, { key: index, getValues: getValues, refresh: refresh, classname: name }, null);
+                return cloneElement(element, { key: `${index}${name}`, getValues: getValues, refresh: refresh, classname: name }, null);
             })}
             <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
         </Form>
     )
 }
 
-const checkDependencies = (name, value, dependencies, inputs) => {
-    dependencies.forEach((inputDependencies, index) => {
-        if (inputDependencies !== undefined) {
-            inputDependencies.forEach((dependency) => {
-                if (dependency.valueOf === name) {
-                    dependency.functions.forEach((f) => {
-                        f(value, inputs[index]);
-                    })
-                }
-            })
-        }
-    })
-}
-
 const CheckIfAllAreValid = (validations) => {
     let enable = true;
-    validations.forEach((valid) => {
-        if (!valid) enable = false;
-    })
+    for (const key in validations) {
+        if (!validations[key]) enable = false;
+    }
     return enable;
 };
 
