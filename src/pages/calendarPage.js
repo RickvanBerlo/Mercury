@@ -41,7 +41,7 @@ const reducer = (state, action) => {
     }
 }
 
-const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
+const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
     let mouseX = 0;
@@ -125,6 +125,7 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
 
 
     useEffect(() => {
+        console.log(storage.shared.events);
         const calendarNext = document.getElementById("calendar_next");
         const calendarPrev = document.getElementById("calendar_prev");
         const monthContainers = document.getElementsByClassName("monthContainer");
@@ -160,7 +161,7 @@ const Calendar = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     let nextMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() + 1, state.currentDate.getDate());
     let prevMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() - 1, state.currentDate.getDate());
-    console.log(nextMonth);
+
     return (
         <Container>
             <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentDate.getMonth()} currentYear={state.currentDate.getFullYear()} callback={CallbackMonthSelector} />

@@ -1,7 +1,7 @@
 
 import { pageNames } from '../constants/pages';
 
-const SHARED_STORAGE = { events: {} };
+const SHARED_STORAGE = { events: [] };
 class Storage {
     #storage;
 

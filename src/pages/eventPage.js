@@ -8,7 +8,7 @@ import dependencieFunctions from '../components/form/dependencies/dependencieFun
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
-const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
+const Event = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
 
     const goBack = useCallback(() => {
         setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
@@ -16,8 +16,9 @@ const Event = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        console.log("uitkomst ");
-        console.log(values);
+        console.log(storage);
+        storage.shared.events.push(values);
+        setCurrentPage(pageNames.CALENDAR);
     }
 
     useEffect(() => {
