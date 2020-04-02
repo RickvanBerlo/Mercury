@@ -51,7 +51,7 @@ const buildForm = (formBuilder, onSubmit, selectedDay) => {
     builder.addTextInput("title", { required: true, placeholder: "Title", label: "Titel" });
     builder.addDateInput("startDate", { required: true, value: value, label: "Start datum" });
     builder.addDateInput("endDate", { required: true, value: value, label: "Eind datum" });
-    builder.addCheckboxInput("time", { label: "Tijdsindeling" });
+    builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true });
     builder.addTimeInput("startTime", { label: "Begin tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
     builder.addTimeInput("endTime", { label: "Eind tijd", dependencies: [{ valueOf: "time", functions: [hideObjectIfTrue] }] });
     builder.addTextAreaInput("description", { required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });

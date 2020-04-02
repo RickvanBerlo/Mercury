@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 
 const CheckboxWrapper = ({ index, name, getValues, refresh, classname, props }) => {
-    const [check, setCheck] = useState(props.checked !== undefined ? props.checked : false);
+    const [check, setCheck] = useState(props.value !== undefined ? props.value : false);
 
     useEffect(() => {
         if (refresh)
@@ -16,7 +16,8 @@ const CheckboxWrapper = ({ index, name, getValues, refresh, classname, props }) 
         <Container className={classname}>
             <Label>
                 <CheckboxContainer>
-                    <HiddenCheckbox type="checkbox" {...props} checked={props.checked} onChange={(event) => {
+                    <HiddenCheckbox type="checkbox" {...props} checked={check} onChange={(event) => {
+                        console.log(event.target.checked);
                         getValues(index, name, event.target.checked, true); setCheck(event.target.checked)
                     }} />
                     <StyledCheckbox checked={check} title={`Toggle de knop "${props.label}" aan of uit`}>
