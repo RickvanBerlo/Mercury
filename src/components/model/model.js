@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import colors from '../../constants/colors';
 import styled, { keyframes, css } from 'styled-components';
 import IconButton from '../buttons/dasboard/iconButton';
+import generateUUID from '../../utils/GenerateUUID';
 
 import AddIcon from 'react-ionicons/lib/MdClose';
 
 const Model = ({ toggle, setToggle, title, content }) => {
+    const UUID = useRef(generateUUID());
 
     useEffect(() => {
-        const modelContainer = document.getElementById("modelContainer");
+        const modelContainer = document.getElementById(UUID.current);
         const closeButton = document.getElementById("closeButton");
         modelContainer.addEventListener("click", hideModel, false);
         modelContainer.addEventListener("touchend", hideModel, false);
@@ -28,7 +30,7 @@ const Model = ({ toggle, setToggle, title, content }) => {
 
     return (
         <div>
-            <BackgroundPopup id="modelContainer" enable={toggle} />
+            <BackgroundPopup id={UUID.current} enable={toggle} />
             <Popup enable={toggle}>
                 <TopBar>
                     <Title>{title}</Title>
