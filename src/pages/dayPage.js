@@ -10,6 +10,9 @@ import AddIcon from 'react-ionicons/lib/MdAdd';
 
 const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
     let scroll = useRef(false);
+    const isdragging = useRef(false);
+    const beginTime = useRef("00:00");
+    const endTime = useRef("00:00");
 
     const goBack = useCallback(() => {
         setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
@@ -21,8 +24,37 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     const goToEvent = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay });
+            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, beginTime: beginTime.current, endTime: endTime.current });
         scroll.current = false;
+    }
+
+    const click = (e, id) => {
+        e.preventDefault();
+        beginTime.current = id;
+        endTime.current = id;
+        goToEvent();
+    }
+
+    const startDrag = (e, id) => {
+        e.preventDefault();
+        isdragging.current = true;
+        document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
+        beginTime.current = id;
+    }
+
+    const drag = (e, id) => {
+        e.preventDefault();
+        if (isdragging.current)
+            document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
+    }
+
+    const endDrag = (e, id) => {
+        e.preventDefault();
+        if (isdragging.current) {
+            isdragging.current = false;
+            endTime.current = id;
+            goToEvent();
+        }
     }
 
     useEffect(() => {
@@ -51,7 +83,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
                 </PositionButtonContainer>
             </TopBar>
             <DayContainer>
-                {createDayGrid(goToEvent)}
+                {createDayGrid(click, drag, startDrag, endDrag)}
             </DayContainer>
             <AddButton onClick={goToEvent} onTouchEnd={goToEvent}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -60,17 +92,14 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
     )
 }
 
-const createDayGrid = (goToEvent) => {
+const createDayGrid = (click, drag, startDrag, endDrag) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
             <HourContainer key={UUID()}>
                 <HourSectionsContainer>
-                    <QuarterContainer onClick={goToEvent} onTouchEnd={goToEvent} />
-                    <QuarterContainer onClick={goToEvent} onTouchEnd={goToEvent} />
-                    <QuarterContainer onClick={goToEvent} onTouchEnd={goToEvent} />
-                    <QuarterContainer onClick={goToEvent} onTouchEnd={goToEvent} />
+                    {createQuarterContainers(i, click, drag, startDrag, endDrag)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -79,6 +108,19 @@ const createDayGrid = (goToEvent) => {
         )
     }
     return array;
+}
+
+const createQuarterContainers = (hour, click, drag, startDrag, endDrag) => {
+    let containers = [];
+    for (let i = 0; i < 4; i++) {
+        containers.push(<QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }} />)
+    }
+    return containers;
+}
+
+const createTime = (hour, quarter) => {
+    return `${hour < 10 ? "0" + hour : hour}:${quarter * 15 === 0 ? "00" : quarter * 15}`;
+
 }
 
 const Container = styled.div`
