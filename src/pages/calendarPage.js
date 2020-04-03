@@ -7,10 +7,12 @@ import languageSelector from '../utils/languageSelector';
 import { pageNames } from '../constants/pages';
 import MonthSelector from '../components/monthSelector/monthSelector';
 import UUID from '../utils/GenerateUUID';
+import Event from '../components/event/event';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
 import AddIcon from 'react-ionicons/lib/MdAdd';
+import useWindowDimensions from "../utils/screenResolution";
 
 const DEAD_ZONE_SCROLL = 150;
 const ANIM_TIME = 520;
@@ -189,13 +191,13 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+                {createMonth(storage.shared.events, monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+                {createMonth(storage.shared.events, monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage)}
+                {createMonth(storage.shared.events, monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
 
 
@@ -248,14 +250,14 @@ const getDayNames = () => {
     return names;
 }
 
-const createMonth = (currentDate, callback) => {
+const createMonth = (events, currentDate, callback, setCurrentPage) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
             <WeekContainer key={UUID()}>
-                {createWeek(firstDayOfMonth, currentDate.getMonth(), callback)}
+                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), callback, setCurrentPage)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
@@ -279,25 +281,27 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (firstDayOfWeek, month, callback) => {
+const createWeek = (events, firstDayOfWeek, month, callback, setCurrentPage) => {
     return (
         <DaysContainer>
-            {createDays(firstDayOfWeek, month, callback)}
+            {createDays(events, firstDayOfWeek, month, callback, setCurrentPage)}
         </DaysContainer>
     )
 }
 
-const createDays = (firstDayOfWeek, month, callback) => {
+const createDays = (events, firstDayOfWeek, month, callback, setCurrentPage) => {
     let days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
     for (let i = 0; i < 7; i++) {
         const date = new Date(firstDayOfWeek);
+        console.log(firstDayOfWeek.toLocaleDateString("fr-CA") === events[0].startDate);
         days.push(
             <Day
                 key={UUID()}
                 onClick={() => { callback(date) }}
                 onTouchEnd={() => { callback(date) }}>
+                {firstDayOfWeek.toLocaleDateString("fr-CA") === events[0].startDate && createEvent(events[0], setCurrentPage)}
                 <DayNumber
                     today={firstDayOfWeek.toLocaleDateString('nl') === today ? true : false}
                     toggle={firstDayOfWeek.getMonth() === month ? true : false}>
@@ -308,6 +312,10 @@ const createDays = (firstDayOfWeek, month, callback) => {
         firstDayOfWeek.setDate(firstDayOfWeek.getDate() + 1);
     }
     return days;
+}
+
+const createEvent = (event, setCurrentPage) => {
+    return (<Event props={event} setCurrentPage={setCurrentPage} />)
 }
 
 const Container = styled.div`
@@ -427,18 +435,7 @@ const Day = styled.div`
     flex: 1;
     position: relative;
     transition: background-color 0.3s linear;
-    &:hover{
-        background-color: ${colors.LIGHT_GRAY}
-        cursor: pointer;
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.LIGHT_GRAY};
-        }
-    }
+    cursor: pointer;
 `
 
 const DayNumber = styled.p`

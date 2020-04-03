@@ -24,7 +24,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
 
     const goToEvent = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, beginTime: beginTime.current, endTime: endTime.current });
+            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, props: { beginTime: beginTime.current, endTime: endTime.current } });
         scroll.current = false;
     }
 
