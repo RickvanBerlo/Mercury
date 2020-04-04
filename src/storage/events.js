@@ -11,7 +11,6 @@ export const setEvent = (eventProps) => {
     events.push(eventProps);
 }
 
-
 export const getEventsOfDay = (YMD) => {
     let offset = 0;
     const tmpEvents = [];
