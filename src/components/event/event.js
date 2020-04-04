@@ -3,17 +3,22 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 import { pageNames } from '../../constants/pages';
-import { datediff } from '../../utils/date';
+import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ setCurrentPage, offset, props }) => {
+const Event = ({ setCurrentPage, placedDate, offset, props }) => {
 
     const goToEvent = (e) => {
         setCurrentPage(pageNames.EVENT, { props: props });
         e.stopPropagation();
     }
 
+    const calculateWidth = () => {
+        if (datediff(placedDate, props.endDate) > (6 - parseDateYMD(placedDate).getDay())) return (6 - parseDateYMD(placedDate).getDay());
+        return datediff(placedDate, props.endDate);
+    }
+
     return (
-        <Container onClick={goToEvent} offset={offset} width={datediff(props.startDate, props.endDate)}><Title>{props.title}</Title></Container>
+        <Container onClick={goToEvent} offset={offset} width={calculateWidth()}><Title>{props.title}</Title></Container>
     )
 
 }

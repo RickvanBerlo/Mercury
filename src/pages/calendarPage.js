@@ -8,7 +8,6 @@ import { pageNames } from '../constants/pages';
 import MonthSelector from '../components/monthSelector/monthSelector';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
-import { datediff } from '../utils/date';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -48,7 +47,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const isDragging = useRef(false);
     let mouseX = 0;
     let scrollmovement = 0;
-    let numberOfEvent = 0;
     const monthContainerPositions = useRef([-100, 0, 100]);
     let timeout = useRef(null);
     const initialState = (selectedDay) => {
@@ -194,13 +192,13 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(storage.shared.getEvents(), monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage, numberOfEvent)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(storage.shared.getEvents(), monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage, numberOfEvent)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(storage.shared.getEvents(), monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage, numberOfEvent)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
             </AnimationContainer>
 
 
@@ -253,14 +251,14 @@ const getDayNames = () => {
     return names;
 }
 
-const createMonth = (events, currentDate, callback, setCurrentPage, numberOfEvent) => {
+const createMonth = (getEventsOfDay, currentDate, callback, setCurrentPage) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
             <WeekContainer key={UUID()}>
-                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), callback, setCurrentPage, numberOfEvent)}
+                {createWeek(getEventsOfDay, firstDayOfMonth, currentDate.getMonth(), callback, setCurrentPage)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
@@ -284,40 +282,32 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (events, firstDayOfWeek, month, callback, setCurrentPage, numberOfEvent) => {
+const createWeek = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
     return (
         <DaysContainer>
-            {createDays(events, firstDayOfWeek, month, callback, setCurrentPage, numberOfEvent)}
+            {createDays(getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage)}
         </DaysContainer>
     )
 }
 
-const createDays = (events, firstDayOfWeek, month, callback, setCurrentPage, numberOfEvent) => {
+const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
     const days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
-    const offset = [];
 
     for (let i = 0; i < 7; i++) {
-        console.log(offset);
         const date = new Date(firstDayOfWeek);
-        const eventcomponents = [];
         //get events
-        while (true) {
-            if (events[numberOfEvent] === undefined) break;
-            if (events[numberOfEvent].startDate !== firstDayOfWeek.toLocaleDateString("fr-CA")) break;
-            const numberOfDays = datediff(events[numberOfEvent].startDate, events[numberOfEvent].endDate);
-            eventcomponents.push(<Event key={UUID()} offset={eventcomponents.length > 0 ? 0 : Object.keys(offset).length} props={events[numberOfEvent]} setCurrentPage={setCurrentPage} />);
-            numberOfEvent += 1;
-            if (numberOfDays > 0) offset.push(numberOfDays);
-        }
+        const dayEventsObj = getEventsOfDay(firstDayOfWeek.toLocaleDateString("fr-CA"));
         //make day
         days.push(
             <Day
                 key={UUID()}
                 onClick={() => { callback(date) }}
                 onTouchEnd={() => { callback(date) }}>
-                {eventcomponents}
+                {dayEventsObj.events.map((event, index) => {
+                    return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} />
+                })}
                 <DayNumber
                     today={firstDayOfWeek.toLocaleDateString('nl') === today ? true : false}
                     toggle={firstDayOfWeek.getMonth() === month ? true : false}>
@@ -327,12 +317,6 @@ const createDays = (events, firstDayOfWeek, month, callback, setCurrentPage, num
         )
         //increase day
         firstDayOfWeek.setDate(firstDayOfWeek.getDate() + 1);
-        //remove one day in offset
-        for (const key in offset) {
-            if (offset[key] === 0)
-                offset.splice(offset.indexOf(key), 1);
-            offset[key] -= 1;
-        }
     }
     return days;
 }
