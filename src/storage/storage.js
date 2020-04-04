@@ -1,7 +1,8 @@
 
 import { pageNames } from '../constants/pages';
+import { getEvents, setEvent } from './events';
 
-const SHARED_STORAGE = { events: [{ title: "test", startDate: "2020-04-01", endDate: "2020-04-01", time: true, startTime: "00:30", endTime: "04:00", description: "test" }] };
+const SHARED_STORAGE = { getEvents: getEvents, setEvent: setEvent };
 class Storage {
     #storage;
 

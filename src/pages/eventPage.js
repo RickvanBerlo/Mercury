@@ -16,8 +16,7 @@ const Event = ({ storage, setCurrentPage, selectedDay = new Date(), beginTime = 
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        console.log(storage);
-        storage.shared.events.push(values);
+        storage.shared.setEvent(values);
         setCurrentPage(pageNames.CALENDAR);
     }
 
