@@ -13,7 +13,7 @@ const Event = ({ setCurrentPage, offset, props }) => {
     }
 
     return (
-        <Container onClick={goToEvent} offset={offset} width={datediff(props.startDate, props.endDate)}><Title>{props.title}ddddddddddddddddddddd</Title></Container>
+        <Container onClick={goToEvent} offset={offset} width={datediff(props.startDate, props.endDate)}><Title>{props.title}</Title></Container>
     )
 
 }
