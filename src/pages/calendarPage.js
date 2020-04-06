@@ -60,9 +60,9 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
 
-    const navigateToDayPage = (day) => {
+    const navigateToDayPage = (day, events) => {
         if (timeout.current === null)
-            setCurrentPage(pageNames.DAY, { selectedDay: day });
+            setCurrentPage(pageNames.DAY, { selectedDay: day, events: events });
     }
 
     const scroll = (e) => {
@@ -202,7 +202,7 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { setCurrentPage(pageNames.EVENT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENT); }}>
+            <AddButton onClick={() => { setCurrentPage(pageNames.EVENTEDIT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENTEDIT); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
@@ -303,8 +303,8 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentP
         days.push(
             <Day
                 key={UUID()}
-                onClick={() => { callback(date) }}
-                onTouchEnd={() => { callback(date) }}>
+                onClick={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.events : []) }}
+                onTouchEnd={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.events : []) }}>
                 {dayEventsObj !== undefined && dayEventsObj.events.map((event, index) => {
                     return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} />
                 })}

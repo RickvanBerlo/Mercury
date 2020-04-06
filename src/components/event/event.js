@@ -34,6 +34,7 @@ const Container = styled.div`
     z-index: 1;
     display: flex;
     transition: background-color 0.3s linear;
+    box-shadow: 0px 1px 2px 0px ${colors.BLACK};
     &:hover{
         background-color: ${colorChanger(colors.RED, -0.2)}
         cursor: pointer;

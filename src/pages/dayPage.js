@@ -1,19 +1,21 @@
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
+import colorChanger from '../utils/colorChanger';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
+const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
     let scroll = useRef(false);
+    const ispressedDown = useRef(false);
     const isdragging = useRef(false);
     const beginTime = useRef("00:00");
     const endTime = useRef("00:00");
-
+    console.log("rerender")
     const goBack = useCallback(() => {
         setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
     }, [setCurrentPage, selectedDay])
@@ -22,9 +24,17 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
         scroll.current = true;
     }
 
-    const goToEvent = () => {
+    const goToEventEdit = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, props: { beginTime: beginTime.current, endTime: endTime.current } });
+            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: selectedDay, props: { beginTime: beginTime.current, endTime: endTime.current } });
+        scroll.current = false;
+    }
+
+    const goToEvent = (e, props) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!scroll.current)
+            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, props: props });
         scroll.current = false;
     }
 
@@ -32,28 +42,33 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
         e.preventDefault();
         beginTime.current = id;
         endTime.current = id;
-        goToEvent();
+        goToEventEdit();
     }
 
     const startDrag = (e, id) => {
         e.preventDefault();
-        isdragging.current = true;
+        ispressedDown.current = true;
         document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
         beginTime.current = id;
     }
 
     const drag = (e, id) => {
         e.preventDefault();
-        if (isdragging.current)
+        if (ispressedDown.current) {
+            isdragging.current = true;
             document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
+        }
     }
 
     const endDrag = (e, id) => {
         e.preventDefault();
-        if (isdragging.current) {
+        if (isdragging.current && ispressedDown.current) {
             isdragging.current = false;
+            ispressedDown.current = false;
             endTime.current = id;
-            goToEvent();
+
+            console.log("d");
+            goToEventEdit();
         }
     }
 
@@ -83,23 +98,23 @@ const Day = ({ setCurrentPage, selectedDay = new Date() }) => {
                 </PositionButtonContainer>
             </TopBar>
             <DayContainer>
-                {createDayGrid(click, drag, startDrag, endDrag)}
+                {createDayGrid(click, drag, startDrag, endDrag, events, goToEvent)}
             </DayContainer>
-            <AddButton onClick={goToEvent} onTouchEnd={goToEvent}>
+            <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
     )
 }
 
-const createDayGrid = (click, drag, startDrag, endDrag) => {
+const createDayGrid = (click, drag, startDrag, endDrag, events, goToEvent) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
             <HourContainer key={UUID()}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click, drag, startDrag, endDrag)}
+                    {createQuarterContainers(i, click, drag, startDrag, endDrag, events, goToEvent)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -110,23 +125,92 @@ const createDayGrid = (click, drag, startDrag, endDrag) => {
     return array;
 }
 
-const createQuarterContainers = (hour, click, drag, startDrag, endDrag) => {
+const createQuarterContainers = (hour, click, drag, startDrag, endDrag, events, goToEvent) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
-        containers.push(<QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }} />)
+        containers.push(
+            <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
+                {createEvents(createTime(hour, i), events, goToEvent)}
+            </QuarterContainer>
+        )
     }
     return containers;
 }
 
+const createEvents = (quarter, events, goToEvent) => {
+    let eventComponents = [];
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].startTime === quarter) {
+            let offset = getOffset(quarter, events);
+            eventComponents.push(<Event key={UUID()} className="event" offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></Event>)
+        }
+    }
+    return eventComponents;
+}
+
+const getOffset = (quarter, events) => {
+    let offset = 0;
+    for (let i = 0; i < events.length; i++) {
+        if (diffQuarter(events[i].startTime, quarter) < diffQuarter(events[i].startTime, events[i].endTime) && diffQuarter(events[i].startTime, quarter) > 0) {
+            offset += 1;
+        }
+    }
+    return offset;
+}
+
 const createTime = (hour, quarter) => {
     return `${hour < 10 ? "0" + hour : hour}:${quarter * 15 === 0 ? "00" : quarter * 15}`;
+}
 
+const diffQuarter = (startTime, endTime) => {
+    const start = startTime.split(':');
+    const end = endTime.split(':');
+    return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
 }
 
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
 `
+
+const Event = styled.div`
+    position: relative;
+    text-align: center;
+    flex: 1;
+    height: calc(${props => (props.height * 100) + 100}% + ${props => props.height + 1}px);
+    background-color: ${colors.RED};
+    margin-left: ${props => 6 + (props.offset * 6)}px;
+    margin-right: ${props => 6 + (props.offset * 6)}px;
+    border-radius: 5px;
+    transition: background-color 0.3s linear;
+    box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    &:hover{
+        background-color: ${colorChanger(colors.RED, -0.2)}
+        cursor: pointer;
+    }
+    @media (max-width: 767px) {
+        &:hover{
+            background-color: ${colors.RED};
+        }
+        &:active{
+            background-color: ${colorChanger(colors.RED, -0.2)}
+    }
+`
+
+const EventTitle = styled.p`
+    color: ${colors.WHITE}
+    margin: 0;
+    width: calc(100% - 16px);
+    text-align: center;
+    font-size: 20px;
+    height: 100%;
+    padding-top: 2px;
+    margin-left: 8px;
+    margin-right: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`
+
 const PositionButtonContainer = styled.div`
     position: absolute;
     top: 5px;
@@ -149,18 +233,8 @@ const QuarterContainer = styled.div`
     height: calc(25% - 1px);
     border-bottom: 1px solid ${colors.GRAY};
     transition: background-color 0.3s linear;
-    &:hover{
-        background-color: ${colors.LIGHT_GRAY}
-        cursor: pointer;
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: ${colors.WHITE};
-        }
-        &:active{
-            background-color: ${colors.LIGHT_GRAY};
-        }
-    }
+    display: flex;
+
 `
 
 const HourSectionsContainer = styled.div`
@@ -175,7 +249,7 @@ const HourNameContainer = styled.div`
 `
 
 const HourContainer = styled.div`
-    min-height: 150px;
+    min-height: 180px;
     width: 100%;
     display: flex;
 `
@@ -217,4 +291,8 @@ const AddButton = styled.div`
     box-shadow: 0px 2px 10px 0px ${colors.BLACK};
 `
 
-export default Day;
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+export default memo(Day, areEqual);
