@@ -1,31 +1,43 @@
 import { datediff, parseDateYMD } from '../utils/date';
 
-const events = [{ title: "test", startDate: "2020-04-05", endDate: "2020-04-12", time: true, startTime: "00:30", endTime: "04:00", description: "test" },
-{ title: "test2", startDate: "2020-04-06", endDate: "2020-04-07", time: true, startTime: "00:30", endTime: "04:00", description: "test" }];
+const events = [];
 
 export const getEvents = () => {
     return events;
 }
 
-export const setEvent = (eventProps) => {
-    events.push(eventProps);
+export const setEvent = (eventProps, isnew) => {
+    const startDate = parseDateYMD(eventProps.startDate);
+    const diffrence = datediff(eventProps.startDate, eventProps.endDate);
+
+    if (isnew) {
+        for (let i = 0; i <= diffrence; i++) {
+            const firstDayOfWeek = startDate.getDay() === 0;
+
+            if (events[startDate.toLocaleDateString("fr-CA")] === undefined) {
+                if (i === 0) events[startDate.toLocaleDateString("fr-CA")] = { offset: 0, events: [eventProps] }
+                else if (firstDayOfWeek) events[startDate.toLocaleDateString("fr-CA")] = { offset: 0, events: [eventProps] }
+                else events[startDate.toLocaleDateString("fr-CA")] = { offset: 1, events: [] }
+            } else {
+                if (i === 0) events[startDate.toLocaleDateString("fr-CA")].events.push(eventProps);
+                else if (firstDayOfWeek) events[startDate.toLocaleDateString("fr-CA")].events.push(eventProps);
+                else events[startDate.toLocaleDateString("fr-CA")].offset += 1;
+            }
+
+            startDate.setDate(startDate.getDate() + 1);
+        }
+    } else {
+        events[startDate.toLocaleDateString("fr-CA")].events.forEach((event, index) => {
+            if (event.id === eventProps.id) {
+                events[startDate.toLocaleDateString("fr-CA")].events.splice(index, 1);
+                setEvent(eventProps, true);
+                return;
+            }
+        })
+    }
+
 }
 
 export const getEventsOfDay = (YMD) => {
-    let offset = 0;
-    const tmpEvents = [];
-    const firstDayOfWeek = parseDateYMD(YMD).getDay() === 0;
-
-    events.forEach((event) => {
-        if (event.startDate === YMD) {
-            tmpEvents.push(event);
-        } else {
-            if (datediff(event.startDate, event.endDate) >= datediff(event.startDate, YMD) && parseDateYMD(YMD) > parseDateYMD(event.startDate)) {
-                if (firstDayOfWeek) tmpEvents.push(event);
-                else offset += 1;
-            }
-        }
-
-    })
-    return { offset: offset, events: tmpEvents };
+    return events[YMD];
 }

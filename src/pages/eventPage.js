@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
-import formBuilder from '../utils/formBuilder';
+import FormBuilder from '../utils/formBuilder';
 import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
+import GenerateUUID from "../utils/GenerateUUID";
 
 const Event = ({ storage, setCurrentPage, selectedDay = new Date(), beginTime = "00:00", endTime = "00:00", props = {} }) => {
 
@@ -16,7 +17,7 @@ const Event = ({ storage, setCurrentPage, selectedDay = new Date(), beginTime = 
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        storage.shared.setEvent(values);
+        storage.shared.setEvent(values, props.id === undefined ? true : false);
         setCurrentPage(pageNames.CALENDAR);
     }
 
@@ -39,15 +40,16 @@ const Event = ({ storage, setCurrentPage, selectedDay = new Date(), beginTime = 
                 </PositionButtonContainer>
             </TopBar>
             <EventContainer>
-                {buildForm(formBuilder, onSubmit, selectedDay, props)}
+                {buildForm(onSubmit, selectedDay, props)}
             </EventContainer>
         </Container>
     )
 }
 
-const buildForm = (formBuilder, onSubmit, selectedDay, props) => {
+const buildForm = (onSubmit, selectedDay, props) => {
     const value = selectedDay.toLocaleDateString('en-CA');
-    const builder = new formBuilder();
+    const builder = new FormBuilder();
+    builder.addHiddenInput("id", { value: props.id === undefined ? GenerateUUID() : props.id, required: true });
     builder.addTextInput("title", { value: props.title, required: true, placeholder: "Title", label: "Titel" });
     builder.addDateInput("startDate", { required: true, value: props.startDate === undefined ? value : props.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen] }] });
     builder.addDateInput("endDate", { required: true, value: props.endDate === undefined ? value : props.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen] }] });

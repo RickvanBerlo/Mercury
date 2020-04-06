@@ -13,6 +13,11 @@ class FormBuilder {
         this.elements = [];
     }
 
+    addHiddenInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<Input index={this.elements.length} type="hidden" name={name} props={props}></Input>)
+    }
+
     addTextInput(name, props = {}) {
         props.validation = this._getValidation(props);
         this.elements.push(<Input index={this.elements.length} type="text" name={name} props={props}></Input>)

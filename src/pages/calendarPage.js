@@ -305,7 +305,7 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentP
                 key={UUID()}
                 onClick={() => { callback(date) }}
                 onTouchEnd={() => { callback(date) }}>
-                {dayEventsObj.events.map((event, index) => {
+                {dayEventsObj !== undefined && dayEventsObj.events.map((event, index) => {
                     return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} />
                 })}
                 <DayNumber
