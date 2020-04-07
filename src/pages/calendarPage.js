@@ -8,6 +8,7 @@ import { pageNames } from '../constants/pages';
 import MonthSelector from '../components/monthSelector/monthSelector';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
+import { parseDateYMD, datediff } from '../utils/date';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -60,9 +61,9 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
 
     const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
 
-    const navigateToDayPage = (day, events) => {
+    const navigateToDayPage = (day, allDayEvents, timedEvents) => {
         if (timeout.current === null)
-            setCurrentPage(pageNames.DAY, { selectedDay: day, events: events });
+            setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
     }
 
     const scroll = (e) => {
@@ -303,9 +304,14 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentP
         days.push(
             <Day
                 key={UUID()}
-                onClick={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.events : []) }}
-                onTouchEnd={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.events : []) }}>
-                {dayEventsObj !== undefined && dayEventsObj.events.map((event, index) => {
+                onClick={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}
+                onTouchEnd={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}>
+                {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
+                    if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0)
+                        return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} />
+                    return null;
+                })}
+                {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
                     return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} />
                 })}
                 <DayNumber

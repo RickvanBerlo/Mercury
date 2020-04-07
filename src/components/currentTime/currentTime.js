@@ -20,7 +20,6 @@ const CurrentTime = () => {
     useEffect(() => {
         const container = document.getElementById("currentTime");
         const today = new Date();
-        console.log(today.getHours());
         container.style.opacity = 1;
         container.style.top = `${(today.getHours() * 180) + (today.getMinutes() * (180 / 60))}px`;
     }, [time])

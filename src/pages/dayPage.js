@@ -10,13 +10,13 @@ import CurrentTime from '../components/currentTime/currentTime';
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
+const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEvents }) => {
     let scroll = useRef(false);
     const ispressedDown = useRef(false);
     const isdragging = useRef(false);
     const beginTime = useRef("00:00");
     const endTime = useRef("00:00");
-    console.log("rerender")
+
     const goBack = useCallback(() => {
         setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
     }, [setCurrentPage, selectedDay])
@@ -68,9 +68,21 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
             ispressedDown.current = false;
             endTime.current = id;
 
-            console.log("d");
             goToEventEdit();
         }
+    }
+
+    const scrollDirection = (e) => {
+        if (e.deltaY > 0) hideAllDayEventsAnim();
+        else showAllDayEventsAnim();
+    }
+
+    const showAllDayEventsAnim = () => {
+        document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
+    }
+
+    const hideAllDayEventsAnim = () => {
+        document.getElementById("allDayContainer").style.maxHeight = "0px";
     }
 
     useEffect(() => {
@@ -87,8 +99,10 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
         const today = new Date();
         document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
+        document.getElementById("dayContainer").addEventListener("wheel", scrollDirection, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
+            document.getElementById("dayContainer").removeEventListener("wheel", scrollDirection, false);
         }
     }, [])
 
@@ -100,9 +114,13 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
             </TopBar>
+            <AllDayContainer id={"allDayContainer"}>
+                {createAllDayEvents(allDayEvents, goToEvent)}
+            </AllDayContainer>
             <DayContainer id={"dayContainer"}>
+                <Spacer height={allDayEvents.length * 40} />
                 <CurrentTime />
-                {createDayGrid(click, drag, startDrag, endDrag, events, goToEvent)}
+                {createDayGrid(click, drag, startDrag, endDrag, timedEvents, goToEvent)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -134,21 +152,31 @@ const createQuarterContainers = (hour, click, drag, startDrag, endDrag, events, 
     for (let i = 0; i < 4; i++) {
         containers.push(
             <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
-                {createEvents(createTime(hour, i), events, goToEvent)}
+                {createTimedEvents(createTime(hour, i), events, goToEvent)}
             </QuarterContainer>
         )
     }
     return containers;
 }
 
-const createEvents = (quarter, events, goToEvent) => {
+const createTimedEvents = (quarter, events, goToEvent) => {
     let eventComponents = [];
     for (let i = 0; i < events.length; i++) {
         if (events[i].startTime === quarter) {
             let offset = getOffset(quarter, events);
-            eventComponents.push(<Event key={UUID()} className="event" offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></Event>)
+            eventComponents.push(<TimedEvent key={UUID()} className="event" offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
         }
     }
+    return eventComponents;
+}
+
+const createAllDayEvents = (events, goToEvent) => {
+    let eventComponents = [];
+
+    for (let i = 0; i < events.length; i++) {
+        eventComponents.push(<AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></AllDayEvent>)
+    }
+
     return eventComponents;
 }
 
@@ -172,12 +200,53 @@ const diffQuarter = (startTime, endTime) => {
     return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
 }
 
+const Spacer = styled.div`
+    width: 100%;
+    height: ${props => props.height}px;
+`
+
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
 `
 
-const Event = styled.div`
+const AllDayContainer = styled.div`
+    position: absolute;
+    width: 100vw;
+    box-shadow: 0px 3px 5px 0px ${colors.BLACK};
+    z-index: 1;
+    max-height: 0;
+    overflow: hidden;
+    background-color: ${colors.WHITE};
+    transition: max-height 0.2s linear;
+
+`
+const AllDayEvent = styled.div`
+    text-align: center;
+    height: 30px;
+    background-color: ${colors.RED};
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    transition: background-color 0.3s linear;
+    //box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    &:hover{
+        background-color: ${colorChanger(colors.RED, -0.2)}
+        cursor: pointer;
+    }
+    @media (max-width: 767px) {
+        &:hover{
+            background-color: ${colors.RED};
+        }
+        &:active{
+            background-color: ${colorChanger(colors.RED, -0.2)}
+        }
+    }
+`
+
+const TimedEvent = styled.div`
     position: relative;
     text-align: center;
     flex: 1;
