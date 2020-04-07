@@ -5,6 +5,7 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
+import CurrentTime from '../components/currentTime/currentTime';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import AddIcon from 'react-ionicons/lib/MdAdd';
@@ -83,6 +84,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
     }, [goBack]);
 
     useEffect(() => {
+        const today = new Date();
+        document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
@@ -97,7 +100,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), events = [] }) => {
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
             </TopBar>
-            <DayContainer>
+            <DayContainer id={"dayContainer"}>
+                <CurrentTime />
                 {createDayGrid(click, drag, startDrag, endDrag, events, goToEvent)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>

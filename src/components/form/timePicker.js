@@ -21,7 +21,7 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
     const onChange = (value) => {
         switch (value) {
             case "toggleVisibility":
-                setValue("00:00");
+                setValue(props.value === undefined ? "00:00" : props.value);
                 setToggle(null);
                 break;
         }

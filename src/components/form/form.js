@@ -48,10 +48,10 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
                 dependency.functions.forEach((f) => {
                     if (dependency.valueOf === name) {
                         if (dependencies.current[name].some((dependency) => { return dependency.valueOf === key })) {
-                            f(values[key], value, inputs.current[dependency.valueOf], changeValidation(dependency.valueOf))
+                            f(values[key], value, inputs.current[dependency.valueOf], changeValidation(dependency.valueOf), inputs.current)
                         }
                     } else if (name === key) {
-                        f(value, values[dependency.valueOf], inputs.current[dependency.valueOf], changeValidation(dependency.valueOf))
+                        f(value, values[dependency.valueOf], inputs.current[dependency.valueOf], changeValidation(dependency.valueOf), inputs.current)
                     }
                 })
             })

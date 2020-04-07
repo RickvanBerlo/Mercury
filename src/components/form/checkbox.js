@@ -1,9 +1,11 @@
-import React, { useState, memo, useEffect } from "react";
+import React, { useState, memo, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
+import generateUUID from '../../utils/GenerateUUID';
 
 const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
     const [check, setCheck] = useState(props.value !== undefined ? props.value : false);
+    const UUID = useRef(generateUUID());
 
     useEffect(() => {
         if (refresh)
@@ -14,8 +16,21 @@ const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
         getValues(name, check, true);
     }, [check]);
 
+
+    const onChange = (value) => {
+        switch (value) {
+            case "toggleVisibility":
+                setCheck(false);
+                break;
+        }
+    }
+
+    useEffect(() => {
+        document.getElementById(UUID.current).onchange = onChange;
+    }, [])
+
     return (
-        <Container className={classname}>
+        <Container id={UUID.current} className={classname}>
             <Label>
                 <CheckboxContainer>
                     <HiddenCheckbox type="checkbox" {...props} checked={check}

@@ -51,13 +51,19 @@ const buildForm = (onSubmit, selectedDay, props) => {
     const builder = new FormBuilder();
     builder.addHiddenInput("id", { value: props.id === undefined ? GenerateUUID() : props.id, required: true });
     builder.addTextInput("title", { value: props.title, required: true, placeholder: "Title", label: "Titel" });
-    builder.addDateInput("startDate", { required: true, value: props.startDate === undefined ? value : props.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen] }] });
-    builder.addDateInput("endDate", { required: true, value: props.endDate === undefined ? value : props.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen] }] });
+    builder.addDateInput("startDate", { required: true, value: props.startDate === undefined ? value : props.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen, disableToggleTime] }] });
+    builder.addDateInput("endDate", { required: true, value: props.endDate === undefined ? value : props.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen, disableToggleTime] }] });
     builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
     builder.addTimeInput("startTime", { value: props.beginTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
     builder.addTimeInput("endTime", { value: props.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
     builder.addTextAreaInput("description", { value: props.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("eventForm", "Verzenden", onSubmit);
+}
+
+const disableToggleTime = (dependencyValue, objectValue, object, changeValidation, inputs) => {
+    let bool = true;
+    if (new Date(dependencyValue).getTime() !== new Date(objectValue).getTime()) bool = false;
+    dependencieFunctions.checkbox.hideCheckbox(bool, objectValue, inputs["time"], changeValidation, inputs);
 }
 
 

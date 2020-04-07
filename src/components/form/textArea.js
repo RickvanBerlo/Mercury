@@ -1,9 +1,11 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
+import generateUUID from '../../utils/GenerateUUID';
 
 const TextAreaWrapper = ({ type, name, getValues, refresh, classname, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
+    const UUID = useRef(generateUUID());
 
     useEffect(() => {
         if (refresh)
@@ -13,8 +15,21 @@ const TextAreaWrapper = ({ type, name, getValues, refresh, classname, props }) =
     useEffect(() => {
         getValues(name, value, props.validation(value))
     }, [value]);
+
+    const onChange = (value) => {
+        switch (value) {
+            case "toggleVisibility":
+                setValue(props.value === undefined ? "" : props.value);
+                break;
+        }
+    }
+
+    useEffect(() => {
+        document.getElementById(UUID.current).onchange = onChange;
+    }, [])
+
     return (
-        <Container className={classname}>
+        <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <Input
                 {...props}

@@ -1,12 +1,12 @@
 import colors from '../../../constants/colors';
 
-export const toggleVisibilityObject = (dependencyValue, objectValue, object, changeValidation) => {
+export const toggleVisibilityObject = (dependencyValue, objectValue, object, changeValidation, inputs) => {
     if (!dependencyValue) object.style.display = "none";
     else object.style.display = "block"
     object.onchange("toggleVisibility");
 }
 
-export const smallerThen = (dependencyValue, objectValue, object, changeValidation) => {
+export const smallerThen = (dependencyValue, objectValue, object, changeValidation, inputs) => {
     if (dependencyValue < objectValue) {
         const input = getVisibleItem(object);
         input.title = "Deze waarde is te hoog";
@@ -21,7 +21,7 @@ export const smallerThen = (dependencyValue, objectValue, object, changeValidati
     }
 }
 
-export const largerThen = (dependencyValue, objectValue, object, changeValidation) => {
+export const largerThen = (dependencyValue, objectValue, object, changeValidation, inputs) => {
     if (dependencyValue > objectValue) {
         const input = getVisibleItem(object);
         input.title = "Deze waarde is te laag";
