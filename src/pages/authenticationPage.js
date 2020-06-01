@@ -24,7 +24,6 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     const onSubmit = (event, values) => {
         event.preventDefault();
         if (values.name === undefined) {
-            history.replace("/authentication");
             window.location.href = "http://localhost:3000/dashboard";
         } else {
             setToggle(true);
