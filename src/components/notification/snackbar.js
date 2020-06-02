@@ -71,6 +71,7 @@ const SnackBarContainer = styled.div`
     background-color: ${colors.WHITE};
     border: 5px solid ${colors.LIGHT_GRAY}
     z-index: 8;
+    cursor: pointer;
     box-shadow: 3px 4px 10px 0px;
     animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.4s ease-out forwards` : css`${Hide} 0.5s ease-in forwards`};
 `

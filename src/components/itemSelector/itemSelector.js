@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import GenerateUUID from '../../utils/GenerateUUID';
@@ -6,20 +6,21 @@ import GenerateUUID from '../../utils/GenerateUUID';
 
 const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
-    const ID = GenerateUUID();
+    const ID = useRef(GenerateUUID());
 
     useEffect(() => {
         if (toggle) {
             setSelectedItem(defaultItem);
-            const Selector = document.getElementById(ID);
+            const Selector = document.getElementById(ID.current);
             Selector.scrollTop = (items.indexOf(defaultItem) * 50) - 125;
         }
-    }, [toggle])
+    }, [toggle, ID, defaultItem, items])
 
     useEffect(() => {
-        if (defaultItem !== selectedItem)
+        if (defaultItem !== selectedItem) {
             callback(selectedItem);
-    }, [selectedItem])
+        }
+    }, [selectedItem, defaultItem, callback])
 
     const createItems = () => {
         return items.map((item) => {
@@ -32,7 +33,7 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
 
     return (
         <div>
-            <SelectorContainer id={ID} marginBottom={marginBottom}>
+            <SelectorContainer id={ID.current} marginBottom={marginBottom}>
                 {createItems()}
             </SelectorContainer>
         </div>

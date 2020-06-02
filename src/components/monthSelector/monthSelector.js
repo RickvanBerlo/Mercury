@@ -19,7 +19,7 @@ const MonthSelector = ({ enable, currentMonth, currentYear, callback }) => {
     useEffect(() => {
         setSelectedMonth(currentMonth);
         setSelectedYear(currentYear);
-    }, [enable])
+    }, [enable, currentMonth, currentYear])
 
     useEffect(() => {
         if (send) {

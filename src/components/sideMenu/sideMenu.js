@@ -10,55 +10,9 @@ const INIT_SIDEMENU_X = -300;
 
 //this component wil only be rendered once.
 const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
-    let drag = false;
-    let pressed = false;
-    let labelY = INIT_LABEL_Y;
     let sidemenuX = useRef(INIT_SIDEMENU_X)
     let scroll = useRef(false);
-    let mouseY = null;
-    let mouseX = null;
     let screenHeight = getScreenResolution().height;
-
-    const setOffset = (event) => {
-        event.preventDefault();
-        if (pressed) {
-            drag = true;
-
-            const newMouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
-            const newMouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
-
-            //calculate new position of label and sidemenu
-            //newMousePosition - oldMousePosition = offset for label and sidemenu
-            labelY = labelY + (newMouseY - mouseY);
-            sidemenuX.current = sidemenuX.current + (newMouseX - mouseX);
-
-            mouseX = newMouseX;
-            mouseY = newMouseY;
-
-            document.getElementById("label").style.cursor = "grab";
-            document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
-            document.getElementById("sideMenu").style.left = sidemenuX.current > 0 ? 0 : sidemenuX.current < -300 ? -300 : sidemenuX.current + "px";
-            document.getElementById("sideMenu").style.transition = "none";
-            toggleAnimationLabel(sidemenuX.current > 0 ? true : false);
-        }
-    }
-
-    const startDrag = (event) => {
-        event.preventDefault();
-        mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
-        mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
-        pressed = true;
-    }
-
-    const endDrag = (event) => {
-        if (pressed) {
-            drag ? sidemenuX.current = sidemenuX.current >= -150 ? 0 : -300 : sidemenuX.current = sidemenuX.current === 0 ? -300 : 0;
-            setPositionSideMenu(sidemenuX.current);
-            pressed = false;
-            drag = false;
-            scroll.current = false;
-        }
-    }
 
     const setPositionSideMenu = (X) => {
         document.getElementById("label").style.cursor = "pointer";
@@ -76,15 +30,75 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         scroll.current = false;
     }
 
+    const touchMove = () => {
+        scroll.current = true;
+    }
+
     useEffect(() => {
-        document.getElementById("label").addEventListener("mousedown", startDrag, false);
+        let drag = false;
+        let labelY = INIT_LABEL_Y;
+        let mouseY = null;
+        let mouseX = null;
+        let pressed = false;
+
+        const setOffset = (event) => {
+            event.preventDefault();
+            if (pressed) {
+                drag = true;
+
+                const newMouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+                const newMouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
+
+                //calculate new position of label and sidemenu
+                //newMousePosition - oldMousePosition = offset for label and sidemenu
+                labelY = labelY + (newMouseY - mouseY);
+                sidemenuX.current = sidemenuX.current + (newMouseX - mouseX);
+
+                mouseX = newMouseX;
+                mouseY = newMouseY;
+
+                document.getElementById("label").style.cursor = "grab";
+                document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
+                document.getElementById("sideMenu").style.left = sidemenuX.current > 0 ? 0 : sidemenuX.current < -300 ? -300 : sidemenuX.current + "px";
+                document.getElementById("sideMenu").style.transition = "none";
+                toggleAnimationLabel(sidemenuX.current > 0 ? true : false);
+            }
+        }
+
+        const startDrag = (event) => {
+            event.preventDefault();
+            mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
+            mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
+            pressed = true;
+        }
+
+        const endDrag = (event) => {
+            if (pressed) {
+                drag ? sidemenuX.current = sidemenuX.current >= -150 ? 0 : -300 : sidemenuX.current = sidemenuX.current === 0 ? -300 : 0;
+                setPositionSideMenu(sidemenuX.current);
+                pressed = false;
+                drag = false;
+                scroll.current = false;
+            }
+        }
+        const label = document.getElementById("label");
+        label.addEventListener("mousedown", startDrag, false);
+        label.addEventListener("touchstart", startDrag, false);
         window.addEventListener("mouseup", endDrag, false);
         window.addEventListener("mousemove", setOffset, false);
-        document.getElementById("label").addEventListener("touchstart", startDrag, false);
         window.addEventListener("touchend", endDrag, false);
         window.addEventListener("touchmove", setOffset, false);
-        window.addEventListener("touchmove", () => { scroll.current = true; }, false);
-    }, [])
+        window.addEventListener("touchmove", touchMove, false);
+        return () => {
+            label.removeEventListener("mousedown", startDrag, false);
+            window.removeEventListener("mouseup", endDrag, false);
+            window.removeEventListener("mousemove", setOffset, false);
+            label.removeEventListener("touchstart", startDrag, false);
+            window.removeEventListener("touchend", endDrag, false);
+            window.removeEventListener("touchmove", setOffset, false);
+            window.removeEventListener("touchmove", touchMove, false);
+        }
+    }, [screenHeight])
 
     return (
         <Container id="sideMenu" offsetX={INIT_SIDEMENU_X}>

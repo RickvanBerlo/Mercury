@@ -15,7 +15,6 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     const [toggle, setToggle] = useState(ToggleLogin);
     const [textSnackbar, setTextSnackbar] = useState("");
 
-    console.log(degree);
     const calculateDegreeAndFormWith = () => {
         setDegree(calculateDegree());
         setFormWidth(calculateFormWitdh());
@@ -44,7 +43,7 @@ const Authentication = ({ history, ToggleLogin = true }) => {
         } else {
             history.push("/register")
         }
-    }, [toggle])
+    }, [toggle, history])
 
     return (
         <Container background={background} >

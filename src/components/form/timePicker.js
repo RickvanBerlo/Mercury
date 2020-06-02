@@ -12,20 +12,7 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
 
     useEffect(() => {
         getValues(name, value, props.validation(value))
-    }, [value])
-
-    const changeToggle = () => {
-        setToggle(!toggle);
-    }
-
-    const onChange = (value) => {
-        switch (value) {
-            case "toggleVisibility":
-                setValue(props.value === undefined ? "00:00" : props.value);
-                setToggle(null);
-                break;
-        }
-    }
+    }, [value, getValues, name, props])
 
     useEffect(() => {
         if (refresh)
@@ -33,17 +20,32 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
     }, [refresh]);
 
     useEffect(() => {
-        document.getElementById(UUID.current).onchange = onChange;
+        const changeToggle = () => {
+            setToggle(!toggle);
+        }
+
+        const callback = (value) => {
+            switch (value) {
+                case "toggleVisibility":
+                    console.log(props.value)
+                    //if (props.value === undefined) setValue("00:00");
+                    //this causes a problem. needs further investigation
+                    setToggle(null);
+                    break;
+                default: console.error("no case was found for " + value + " in the Callback function in TimePicker!");
+            }
+        }
+        document.getElementById(UUID.current).callback = callback;
         const timePicker = document.getElementById(name);
         timePicker.addEventListener("click", changeToggle, false);
         return () => {
             timePicker.removeEventListener("click", changeToggle, false);
         }
-    }, [])
+    }, [props, name, toggle])
 
     const modelOnsubmit = (newValue) => {
         setValue(newValue);
-        changeToggle();
+        setToggle(!toggle);
     }
 
     const createContent = () => {
@@ -53,6 +55,7 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
             </div>
         )
     }
+
     return (
         <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}

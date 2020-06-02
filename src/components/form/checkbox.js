@@ -14,19 +14,20 @@ const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
 
     useEffect(() => {
         getValues(name, check, true);
-    }, [check]);
+    }, [check, name, getValues]);
 
 
-    const onChange = (value) => {
+    const callback = (value) => {
         switch (value) {
             case "toggleVisibility":
                 setCheck(false);
                 break;
+            default: console.error("no case was found for " + value + " in the Callback function in Checkbox!");
         }
     }
 
     useEffect(() => {
-        document.getElementById(UUID.current).onchange = onChange;
+        document.getElementById(UUID.current).callback = callback;
     }, [])
 
     return (

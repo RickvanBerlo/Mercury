@@ -2,8 +2,8 @@ import colors from '../../../constants/colors';
 
 export const toggleVisibilityObject = (dependencyValue, objectValue, object, changeValidation, inputs) => {
     if (!dependencyValue) object.style.display = "none";
-    else object.style.display = "block"
-    object.onchange("toggleVisibility");
+    else object.style.display = "block";
+    object.callback("toggleVisibility");
 }
 
 export const smallerThen = (dependencyValue, objectValue, object, changeValidation, inputs) => {

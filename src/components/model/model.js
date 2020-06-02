@@ -10,6 +10,9 @@ const Model = ({ toggle, setToggle, title, content }) => {
     const UUID = useRef(generateUUID());
 
     useEffect(() => {
+        const hideModel = () => {
+            setToggle(false);
+        }
         const modelContainer = document.getElementById(UUID.current);
         const closeButton = document.getElementById("closeButton");
         modelContainer.addEventListener("click", hideModel, false);
@@ -22,11 +25,7 @@ const Model = ({ toggle, setToggle, title, content }) => {
             closeButton.addEventListener("click", hideModel, false);
             closeButton.addEventListener("touchend", hideModel, false);
         }
-    }, []);
-
-    const hideModel = () => {
-        setToggle(false);
-    }
+    }, [setToggle]);
 
     return (
         <div>

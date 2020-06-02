@@ -11,10 +11,12 @@ import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
 const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEvents }) => {
-    let scroll = useRef(false);
+    const scroll = useRef(false);
+    let currentDragPosition = undefined;
+    let dragDirection = undefined;
     const ispressedDown = useRef(false);
     const isdragging = useRef(false);
-    const beginTime = useRef("00:00");
+    const startTime = useRef("00:00");
     const endTime = useRef("00:00");
 
     const goBack = useCallback(() => {
@@ -27,7 +29,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const goToEventEdit = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: selectedDay, props: { beginTime: beginTime.current, endTime: endTime.current } });
+            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: selectedDay, props: { startTime: startTime.current, endTime: endTime.current } });
         scroll.current = false;
     }
 
@@ -41,7 +43,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const click = (e, id) => {
         e.preventDefault();
-        beginTime.current = id;
+        startTime.current = id;
         endTime.current = id;
         goToEventEdit();
     }
@@ -50,15 +52,26 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
         e.preventDefault();
         ispressedDown.current = true;
         document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
-        beginTime.current = id;
+        startTime.current = id;
+    }
+
+    const dragOver = (e, id) => {
+        if (ispressedDown.current) {
+            if ((e.clientY > currentDragPosition) !== dragDirection) document.getElementById(id).style.backgroundColor = colors.WHITE;
+        }
     }
 
     const drag = (e, id) => {
         e.preventDefault();
         if (ispressedDown.current) {
+            if (currentDragPosition !== undefined && dragDirection === undefined) {
+                if (e.clientY > currentDragPosition) dragDirection = true;
+                else dragDirection = false;
+            }
             isdragging.current = true;
             document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
         }
+        currentDragPosition = e.clientY;
     }
 
     const endDrag = (e, id) => {
@@ -67,22 +80,15 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
             isdragging.current = false;
             ispressedDown.current = false;
             endTime.current = id;
+            if (parseInt(id.slice(0, 2) + id.slice(3)) > parseInt(startTime.current.slice(0, 2) + startTime.current.slice(3))) {
+                endTime.current = id;
+            } else {
+                endTime.current = startTime.current;
+                startTime.current = id;
+            }
 
             goToEventEdit();
         }
-    }
-
-    const scrollDirection = (e) => {
-        if (e.deltaY > 0) hideAllDayEventsAnim();
-        else showAllDayEventsAnim();
-    }
-
-    const showAllDayEventsAnim = () => {
-        document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
-    }
-
-    const hideAllDayEventsAnim = () => {
-        document.getElementById("allDayContainer").style.maxHeight = "0px";
     }
 
     useEffect(() => {
@@ -96,6 +102,18 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }, [goBack]);
 
     useEffect(() => {
+        const hideAllDayEventsAnim = () => {
+            document.getElementById("allDayContainer").style.maxHeight = "0px";
+        }
+
+        const showAllDayEventsAnim = () => {
+            document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
+        }
+
+        const scrollDirection = (e) => {
+            if (e.deltaY > 0) hideAllDayEventsAnim();
+            else showAllDayEventsAnim();
+        }
         const today = new Date();
         document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
@@ -104,7 +122,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
             window.removeEventListener("touchmove", setScroll, false);
             document.getElementById("dayContainer").removeEventListener("wheel", scrollDirection, false);
         }
-    }, [])
+    }, [allDayEvents])
 
     return (
         <Container>
@@ -120,7 +138,7 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
             <DayContainer id={"dayContainer"}>
                 <Spacer height={allDayEvents.length * 40} />
                 <CurrentTime />
-                {createDayGrid(click, drag, startDrag, endDrag, timedEvents, goToEvent)}
+                {createDayGrid(click, drag, dragOver, startDrag, endDrag, timedEvents, goToEvent)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -129,14 +147,14 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     )
 }
 
-const createDayGrid = (click, drag, startDrag, endDrag, events, goToEvent) => {
+const createDayGrid = (click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
             <HourContainer key={UUID()}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click, drag, startDrag, endDrag, events, goToEvent)}
+                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag, events, goToEvent)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -147,11 +165,11 @@ const createDayGrid = (click, drag, startDrag, endDrag, events, goToEvent) => {
     return array;
 }
 
-const createQuarterContainers = (hour, click, drag, startDrag, endDrag, events, goToEvent) => {
+const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
         containers.push(
-            <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
+            <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseOut={(e) => { dragOver(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
                 {createTimedEvents(createTime(hour, i), events, goToEvent)}
             </QuarterContainer>
         )

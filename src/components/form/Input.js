@@ -14,19 +14,19 @@ const InputWrapper = ({ type, name, getValues, refresh, classname, props }) => {
 
     useEffect(() => {
         getValues(name, value, props.validation(value))
-    }, [value])
-
-    const onChange = (value) => {
-        switch (value) {
-            case "toggleVisibility":
-                setValue(props.value === undefined ? "" : props.value);
-                break;
-        }
-    }
+    }, [value, getValues, name, props])
 
     useEffect(() => {
-        document.getElementById(UUID.current).onchange = onChange;
-    }, [])
+        const callback = (value) => {
+            switch (value) {
+                case "toggleVisibility":
+                    setValue(props.value === undefined ? "" : props.value);
+                    break;
+                default: console.error("no case was found for " + value + " in the Callback function in Input!");
+            }
+        }
+        document.getElementById(UUID.current).callback = callback;
+    }, [props])
 
     return (
         <Container id={UUID.current} className={classname}>

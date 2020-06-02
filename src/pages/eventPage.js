@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
@@ -12,22 +12,19 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ storage, setCurrentPage, selectedDay = new Date(), props = {} }) => {
-
-    const goBack = useCallback(() => {
-        setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
-    }, [setCurrentPage, selectedDay])
-
-    const goEdit = () => {
-        setCurrentPage(pageNames.EVENTEDIT, { selectedDay: props.selectedDay, props: props });
-    }
-
-    const goRemove = () => {
-        storage.shared.removeEvent(props);
-        setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
-    }
+const Event = ({ storage, setCurrentPage, props = {} }) => {
 
     useEffect(() => {
+        const goRemove = () => {
+            storage.shared.removeEvent(props);
+            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
+        }
+        const goBack = () => {
+            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
+        }
+        const goEdit = () => {
+            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: props.selectedDay, props: props });
+        }
         const backButton = document.getElementById("goBack");
         const EditButton = document.getElementById("edit");
         const RemoveButton = document.getElementById("remove");
@@ -45,7 +42,7 @@ const Event = ({ storage, setCurrentPage, selectedDay = new Date(), props = {} }
             RemoveButton.removeEventListener("click", goRemove, false);
             RemoveButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [goBack]);
+    }, [setCurrentPage, props, storage]);
 
     return (
         <Container>

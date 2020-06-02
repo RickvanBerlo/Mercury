@@ -70,7 +70,7 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
         elements.forEach((element, index) => {
             inputs.current[element.props.name] = tmpElements[index];
         });
-    }, [name])
+    }, [name, elements])
 
     return (
         <Form onSubmit={handleSubmit}>

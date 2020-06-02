@@ -8,7 +8,6 @@ import { pageNames } from '../constants/pages';
 import MonthSelector from '../components/monthSelector/monthSelector';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
-import { parseDateYMD, datediff } from '../utils/date';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -46,8 +45,6 @@ const reducer = (state, action) => {
 const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
-    let mouseX = 0;
-    let scrollmovement = 0;
     const monthContainerPositions = useRef([-100, 0, 100]);
     let timeout = useRef(null);
     const initialState = (selectedDay) => {
@@ -66,11 +63,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
     }
 
-    const scroll = (e) => {
-        if (e.deltaY > 0) goToNextMonth();
-        else goToPreviousMonth();
-    }
-
     const goToNextMonth = () => {
         if (timeout.current === null) {
             AnimCalendar(-1, monthContainerPositions);
@@ -85,50 +77,58 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
         }
     }
 
-    const animBegin = (e) => {
-        e.preventDefault();
-        isPressing.current = true;
-        mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
-    }
-
-    const drag = (e) => {
-        e.preventDefault();
-        if (isPressing.current) {
-            isDragging.current = true;
-            const newMouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
-            const monthContainers = document.getElementsByClassName("monthContainer");
-            e.toElement.style.cursor = "grab"
-            Array.from(monthContainers).forEach((monthContainer, index) => {
-                monthContainer.style.transition = "none";
-                monthContainer.style.left = `calc(${monthContainerPositions.current[index]}% + ${newMouseX - mouseX}px)`;
-            })
-            scrollmovement = newMouseX - mouseX;
-        }
-    }
-
-    const animEnd = (e) => {
-        e.preventDefault();
-        if (isPressing.current && isDragging.current) {
-            isPressing.current = false;
-            isDragging.current = false;
-            const direction = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
-            e.toElement.style.cursor = "pointer";
-            AnimCalendar(direction, monthContainerPositions);
-            scrollmovement = 0;
-            timeout.current = setTimeout(() => {
-                if (direction === 1) dispatch({ type: "prevMonth" });
-                if (direction === -1) dispatch({ type: "nextMonth" })
-                timeout.current = null;
-            }, ANIM_TIME);
-        }
-    }
-
     const CallbackMonthSelector = (newYear, newMonth) => {
         dispatch({ type: "newMonth", month: newMonth, year: newYear })
     }
 
 
     useEffect(() => {
+        let mouseX = 0;
+        let scrollmovement = 0;
+
+        const scroll = (e) => {
+            if (e.deltaY > 0) goToNextMonth();
+            else goToPreviousMonth();
+        }
+
+        const animBegin = (e) => {
+            e.preventDefault();
+            isPressing.current = true;
+            mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
+        }
+
+        const drag = (e) => {
+            e.preventDefault();
+            if (isPressing.current) {
+                isDragging.current = true;
+                const newMouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
+                const monthContainers = document.getElementsByClassName("monthContainer");
+                e.toElement.style.cursor = "grab"
+                Array.from(monthContainers).forEach((monthContainer, index) => {
+                    monthContainer.style.transition = "none";
+                    monthContainer.style.left = `calc(${monthContainerPositions.current[index]}% + ${newMouseX - mouseX}px)`;
+                })
+                scrollmovement = newMouseX - mouseX;
+            }
+        }
+
+        const animEnd = (e) => {
+            e.preventDefault();
+            if (isPressing.current && isDragging.current) {
+                isPressing.current = false;
+                isDragging.current = false;
+                const direction = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
+                e.toElement.style.cursor = "pointer";
+                AnimCalendar(direction, monthContainerPositions);
+                scrollmovement = 0;
+                timeout.current = setTimeout(() => {
+                    if (direction === 1) dispatch({ type: "prevMonth" });
+                    if (direction === -1) dispatch({ type: "nextMonth" })
+                    timeout.current = null;
+                }, ANIM_TIME);
+            }
+        }
+
         const calendarNext = document.getElementById("calendar_next");
         const calendarPrev = document.getElementById("calendar_prev");
         const monthContainers = document.getElementsByClassName("monthContainer");
@@ -240,6 +240,8 @@ const AnimCalendar = (direction, monthContainerPositions) => {
                 monthContainer.style.left = `${monthContainerPositions.current[index]}%`;
                 monthContainer.style.transition = "left 0.5s ease-out";
                 break;
+            default: console.error("no case was found for " + direction + " in the AnimCalendar function in CalendarPage!");
+
         }
     })
 }

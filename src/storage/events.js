@@ -1,7 +1,7 @@
 import { datediff, parseDateYMD } from '../utils/date';
 
 const events = [];
-events["2020-04-06"] = { offset: 0, allDayEvents: [{ id: "a8fa1801-aa7d-4317-01dc-2799832af685", title: "test2", startDate: "2020-04-06", endDate: "2020-04-07", time: false, startTime: "00:00", endTime: "00:00", description: "test hahahahh    hahahahahah" }], timedEvents: [{ id: "a8fa1801-aa7d-4317-01dc-2799832af685", title: "test", startDate: "2020-04-06", endDate: "2020-04-06", time: true, startTime: "00:00", endTime: "00:15", description: "test hahahahh    hahahahahah" }] }
+//events["2020-06-06"] = { offset: 0, allDayEvents: [{ id: "a8fa1801-aa7d-4317-01dc-2799832af685", title: "test2", startDate: "2020-06-08", endDate: "2020-06-10", time: false, startTime: "00:00", endTime: "00:00", description: "test hahahahh    hahahahahah" }], timedEvents: [{ id: "a8fa1801-aa7d-4317-01dc-2799832af685", title: "test", startDate: "2020-06-06", endDate: "2020-06-06", time: true, startTime: "00:00", endTime: "00:15", description: "test hahahahh    hahahahahah" }] }
 
 export const getEvents = () => {
     return events;

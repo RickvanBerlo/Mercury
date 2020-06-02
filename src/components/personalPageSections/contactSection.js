@@ -34,17 +34,20 @@ const ContactSection = ({ name, content, contactTitle, contactContent, recaptcha
         }
     }
 
+    const removeAllValues = () => {
+        setEmail("");
+        setSubject("");
+        setDescription("");
+        setSubjectClicked(false);
+        setSubmitButtonHover(false);
+    }
+
     useEffect(() => {
         if (token) {
-            send(email, subject, description, setEnableCheckmark, setEnableCrossmark);
-
-            setEmail("");
-            setSubject("");
-            setDescription("");
-            setSubjectClicked(false);
-            setSubmitButtonHover(false);
+            send(email, subject, description, setEnableCheckmark, setEnableCrossmark, removeAllValues);
+            setToken(null);
         }
-    }, [token]);
+    }, [token, email, subject, description]);
 
     useEffect(() => {
         window.addEventListener('scroll', listenScrollEvent)

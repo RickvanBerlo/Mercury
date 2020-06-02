@@ -18,8 +18,10 @@ const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPa
             setPage(nextPage);
             setVisible(true);
         }
-    }, [page])
+    }, [page, nextPage])
+
     const Page = page === null ? null : getCorrectPageByName(page);
+
     return (
         <Container id="refresher" visible={visible} seconds={ANIM_TIME}>
             {Page && <Page setCurrentPage={setCurrentPage} storage={storage.getStorage(page)} {...currentPageParam} />}
