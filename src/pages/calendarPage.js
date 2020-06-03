@@ -60,6 +60,7 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const navigateToDayPage = (day, allDayEvents, timedEvents) => {
         if (!isDragging.current)
             setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
+        isDragging.current = false;
     }
 
     const goToNextMonth = () => {
@@ -115,7 +116,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             e.preventDefault();
             if (isPressing.current && isDragging.current) {
                 isPressing.current = false;
-                isDragging.current = false;
                 direction.current = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
                 e.toElement.style.cursor = "pointer";
                 AnimCalendar(direction.current, monthContainerPositions);
