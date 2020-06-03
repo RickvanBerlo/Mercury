@@ -58,7 +58,7 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
 
     const navigateToDayPage = (day, allDayEvents, timedEvents) => {
-        if (!isDragging)
+        if (!isDragging.current)
             setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
     }
 
