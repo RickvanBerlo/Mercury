@@ -27,8 +27,7 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
         const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
-                    console.log(props.value)
-                    //if (props.value === undefined) setValue("00:00");
+                    setValue("00:00");
                     //this causes a problem. needs further investigation
                     setToggle(null);
                     break;

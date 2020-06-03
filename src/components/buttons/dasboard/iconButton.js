@@ -25,7 +25,7 @@ const IconButton = ({ id, icon = DefaultIcon, fontSize = "20px", color = colors.
             }
         }
     `
-    if (id === undefined) throw new Error("IconButton: The id param is empty");;
+    if (id === undefined) throw new Error("IconButton: The id param is empty");
     return (
         <Container id={id} fontSize={fontSize}>
             <StyledIcon fontSize={fontSize} color={color} round={round} />

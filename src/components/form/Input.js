@@ -6,7 +6,6 @@ import generateUUID from '../../utils/GenerateUUID';
 const InputWrapper = ({ type, name, getValues, refresh, classname, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
     const UUID = useRef(generateUUID());
-
     useEffect(() => {
         if (refresh)
             setValue("");

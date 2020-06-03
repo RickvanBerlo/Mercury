@@ -6,6 +6,7 @@ import GenerateUUID from '../../utils/GenerateUUID';
 
 const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
+    const [oldDefaultItem, setOldDefaultItem] = useState(defaultItem);
     const ID = useRef(GenerateUUID());
 
     useEffect(() => {
@@ -17,10 +18,15 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
     }, [toggle, ID, defaultItem, items])
 
     useEffect(() => {
-        if (defaultItem !== selectedItem) {
-            callback(selectedItem);
+        if (oldDefaultItem !== defaultItem) {
+            setOldDefaultItem(defaultItem);
+            setSelectedItem(defaultItem);
+        } else {
+            if (defaultItem !== selectedItem) {
+                callback(selectedItem);
+            }
         }
-    }, [selectedItem, defaultItem, callback])
+    }, [selectedItem, oldDefaultItem, defaultItem, callback])
 
     const createItems = () => {
         return items.map((item) => {

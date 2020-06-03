@@ -2,18 +2,22 @@ import React, { useEffect, useCallback, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
+import ToggleIconButton from '../components/buttons/dasboard/toggleIconButton';
 import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
+import { datediff } from '../utils/date';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
+import EyeIcon from 'react-ionicons/lib/MdEye';
+import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
 const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEvents }) => {
     const scroll = useRef(false);
     let currentDragPosition = undefined;
-    let dragDirection = undefined;
+    let dragStartingPosition = undefined;
     const ispressedDown = useRef(false);
     const isdragging = useRef(false);
     const startTime = useRef("00:00");
@@ -57,17 +61,16 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const dragOver = (e, id) => {
         if (ispressedDown.current) {
-            if ((e.clientY > currentDragPosition) !== dragDirection) document.getElementById(id).style.backgroundColor = colors.WHITE;
+            console.log("e: " + e.clientY + " current: " + currentDragPosition)
+            if (e.clientY > dragStartingPosition && e.clientY < currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
+            if (e.clientY < dragStartingPosition && e.clientY > currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
         }
     }
 
     const drag = (e, id) => {
         e.preventDefault();
         if (ispressedDown.current) {
-            if (currentDragPosition !== undefined && dragDirection === undefined) {
-                if (e.clientY > currentDragPosition) dragDirection = true;
-                else dragDirection = false;
-            }
+            if (dragStartingPosition === undefined) dragStartingPosition = e.clientY;
             isdragging.current = true;
             document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
         }
@@ -101,42 +104,43 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
         }
     }, [goBack]);
 
+    const hideAllDayEventsAnim = () => {
+        document.getElementById("allDayContainer").style.maxHeight = "0px";
+    }
+
+    const showAllDayEventsAnim = () => {
+        document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
+    }
+
+    const ToggleShowAllDay = (bool) => {
+        if (bool) showAllDayEventsAnim();
+        else hideAllDayEventsAnim();
+    }
+
     useEffect(() => {
-        const hideAllDayEventsAnim = () => {
-            document.getElementById("allDayContainer").style.maxHeight = "0px";
-        }
-
-        const showAllDayEventsAnim = () => {
-            document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
-        }
-
-        const scrollDirection = (e) => {
-            if (e.deltaY > 0) hideAllDayEventsAnim();
-            else showAllDayEventsAnim();
-        }
         const today = new Date();
         document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
-        document.getElementById("dayContainer").addEventListener("wheel", scrollDirection, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
-            document.getElementById("dayContainer").removeEventListener("wheel", scrollDirection, false);
         }
     }, [allDayEvents])
 
     return (
         <Container>
             <TopBar>
-                <Title>{selectedDay.toLocaleDateString('nl')}</Title>
-                <PositionButtonContainer>
+                <Title>{selectedDay.toLocaleDateString("fr-CA")}</Title>
+                <PositionButtonLeftContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
-                </PositionButtonContainer>
+                </PositionButtonLeftContainer>
+                <PositionButtonRightContainer>
+                    <ToggleIconButton id="showAllDay" iconOne={EyeIcon} iconTwo={EyeOffIcon} callback={ToggleShowAllDay} fontSize="40px" color={colors.DARK_GREEN} />
+                </PositionButtonRightContainer>
             </TopBar>
             <AllDayContainer id={"allDayContainer"}>
-                {createAllDayEvents(allDayEvents, goToEvent)}
+                {createAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
-                <Spacer height={allDayEvents.length * 40} />
                 <CurrentTime />
                 {createDayGrid(click, drag, dragOver, startDrag, endDrag, timedEvents, goToEvent)}
             </DayContainer>
@@ -188,11 +192,16 @@ const createTimedEvents = (quarter, events, goToEvent) => {
     return eventComponents;
 }
 
-const createAllDayEvents = (events, goToEvent) => {
+const createAllDayEvents = (events, goToEvent, selectedDay) => {
     let eventComponents = [];
 
     for (let i = 0; i < events.length; i++) {
-        eventComponents.push(<AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></AllDayEvent>)
+        eventComponents.push(
+            <AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
+                <ColorBubble></ColorBubble>
+                <AllDayEventTitle>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
+            </AllDayEvent>
+        )
     }
 
     return eventComponents;
@@ -218,11 +227,6 @@ const diffQuarter = (startTime, endTime) => {
     return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
 }
 
-const Spacer = styled.div`
-    width: 100%;
-    height: ${props => props.height}px;
-`
-
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
@@ -230,6 +234,9 @@ const Container = styled.div`
 
 const AllDayContainer = styled.div`
     position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     width: 100vw;
     box-shadow: 0px 3px 5px 0px ${colors.BLACK};
     z-index: 1;
@@ -239,29 +246,41 @@ const AllDayContainer = styled.div`
     transition: max-height 0.2s linear;
 
 `
+
 const AllDayEvent = styled.div`
     text-align: center;
+    display: flex;
     height: 30px;
-    background-color: ${colors.RED};
     margin-left: 6px;
     margin-right: 6px;
     margin-top: 8px;
     margin-bottom: 2px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
-    //box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    box-shadow: inset 0px 0px 5px 5px ${colors.WHITE};
     &:hover{
-        background-color: ${colorChanger(colors.RED, -0.2)}
+        background-color: ${colorChanger(colors.LIGHT_GRAY, -0.2)}
         cursor: pointer;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.RED};
+            background-color: ${colors.WHITE};
         }
         &:active{
-            background-color: ${colorChanger(colors.RED, -0.2)}
+            background-color: ${colorChanger(colors.LIGHT_GRAY, -0.2)}
         }
     }
+`
+
+const ColorBubble = styled.div`
+    width: 10px;
+    height: 10px;
+    background-color: ${colors.RED};
+    margin-left: 20px;
+    margin-right: 6px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    border-radius: 20px;
 `
 
 const TimedEvent = styled.div`
@@ -288,6 +307,17 @@ const TimedEvent = styled.div`
     }
 `
 
+const AllDayEventTitle = styled.p`
+    color: ${colors.BLACK}
+    margin: 0;
+    font-size: 20px;
+    height: 100%;
+    padding-top: 2px;
+    margin-right: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`
+
 const EventTitle = styled.p`
     color: ${colors.WHITE}
     margin: 0;
@@ -302,10 +332,16 @@ const EventTitle = styled.p`
     text-overflow: ellipsis;
 `
 
-const PositionButtonContainer = styled.div`
+const PositionButtonLeftContainer = styled.div`
     position: absolute;
     top: 5px;
     left: 10px;
+`
+
+const PositionButtonRightContainer = styled.div`
+    position: absolute;
+    top: 5px;
+    right: 10px;
 `
 
 const HourName = styled.div`
