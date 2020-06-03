@@ -60,7 +60,7 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const navigateToDayPage = (day, allDayEvents, timedEvents) => {
         if (!isDragging.current)
             setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
-        isDragging.current = false;
+        isDragging.current = false; //is placed here because this function is called every time when the calendar is drag + event drag is called before this one.
     }
 
     const goToNextMonth = () => {
