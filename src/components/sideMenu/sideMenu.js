@@ -83,7 +83,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         }
         const label = document.getElementById("label");
         label.addEventListener("mousedown", startDrag, false);
-        label.addEventListener("touchstart", startDrag, false);
+        label.addEventListener("touchstart", startDrag, { passive: true });
         window.addEventListener("mouseup", endDrag, false);
         window.addEventListener("mousemove", setOffset, false);
         window.addEventListener("touchend", endDrag, false);
@@ -93,7 +93,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             label.removeEventListener("mousedown", startDrag, false);
             window.removeEventListener("mouseup", endDrag, false);
             window.removeEventListener("mousemove", setOffset, false);
-            label.removeEventListener("touchstart", startDrag, false);
+            label.removeEventListener("touchstart", startDrag, { passive: true });
             window.removeEventListener("touchend", endDrag, false);
             window.removeEventListener("touchmove", setOffset, false);
             window.removeEventListener("touchmove", touchMove, false);

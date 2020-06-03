@@ -14,7 +14,6 @@ import NextIcon from 'react-ionicons/lib/MdArrowForward';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
 const DEAD_ZONE_SCROLL = 150;
-const ANIM_TIME = 520;
 const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
 
@@ -45,8 +44,8 @@ const reducer = (state, action) => {
 const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
+    const direction = useRef(undefined);
     const monthContainerPositions = useRef([-100, 0, 100]);
-    let timeout = useRef(null);
     const initialState = (selectedDay) => {
         if (selectedDay.getDate() > 29)
             selectedDay.setDate(selectedDay.getDate() - 3);
@@ -59,21 +58,21 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
     const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
 
     const navigateToDayPage = (day, allDayEvents, timedEvents) => {
-        if (timeout.current === null)
+        if (!isDragging)
             setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
     }
 
     const goToNextMonth = () => {
-        if (timeout.current === null) {
-            AnimCalendar(-1, monthContainerPositions);
-            timeout.current = setTimeout(() => { dispatch({ type: "nextMonth" }); timeout.current = null; }, ANIM_TIME);
+        if (direction.current === undefined) {
+            direction.current = -1;
+            AnimCalendar(direction.current, monthContainerPositions);
         }
     }
 
     const goToPreviousMonth = () => {
-        if (timeout.current === null) {
-            AnimCalendar(1, monthContainerPositions);
-            timeout.current = setTimeout(() => { dispatch({ type: "prevMonth" }); timeout.current = null; }, ANIM_TIME);
+        if (direction.current === undefined) {
+            direction.current = 1;
+            AnimCalendar(direction.current, monthContainerPositions);
         }
     }
 
@@ -117,15 +116,18 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             if (isPressing.current && isDragging.current) {
                 isPressing.current = false;
                 isDragging.current = false;
-                const direction = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
+                direction.current = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
                 e.toElement.style.cursor = "pointer";
-                AnimCalendar(direction, monthContainerPositions);
+                AnimCalendar(direction.current, monthContainerPositions);
                 scrollmovement = 0;
-                timeout.current = setTimeout(() => {
-                    if (direction === 1) dispatch({ type: "prevMonth" });
-                    if (direction === -1) dispatch({ type: "nextMonth" })
-                    timeout.current = null;
-                }, ANIM_TIME);
+            }
+        }
+
+        const transitionEnd = (e) => {
+            if (e.target.offsetLeft === 0) {
+                if (direction.current === 1) dispatch({ type: "prevMonth" });
+                if (direction.current === -1) dispatch({ type: "nextMonth" });
+                direction.current = undefined;
             }
         }
 
@@ -133,10 +135,12 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
         const calendarPrev = document.getElementById("calendar_prev");
         const monthContainers = document.getElementsByClassName("monthContainer");
         Array.from(monthContainers).forEach(monthContainer => {
-            monthContainer.addEventListener('wheel', scroll, false);
+            monthContainer.addEventListener('wheel', scroll, { passive: true });
             monthContainer.addEventListener('mousedown', animBegin, false);
             monthContainer.addEventListener('mousemove', drag, false);
             monthContainer.addEventListener('mouseup', animEnd, false);
+            monthContainer.addEventListener('transitionend', transitionEnd, false);
+            monthContainer.addEventListener('transitionend', transitionEnd, false);
         });
         calendarNext.addEventListener("click", goToNextMonth, false);
         calendarNext.addEventListener("touchend", goToNextMonth, false);
@@ -147,10 +151,12 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
         // window.addEventListener("touchend", endDrag, false);
         return () => {
             Array.from(monthContainers).forEach(monthContainer => {
-                monthContainer.removeEventListener('wheel', scroll, false);
+                monthContainer.removeEventListener('wheel', scroll, { passive: true });
                 monthContainer.removeEventListener('mousedown', animBegin, false);
                 monthContainer.removeEventListener('mousemove', drag, false);
                 monthContainer.removeEventListener('mouseup', animEnd, false);
+                monthContainer.removeEventListener('transitionend', transitionEnd, false);
+                monthContainer.addEventListener('transitionend', transitionEnd, false);
             });
             calendarNext.removeEventListener("click", goToNextMonth, false);
             calendarNext.removeEventListener("touchend", goToNextMonth, false);
