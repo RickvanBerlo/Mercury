@@ -140,7 +140,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             monthContainer.addEventListener('mousemove', drag, false);
             monthContainer.addEventListener('mouseup', animEnd, false);
             monthContainer.addEventListener('transitionend', transitionEnd, false);
-            monthContainer.addEventListener('transitionend', transitionEnd, false);
         });
         calendarNext.addEventListener("click", goToNextMonth, false);
         calendarNext.addEventListener("touchend", goToNextMonth, false);
@@ -156,7 +155,6 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
                 monthContainer.removeEventListener('mousemove', drag, false);
                 monthContainer.removeEventListener('mouseup', animEnd, false);
                 monthContainer.removeEventListener('transitionend', transitionEnd, false);
-                monthContainer.addEventListener('transitionend', transitionEnd, false);
             });
             calendarNext.removeEventListener("click", goToNextMonth, false);
             calendarNext.removeEventListener("touchend", goToNextMonth, false);

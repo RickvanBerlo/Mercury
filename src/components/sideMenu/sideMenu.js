@@ -6,25 +6,37 @@ import { mobilecheck } from '../../utils/deviceCheck';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 
 const INIT_LABEL_Y = 75;
-const INIT_SIDEMENU_X = -300;
+
+const SIDEMENU_MIN = -300;
+const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
 const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
-    let sidemenuX = useRef(INIT_SIDEMENU_X)
+    let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     let screenHeight = getScreenResolution().height;
 
-    const setPositionSideMenu = (X) => {
+    const AnimEndEvent = (e) => {
+        if (e.target.id === "sideMenu") {
+            document.getElementById("sideMenu").style.transition = "none";
+            document.getElementById("sideMenu").style.left = sidemenuX.current + "px";
+            document.getElementById("sideMenu").style.transform = "translateX(0px)";
+        }
+    }
+
+    const setPositionSideMenu = async (X) => {
+        const transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
         document.getElementById("label").style.cursor = "pointer";
-        document.getElementById("sideMenu").style.left = X + "px";
-        document.getElementById("sideMenu").style.transition = "left 0.4s linear";
+        document.getElementById("sideMenu").style.transform = "translateX(" + transformOffset + "px)";
+        document.getElementById("sideMenu").style.transition = "transform 0.4s linear";
+        document.getElementById("sideMenu").style.willChange = "transform";
         toggleAnimationLabel(X === 0 ? true : false);
     }
 
     const changeCurrentPage = (name) => {
         if (!scroll.current) {
             setCurrentPage(name);
-            sidemenuX.current = -300;
+            sidemenuX.current = SIDEMENU_MIN;
             setPositionSideMenu(sidemenuX.current);
         }
         scroll.current = false;
@@ -59,9 +71,9 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
 
                 document.getElementById("label").style.cursor = "grab";
                 document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
-                document.getElementById("sideMenu").style.left = sidemenuX.current > 0 ? 0 : sidemenuX.current < -300 ? -300 : sidemenuX.current + "px";
+                document.getElementById("sideMenu").style.left = sidemenuX.current > SIDEMENU_MAX ? SIDEMENU_MAX : sidemenuX.current < SIDEMENU_MIN ? SIDEMENU_MIN : sidemenuX.current + "px";
                 document.getElementById("sideMenu").style.transition = "none";
-                toggleAnimationLabel(sidemenuX.current > 0 ? true : false);
+                toggleAnimationLabel(sidemenuX.current > SIDEMENU_MAX ? true : false);
             }
         }
 
@@ -74,7 +86,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
 
         const endDrag = (event) => {
             if (pressed) {
-                drag ? sidemenuX.current = sidemenuX.current >= -150 ? 0 : -300 : sidemenuX.current = sidemenuX.current === 0 ? -300 : 0;
+                drag ? sidemenuX.current = sidemenuX.current >= -150 ? SIDEMENU_MAX : SIDEMENU_MIN : sidemenuX.current = sidemenuX.current === SIDEMENU_MAX ? SIDEMENU_MIN : SIDEMENU_MAX;
                 setPositionSideMenu(sidemenuX.current);
                 pressed = false;
                 drag = false;
@@ -82,6 +94,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             }
         }
         const label = document.getElementById("label");
+        const sideMenu = document.getElementById("sideMenu");
         label.addEventListener("mousedown", startDrag, false);
         label.addEventListener("touchstart", startDrag, { passive: true });
         window.addEventListener("mouseup", endDrag, false);
@@ -89,6 +102,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         window.addEventListener("touchend", endDrag, false);
         window.addEventListener("touchmove", setOffset, false);
         window.addEventListener("touchmove", touchMove, false);
+        sideMenu.addEventListener("transitionend", AnimEndEvent, false);
         return () => {
             label.removeEventListener("mousedown", startDrag, false);
             window.removeEventListener("mouseup", endDrag, false);
@@ -97,11 +111,12 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
             window.removeEventListener("touchend", endDrag, false);
             window.removeEventListener("touchmove", setOffset, false);
             window.removeEventListener("touchmove", touchMove, false);
+            sideMenu.removeEventListener("transitionend", AnimEndEvent, false);
         }
     }, [screenHeight])
 
     return (
-        <Container id="sideMenu" offsetX={INIT_SIDEMENU_X}>
+        <Container id="sideMenu" offsetX={SIDEMENU_MIN}>
             <Label id="label" top={INIT_LABEL_Y}>
                 <Bar1 id="bar1" />
                 <Bar2 id="bar2" />
