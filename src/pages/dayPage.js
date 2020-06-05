@@ -61,7 +61,6 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const dragOver = (e, id) => {
         if (ispressedDown.current) {
-            console.log("e: " + e.clientY + " current: " + currentDragPosition)
             if (e.clientY > dragStartingPosition && e.clientY < currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
             if (e.clientY < dragStartingPosition && e.clientY > currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
         }
