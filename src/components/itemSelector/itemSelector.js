@@ -6,16 +6,22 @@ import GenerateUUID from '../../utils/GenerateUUID';
 
 const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
-    const [oldDefaultItem, setOldDefaultItem] = useState(defaultItem);
+    const currentToggleValue = useRef(toggle);
+    const oldToggleValue = useRef(false);
     const ID = useRef(GenerateUUID());
 
     useEffect(() => {
-        console.log(selectedItem, oldDefaultItem);
-        if (toggle && selectedItem === oldDefaultItem) {
+        oldToggleValue.current = currentToggleValue.current;
+        currentToggleValue.current = toggle;
+    }, [toggle, oldToggleValue, currentToggleValue])
+
+    useEffect(() => {
+        if (toggle && !oldToggleValue.current) {
+            oldToggleValue.current = true;
             const Selector = document.getElementById(ID.current);
             Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
         }
-    }, [toggle, ID, selectedItem, oldDefaultItem, items])
+    }, [toggle, ID, selectedItem, items])
 
     useEffect(() => {
         if (defaultItem !== selectedItem) {
@@ -23,14 +29,9 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
         }
     }, [selectedItem, defaultItem, callback])
 
-    const changeSelectedItem = (item) => {
-        setOldDefaultItem(selectedItem);
-        setSelectedItem(item);
-    }
-
     const createItems = () => {
         return items.map((item) => {
-            return (<Item key={GenerateUUID()} onClick={() => { changeSelectedItem(item) }} onTouchEnd={() => { changeSelectedItem(item) }}>
+            return (<Item key={GenerateUUID()} onClick={() => { setSelectedItem(item) }} onTouchEnd={() => { setSelectedItem(item) }}>
                 <Name toggle={selectedItem === item}>{item}</Name>
             </Item>)
         })
