@@ -59,17 +59,17 @@ const Event = ({ storage, setCurrentPage, props = {} }) => {
             <ContentContainer>
                 <SpacingContainer>
                     <CalendarIcon id="calendar" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
+                    <Seperator>-</Seperator>
                     <TextContainer>
                         <Text>{props.startDate}</Text>
-                        <Text>-</Text>
                         <Text>{props.endDate}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <SpacingContainer>
                     <ClockIcon id="clock" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
+                    <Seperator>-</Seperator>
                     <TextContainer>
                         <Text>{props.startTime}</Text>
-                        <Text>-</Text>
                         <Text>{props.endTime}</Text>
                     </TextContainer>
                 </SpacingContainer>
@@ -88,6 +88,11 @@ const Container = styled.div`
     height: 100vh;
 `
 
+const Seperator = styled.p`
+    position: absolute;
+    left: 50%;
+`
+
 const LeftButtonContainer = styled.div`
     position: absolute;
     top: 5px;
@@ -102,6 +107,8 @@ const Line = styled.div`
 const DescriptionContainer = styled.div`
     height: 500px;
     max-width: 800px;
+    padding-right: 5%;
+    padding-left: 5%;
     margin:  auto;
     display: flex;
 `
@@ -118,7 +125,8 @@ const Description = styled.p`
 const TextContainer = styled.div`
     padding-top: 20px; 
     display: flex;
-    width: 100%;
+    width: 95%;
+    padding-left: 5%;
 `
 
 const Text = styled.p`
@@ -136,6 +144,8 @@ const ContentContainer = styled.div`
 const SpacingContainer = styled.div`
     height: 50px;
     max-width: 800px;
+    padding-right: 5%;
+    padding-left: 5%;
     margin:  auto;
 `
 
