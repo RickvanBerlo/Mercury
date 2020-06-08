@@ -10,27 +10,27 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
     const ID = useRef(GenerateUUID());
 
     useEffect(() => {
-        if (toggle) {
-            setSelectedItem(defaultItem);
+        console.log(selectedItem, oldDefaultItem);
+        if (toggle && selectedItem === oldDefaultItem) {
             const Selector = document.getElementById(ID.current);
-            Selector.scrollTop = (items.indexOf(defaultItem) * 50) - 125;
+            Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
         }
-    }, [toggle, ID, defaultItem, items])
+    }, [toggle, ID, selectedItem, oldDefaultItem, items])
 
     useEffect(() => {
-        if (oldDefaultItem !== defaultItem) {
-            setOldDefaultItem(defaultItem);
-            setSelectedItem(defaultItem);
-        } else {
-            if (defaultItem !== selectedItem) {
-                callback(selectedItem);
-            }
+        if (defaultItem !== selectedItem) {
+            callback(selectedItem);
         }
-    }, [selectedItem, oldDefaultItem, defaultItem, callback])
+    }, [selectedItem, defaultItem, callback])
+
+    const changeSelectedItem = (item) => {
+        setOldDefaultItem(selectedItem);
+        setSelectedItem(item);
+    }
 
     const createItems = () => {
         return items.map((item) => {
-            return (<Item key={GenerateUUID()} onClick={() => { setSelectedItem(item) }} onTouchEnd={() => { setSelectedItem(item) }}>
+            return (<Item key={GenerateUUID()} onClick={() => { changeSelectedItem(item) }} onTouchEnd={() => { changeSelectedItem(item) }}>
                 <Name toggle={selectedItem === item}>{item}</Name>
             </Item>)
         })
