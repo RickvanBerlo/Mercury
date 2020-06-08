@@ -47,7 +47,7 @@ const Model = ({ toggle, setToggle, title, content }) => {
 
 const Show = keyframes`
     from{
-        top: -100%;
+        top: -2000px;
     }
     to {
         top: 10%;
@@ -58,7 +58,7 @@ const Hide = keyframes`
         top: 10%;
     }
     to {
-        top: -100%;
+        top: -1000px;
     }
 `
 
@@ -72,7 +72,7 @@ const Popup = styled.div`
     position: absolute;
     text-align: left;
     max-width: 70%;
-    top: -100%;
+    top: -1000px;
     z-index: 3;
     border-radius: 10px;
     left: 50%;

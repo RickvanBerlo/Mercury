@@ -39,7 +39,7 @@ const disableTimer = (timeout, setShowSnackbar) => {
 
 const Show = keyframes`
     from{
-        top: -15%;
+        top: -200px;
     }
     to {
         top 4%;
@@ -50,7 +50,7 @@ const Hide = keyframes`
         top: 4%;
     }
     to {
-        top -15%;
+        top -200px;
     }
 `
 
@@ -64,7 +64,7 @@ const Text = styled.p`
 const SnackBarContainer = styled.div`
     position: absolute;
     right: 4%;
-    top: -15%;
+    top: -200px;
     display: inline-flex;
     max-width: 90%;
     border-radius: 10px;

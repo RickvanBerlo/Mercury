@@ -3,19 +3,13 @@ import styled from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 import { pageNames } from '../../constants/pages';
-import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ setCurrentPage, placedDate, offset, props }) => {
+const EventPlaceholder = ({ setCurrentPage, offset, date, dayEventsObj }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
-    const goToEvent = (e) => {
-        setCurrentPage(pageNames.EVENT, { props: props });
+    const goToDay = (e) => {
+        setCurrentPage(pageNames.DAY, { selectedDay: date, allDayEvents: dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], timedEvents: dayEventsObj !== undefined ? dayEventsObj.timedEvents : [] });
         e.stopPropagation();
-    }
-
-    const calculateWidth = () => {
-        if (datediff(placedDate, props.endDate) > (6 - parseDateYMD(placedDate).getDay())) return (6 - parseDateYMD(placedDate).getDay());
-        return datediff(placedDate, props.endDate);
     }
 
     const resizeHeight = (e) => {
@@ -30,7 +24,7 @@ const Event = ({ setCurrentPage, placedDate, offset, props }) => {
     }, [])
 
     return (
-        <Container onClick={goToEvent} height={height} offset={offset} width={calculateWidth()}><Title height={height}>{props.title}</Title></Container>
+        <Container onClick={goToDay} height={height} offset={offset}><Title height={height}>...</Title></Container>
     )
 
 }
@@ -40,7 +34,7 @@ const Container = styled.div`
     margin-top: ${props => ((props.offset * 23)) + 3}px;
     margin-left: 3px;
     height: 16%;
-    width: calc(100% + (${props => props.width} * 100%) - 6px);
+    width: calc(100%  - 6px);
     background-color: ${colors.RED}
     border-radius: 5px;
     z-index: 1;
@@ -74,4 +68,4 @@ const Title = styled.p`
 `
 
 
-export default Event;
+export default EventPlaceholder;
