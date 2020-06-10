@@ -6,6 +6,7 @@ import TextArea from '../components/form/textArea';
 import Checkbox from '../components/form/checkbox';
 import TimePicker from '../components/form/timePicker';
 import ColorPicker from '../components/form/colorPicker';
+import TextEditor from '../components/form/TextEditor';
 
 class FormBuilder {
     #elements;
@@ -27,6 +28,11 @@ class FormBuilder {
     addTextAreaInput(name, props = {}) {
         props.validation = this._getValidation(props);
         this.elements.push(<TextArea index={this.elements.length} name={name} props={props}></TextArea>)
+    }
+
+    addTextEditorInput(name, props = {}) {
+        props.validation = this._getValidation(props);
+        this.elements.push(<TextEditor index={this.elements.length} name={name} props={props}></TextEditor>)
     }
 
     addPasswordInput(name, props = {}) {

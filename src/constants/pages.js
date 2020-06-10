@@ -8,6 +8,7 @@ import ConfigPage from '../pages/configPage';
 import DayPage from '../pages/dayPage';
 import EventEditPage from '../pages/eventEditPage';
 import EventPage from '../pages/eventPage';
+import NoteEditPage from '../pages/noteEditPage';
 
 import CalanderIcon from 'react-ionicons/lib/MdCalendar';
 import HomeIcon from 'react-ionicons/lib/MdHome';
@@ -28,6 +29,7 @@ export const pageNames = {
     DAY: "Day",
     EVENTEDIT: "EventEdit",
     EVENT: "Event",
+    NOTEEDIT: "NoteEdit",
 }
 
 export const pages = [
@@ -41,4 +43,5 @@ export const pages = [
     { NAME: pageNames.DAY, PAGE: DayPage },
     { NAME: pageNames.EVENTEDIT, PAGE: EventEditPage },
     { NAME: pageNames.EVENT, PAGE: EventPage },
+    { NAME: pageNames.NOTEEDIT, PAGE: NoteEditPage },
 ]
