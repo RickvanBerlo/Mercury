@@ -14,12 +14,14 @@ const colors = {
     BLACK: '#000000',
     RED: '#CC0000',
     GREEN: '#7ac142',
+    YELLOW: '#ecf70c',
+    PURPLE: '#f70cd8',
+    PINK: '#ff08de',
     DARK_WHITE: '#f5f5f5',
     LIGHT_GREEN: '#0cd0d0',
     DARK_GREEN: '#3ba4a3',
-
-
-
+    AQUA: '#02f6fa',
+    ORANGE: '#f08f07',
     ACTIVE_COLOR: '#b8b8b8',
     HEADER_BACKGROUND_COLOR: '#caf2f2',
 }

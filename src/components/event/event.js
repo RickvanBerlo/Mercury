@@ -30,7 +30,7 @@ const Event = ({ setCurrentPage, placedDate, offset, props }) => {
     }, [])
 
     return (
-        <Container onClick={goToEvent} height={height} offset={offset} width={calculateWidth()}><Title height={height}>{props.title}</Title></Container>
+        <Container onClick={goToEvent} height={height} offset={offset} width={calculateWidth()} color={props.color}><Title height={height}>{props.title}</Title></Container>
     )
 
 }
@@ -41,7 +41,7 @@ const Container = styled.div`
     margin-left: 3px;
     height: 16%;
     width: calc(100% + (${props => props.width} * 100%) - 6px);
-    background-color: ${colors.RED}
+    background-color: ${props => props.color};
     border-radius: 5px;
     z-index: 1;
     display: flex;

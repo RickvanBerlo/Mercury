@@ -56,6 +56,7 @@ const buildForm = (onSubmit, selectedDay, props) => {
     builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
     builder.addTimeInput("startTime", { value: props.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
     builder.addTimeInput("endTime", { value: props.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
+    builder.addColorInput("color", { value: props.color, label: "Kleur", });
     builder.addTextAreaInput("description", { value: props.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("eventForm", "Verzenden", onSubmit);
 }

@@ -2,11 +2,11 @@ import React, { memo, useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import Model from '../model/model';
-import ItemSelector from '../itemSelector/itemSelector';
+import ColorSelector from '../itemSelector/colorSelector';
 import generateUUID from '../../utils/GenerateUUID';
 
-const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
-    const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
+const ColorPickerWrapper = ({ name, getValues, refresh, classname, props }) => {
+    const [value, setValue] = useState(props.value === undefined ? colors.RED : props.value);
     const [toggle, setToggle] = useState(null);
     const UUID = useRef(generateUUID());
 
@@ -27,17 +27,17 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
         const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
-                    setValue("00:00");
+                    setValue(colors.RED);
                     setToggle(null);
                     break;
-                default: console.error("no case was found for " + value + " in the Callback function in TimePicker!");
+                default: console.error("no case was found for " + value + " in the Callback function in ColorPicker!");
             }
         }
         document.getElementById(UUID.current).callback = callback;
-        const timePicker = document.getElementById(name);
-        timePicker.addEventListener("click", changeToggle, false);
+        const colorPicker = document.getElementById(name);
+        colorPicker.addEventListener("click", changeToggle, false);
         return () => {
-            timePicker.removeEventListener("click", changeToggle, false);
+            colorPicker.removeEventListener("click", changeToggle, false);
         }
     }, [props, name, toggle])
 
@@ -49,29 +49,29 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
     const createContent = () => {
         return (
             <div>
-                <ItemSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} toggle={toggle} marginBottom={"20px"} />
+                <ColorSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} toggle={toggle} marginBottom={"20px"} />
             </div>
         )
     }
 
     return (
         <Container id={UUID.current} className={classname}>
-            {props.label !== undefined ? <Label>{props.label}</Label> : null}
             <HiddenInput
                 {...props}
-                type="time"
+                type="text"
                 name={name}
                 value={value}
                 onChange={(event) => { setValue(event.target.value) }}
             >
             </HiddenInput >
-            <StyledTimePicker id={name} className="input" title={`Selecteer een tijd.`}>
-                <Time>{value}</Time>
-            </StyledTimePicker>
+            <StyledColorPicker id={name} className="input" title={`Selecteer een kleur.`}>
+                <Color color={value} />
+            </StyledColorPicker>
+            <Label>: {props.label}</Label>
             <Model
                 toggle={toggle}
                 setToggle={setToggle}
-                title="Selecteer een tijd"
+                title="Selecteer een kleur"
                 content={createContent()}
             />
         </Container >
@@ -80,26 +80,30 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
 
 const createItems = () => {
     let array = [];
-    for (let i = 0; i < (24 * 4); i++) {
-        const hours = (i / 4) < 10 ? "0" + Math.floor(i / 4) : Math.floor(i / 4);
-        let minutes = (((i / 4) - Math.floor(i / 4)) * 4) * 15;
-        if (minutes === 0) minutes = "00"
-        array.push(hours + ":" + minutes)
-    }
+    array.push(colors.RED);
+    array.push(colors.BLUE);
+    array.push(colors.GREEN);
+    array.push(colors.YELLOW);
+    array.push(colors.PURPLE);
+    array.push(colors.ORANGE);
+    array.push(colors.AQUA);
+    array.push(colors.PINK);
     return array;
 }
 
 const Container = styled.div`
     margin-bottom: 20px;
+    display: flex;
 `
 
 const Label = styled.div`
-    color: ${colors.DARK_GREEN};
-    margin-left: 10px;
-    margin-bottom:2px;
+    font: 18px 'Open Sans Bold',sans-serif;  
+    line-height: 35px;
+    margin: 0;
+    margin-left: 5px;
 `
 
-const HiddenInput = styled.input.attrs({ type: 'time' })`
+const HiddenInput = styled.input.attrs({ type: 'text' })`
     border: 0;
     clip: rect(0 0 0 0);
     clippath: inset(50%);
@@ -112,22 +116,23 @@ const HiddenInput = styled.input.attrs({ type: 'time' })`
     width: 1px;
 `
 
-const StyledTimePicker = styled.div`
+const StyledColorPicker = styled.div`
     font: 18px 'Open Sans Bold',sans-serif;
     border: 1px solid gray;
     border-radius: 5px;
     padding: 8px;
-    width: calc(100% - 16px);
+    width: 20px;
     outline: none;
     &:hover{
         cursor: pointer;
     }
 `
 
-const Time = styled.p`
-    font: 18px 'Open Sans Bold',sans-serif;
-    margin: 0;
-    padding: 2px;
+const Color = styled.div`
+    width: 20px;
+    height: 20px;
+    background-color: ${props => props.color};
+    border-radius: 20px;
 `
 
 const areEqual = (prevProps, nextProps) => {
@@ -135,5 +140,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoTimePickerWrapper = memo(TimePickerWrapper, areEqual)
-export default MemoTimePickerWrapper;
+const MemoColorPickerWrapper = memo(ColorPickerWrapper, areEqual)
+export default MemoColorPickerWrapper;

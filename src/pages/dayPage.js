@@ -185,7 +185,7 @@ const createTimedEvents = (quarter, events, goToEvent) => {
     for (let i = 0; i < events.length; i++) {
         if (events[i].startTime === quarter) {
             let offset = getOffset(quarter, events);
-            eventComponents.push(<TimedEvent key={UUID()} className="event" offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
+            eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
         }
     }
     return eventComponents;
@@ -197,7 +197,7 @@ const createAllDayEvents = (events, goToEvent, selectedDay) => {
     for (let i = 0; i < events.length; i++) {
         eventComponents.push(
             <AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
-                <ColorBubble></ColorBubble>
+                <ColorBubble color={events[i].color}></ColorBubble>
                 <AllDayEventTitle>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
             </AllDayEvent>
         )
@@ -274,7 +274,7 @@ const AllDayEvent = styled.div`
 const ColorBubble = styled.div`
     width: 10px;
     height: 10px;
-    background-color: ${colors.RED};
+    background-color: ${props => props.color};
     margin-left: 20px;
     margin-right: 6px;
     margin-top: 10px;
@@ -287,7 +287,7 @@ const TimedEvent = styled.div`
     text-align: center;
     flex: 1;
     height: calc(${props => (props.height * 100) + 100}% + ${props => props.height + 1}px);
-    background-color: ${colors.RED};
+    background-color: ${props => props.color};
     margin-left: ${props => 6 + (props.offset * 6)}px;
     margin-right: ${props => 6 + (props.offset * 6)}px;
     border-radius: 5px;
