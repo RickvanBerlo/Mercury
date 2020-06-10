@@ -7,14 +7,15 @@ import generateUUID from '../../utils/GenerateUUID';
 import AddIcon from 'react-ionicons/lib/MdClose';
 
 const Model = ({ toggle, setToggle, title, content }) => {
-    const UUID = useRef(generateUUID());
+    const UUID_Background = useRef(generateUUID());
+    const UUID_CloseButton = useRef(generateUUID());
 
     useEffect(() => {
         const hideModel = () => {
             setToggle(false);
         }
-        const modelContainer = document.getElementById(UUID.current);
-        const closeButton = document.getElementById("closeButton");
+        const modelContainer = document.getElementById(UUID_Background.current);
+        const closeButton = document.getElementById(UUID_CloseButton.current);
         modelContainer.addEventListener("click", hideModel, false);
         modelContainer.addEventListener("touchend", hideModel, false);
         closeButton.addEventListener("click", hideModel, false);
@@ -29,12 +30,12 @@ const Model = ({ toggle, setToggle, title, content }) => {
 
     return (
         <div>
-            <BackgroundPopup id={UUID.current} enable={toggle} />
+            <BackgroundPopup id={UUID_Background.current} enable={toggle} />
             <Popup enable={toggle}>
                 <TopBar>
                     <Title>{title}</Title>
                     <CloseButtonContainer>
-                        <IconButton id="closeButton" icon={AddIcon} color={colors.BLACK} fontSize="30px" round={false} />
+                        <IconButton id={UUID_CloseButton.current} icon={AddIcon} color={colors.BLACK} fontSize="30px" round={false} />
                     </CloseButtonContainer>
                 </TopBar>
                 <MiddleContainer>
