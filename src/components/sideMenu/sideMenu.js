@@ -54,7 +54,6 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
         let pressed = false;
 
         const setOffset = (event) => {
-            event.preventDefault();
             if (pressed) {
                 drag = true;
 
