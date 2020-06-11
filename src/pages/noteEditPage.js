@@ -4,9 +4,10 @@ import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import FormBuilder from '../utils/formBuilder';
+import GenerateUUID from "../utils/GenerateUUID";
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
-import GenerateUUID from "../utils/GenerateUUID";
+import TrashIcon from 'react-ionicons/lib/MdTrash';
 
 const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
 
@@ -14,21 +15,31 @@ const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
         setCurrentPage(pageNames.NOTES);
     }, [setCurrentPage])
 
+    const goRemove = useCallback(() => {
+        storage.shared.removeNote(props);
+        goBack();
+    }, [goBack, storage, props])
+
     const onSubmit = (event, values) => {
         event.preventDefault();
-        storage.shared.addNote(values);
+        props.id === undefined ? storage.shared.addNote(values) : storage.shared.editNote(values);
         setCurrentPage(pageNames.NOTES);
     }
 
     useEffect(() => {
         const backButton = document.getElementById("goBack");
+        const removeButton = document.getElementById("remove");
         backButton.addEventListener("click", goBack, false);
         backButton.addEventListener("touchend", goBack, false);
+        props.id && removeButton.addEventListener("click", goRemove, false);
+        props.id && removeButton.addEventListener("touchend", goRemove, false);
         return () => {
             backButton.removeEventListener("click", goBack, false);
             backButton.removeEventListener("touchend", goBack, false);
+            props.id && removeButton.removeEventListener("click", goRemove, false);
+            props.id && removeButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [goBack]);
+    }, [goBack, goRemove, props]);
 
     return (
         <Container>
@@ -37,6 +48,9 @@ const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
                 <PositionButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
+                {props.id && <RightButtonContainer>
+                    <IconButton id="remove" icon={TrashIcon} fontSize="35px" color={colors.DARK_GREEN} />
+                </RightButtonContainer>}
             </TopBar>
             <EventContainer>
                 {buildForm(onSubmit, props)}
@@ -62,6 +76,12 @@ const PositionButtonContainer = styled.div`
     position: absolute;
     top: 5px;
     left: 10px;
+`
+
+const RightButtonContainer = styled.div`
+    position: absolute;
+    top: 5px;
+    right: 10px;
 `
 
 const Title = styled.p`

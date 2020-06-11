@@ -5,9 +5,13 @@ export const addNote = (noteProps) => {
 }
 
 export const removeNote = (noteProps) => {
-    notes.splice(notes.indexOf(noteProps.id), 1);
+    delete notes[noteProps.id];
 }
 
 export const getNotes = () => {
     return notes;
+}
+
+export const editNote = (noteProps) => {
+    notes[noteProps.id] = noteProps;
 }

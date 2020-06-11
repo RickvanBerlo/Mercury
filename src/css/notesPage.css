@@ -1,0 +1,9 @@
+.description > p > img {
+    max-width: 100%;
+    border: 1px solid gray;
+}
+
+.description > p {
+    max-width: 100%;
+    word-wrap: break-word;
+}
