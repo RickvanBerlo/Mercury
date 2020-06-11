@@ -7,3 +7,8 @@
     max-width: 100%;
     word-wrap: break-word;
 }
+
+.description > iframe {
+    max-width: 100%;
+    margin-top: 5px;
+}
