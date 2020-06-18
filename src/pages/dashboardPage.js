@@ -9,7 +9,7 @@ import Storage from '../storage/storage';
 
 const Dashboard = ({ history }) => {
     const [snackbarText, setSnackBarText] = useState("Goedemorgen Rick");
-    const [currentPage, setCurrentPage] = useState(pageNames.NOTES);
+    const [currentPage, setCurrentPage] = useState(pageNames.STORAGE);
     const [previousPage, setPreviousPage] = useState(null);
     const [currentPageParam, setCurrentPageParam] = useState({});
     const storage = useRef(new Storage());

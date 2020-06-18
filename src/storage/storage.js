@@ -2,6 +2,7 @@
 import { pageNames } from '../constants/pages';
 import { getEvents, setEvent, getEventsOfDay, removeEvent } from './events';
 import { addNote, removeNote, getNotes, editNote } from './notes';
+import { getFiles, addFile, removeFile } from './files';
 
 const SHARED_STORAGE = {
     getEvents: getEvents,
@@ -12,6 +13,9 @@ const SHARED_STORAGE = {
     removeNote: removeNote,
     getNotes: getNotes,
     editNote: editNote,
+    getFiles: getFiles,
+    addFile: addFile,
+    removeFile: removeFile,
 };
 
 class Storage {
