@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import GenerateUUID from "../utils/GenerateUUID";
-
+import '../css/storagePage.css';
 
 import DocumentIcon from 'react-ionicons/lib/MdDocument';
 import FolderIcon from 'react-ionicons/lib/MdFolderOpen';
@@ -66,7 +66,30 @@ const Storage = ({ storage }) => {
         setPath("/");
     }
 
+    const enterDropzone = (e) => {
+        e.preventDefault();
+        document.getElementById("dropzone").classList.add("dragging");
+    }
+
+    const exitDropzone = (e) => {
+        e.preventDefault();
+        document.getElementById("dropzone").classList.remove("dragging");
+    }
+
+    const preventDefault = (e) => {
+        e.preventDefault();
+    }
+
     useEffect(() => {
+        const dropFile = (e) => {
+            e.preventDefault();
+            for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                storage.shared.addFile(e.dataTransfer.files[i]);
+            }
+            document.getElementById("dropzone").classList.remove("dragging");
+            setUpdate(!update);
+        }
+
         const removeItems = (e) => {
             for (const name in selectedItems.current) {
                 storage.shared.removeFile(name);
@@ -74,7 +97,7 @@ const Storage = ({ storage }) => {
             selectedItems.current = [];
             setPath('/');
         }
-
+        const dropzone = document.getElementById("dropzone");
         const documentButton = document.getElementById("addDocument");
         const folderButton = document.getElementById("addFolder");
         const undoButton = document.getElementById("undo");
@@ -83,17 +106,26 @@ const Storage = ({ storage }) => {
         folderButton.addEventListener("click", addFolder, false);
         undoButton.addEventListener("click", undo, false);
         removeButton.addEventListener("click", removeItems, false);
+        dropzone.addEventListener("dragenter", enterDropzone, false);
+        dropzone.addEventListener("dragleave", exitDropzone, false);
+        dropzone.addEventListener("drop", dropFile, false);
+        window.addEventListener("dragover", preventDefault, false);
+        window.addEventListener("drop", preventDefault, false);
         return () => {
             documentButton.removeEventListener("click", addDocument, false);
             folderButton.removeEventListener("click", addFolder, false);
             undoButton.removeEventListener("click", undo, false);
-            removeButton.addEventListener("click", removeItems, false);
+            removeButton.removeEventListener("click", removeItems, false);
+            dropzone.removeEventListener("dragenter", enterDropzone, false);
+            dropzone.removeEventListener("dragleave", exitDropzone, false);
+            dropzone.removeEventListener("drop", dropFile, false);
+            window.removeEventListener("dragover", preventDefault, false);
+            window.removeEventListener("drop", preventDefault, false);
         }
-    }, [storage])
+    }, [storage, update])
 
     return (
         <Container>
-            <FileUpload id="fileUpload" onChange={fileUpload} type="file" />
             <TopBar>
                 <Title>{path}</Title>
                 <PositionLeftButtonContainer hide={path !== "Remove" ? true : false}>
@@ -106,7 +138,8 @@ const Storage = ({ storage }) => {
 
                 </PositionRightButtonContainer>
             </TopBar>
-            <ItemsContainer>
+            <ItemsContainer id="dropzone">
+                <FileUpload id="fileUpload" onChange={fileUpload} type="file" />
                 {createItems(storage.shared.getFiles(), selectedItems, mouseUp, mouseDown)}
             </ItemsContainer>
         </Container>
@@ -116,7 +149,6 @@ const Storage = ({ storage }) => {
 const createItems = (items, selectedItems, mouseUp, mouseDown) => {
     const itemComponents = [];
     for (const item in items) {
-
         itemComponents.push(
             <ItemContainer key={GenerateUUID()} color={selectedItems.current[item] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, items[item].name) }} onMouseUp={(e) => { mouseUp(e, items[item].name) }}>
                 <CenterImageContainer>
@@ -163,6 +195,11 @@ const FileUpload = styled.input`
 const ItemsContainer = styled.div`
     width: 100%;
     height: calc(100% -  50px);
+    border: 0px solid ${colors.DARK_GREEN};
+    transition: all 0.3s linear;
+    &:dragging{
+        background-color: ${colors.BLACK};
+    }
 `
 
 const PositionRightButtonContainer = styled.div`
@@ -222,8 +259,11 @@ const ItemText = styled.p`
     line-height: 60px;
     margin: 0;
     color: ${colors.DARK_GREEN};
+    white-space: nowrap;
+    overflow: hidden;
     flex: 1;
     user-select: none;
+    text-overflow: ellipsis;
 `
 
 export default Storage;
