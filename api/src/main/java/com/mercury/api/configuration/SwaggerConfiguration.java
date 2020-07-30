@@ -1,6 +1,5 @@
 package com.mercury.api.configuration;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +22,7 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public Docket productApi() {
+    public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2).select()
                 .apis(RequestHandlerSelectors.basePackage("com.mercury.api")).build().apiInfo(apiInfo());
     }
