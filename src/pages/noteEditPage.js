@@ -4,7 +4,6 @@ import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import FormBuilder from '../utils/formBuilder';
-import GenerateUUID from "../utils/GenerateUUID";
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
@@ -61,7 +60,7 @@ const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
 
 const buildForm = (onSubmit, props) => {
     const builder = new FormBuilder();
-    builder.addHiddenInput("id", { value: props.id === undefined ? GenerateUUID() : props.id, required: true });
+    builder.addHiddenInput("id", { value: props.id, required: false });
     builder.addTextInput("title", { value: props.title, required: true, placeholder: "Title", label: "Titel" });
     builder.addTextEditorInput("description", { value: props.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("NoteForm", "Verzenden", onSubmit);
