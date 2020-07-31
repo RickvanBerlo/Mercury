@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mercury.api.model.note.Note;
-import com.mercury.api.repository.NoteRepository;
+import com.mercury.api.service.note.NoteServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotesController {
 
     @Autowired
-    private NoteRepository repository;
+    private NoteServiceImpl service;
 
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         try {
-            Note _tutorial = repository.save(new Note(note.getTitle(), note.getDescription()));
+            Note _tutorial = service.save(new Note(note.getTitle(), note.getDescription()));
             return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,7 +36,7 @@ public class NotesController {
     public ResponseEntity<List<Note>> getNotes() {
         List<Note> notes = new ArrayList<>();
         try {
-            notes = repository.findAll();
+            notes = service.findAll();
             return new ResponseEntity<>(notes, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -46,7 +46,7 @@ public class NotesController {
     @RequestMapping(value = "/notes/{id}", method = RequestMethod.GET)
     public ResponseEntity<Note> getNote(@PathVariable("id") String id) {
         try {
-            Optional<Note> note = repository.findById(id);
+            Optional<Note> note = service.findById(id);
             return new ResponseEntity<>(note.get(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -55,13 +55,13 @@ public class NotesController {
 
     @RequestMapping(value = "/notes/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Note> replaceNote(@PathVariable("id") String id, @RequestBody Note note) {
-        Optional<Note> retrived_note = repository.findById(id);
+        Optional<Note> retrived_note = service.findById(id);
 
         if (retrived_note.isPresent()) {
             Note _note = retrived_note.get();
             _note.setTitle(note.getTitle());
             _note.setDescription(note.getDescription());
-            return new ResponseEntity<>(repository.save(_note), HttpStatus.OK);
+            return new ResponseEntity<>(service.save(_note), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -70,7 +70,7 @@ public class NotesController {
     @RequestMapping(value = "/notes/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Note> deleteNote(@PathVariable("id") String id) {
         try {
-            repository.deleteById(id);
+            service.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,7 +80,7 @@ public class NotesController {
     @RequestMapping(value = "/notes", method = RequestMethod.DELETE)
     public ResponseEntity<Note> deleteNotes() {
         try {
-            repository.deleteAll();
+            service.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
