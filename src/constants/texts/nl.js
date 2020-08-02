@@ -15,7 +15,6 @@ const NL = {
         { PUBLIC_NAME: "HOME", PRIVATE_NAME: undefined },
         { PUBLIC_NAME: "OVER MIJ", PRIVATE_NAME: "aboutMeSection" },
         { PUBLIC_NAME: "CURRICULUM VITAE", PRIVATE_NAME: "CVSection" },
-        { PUBLIC_NAME: "CONTACT", PRIVATE_NAME: "contactSection" },
     ],
     ABOUT: {
         TITLE: "Over mij",
