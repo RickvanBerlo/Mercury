@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import IconButton from '../buttons/cv/iconButton';
 import colors from '../../constants/colors';
 import { ParallaxBanner } from 'react-scroll-parallax';
 import { mobilecheck } from '../../utils/deviceCheck';
 
+import arrowDownIcon from 'react-ionicons/lib/MdArrowDown';
+
 const Header = ({ name, links, nextSection, layers, mobile }) => {
     var check = mobilecheck();
+
+    useEffect(() => {
+        const goDown = () => {
+            window.scrollTo(0, window.scrollY + document.getElementById(nextSection).getBoundingClientRect().y + 4);
+        }
+
+        const DownButton = document.getElementById("buttonDown");
+        for (let i = 0; i > -1; i++) {
+            const button = document.getElementById(i + "header");
+            if (button === null) break;
+            button.addEventListener("click", () => { window.open(links[i].LINK, "_blank") }, false);
+        }
+        DownButton.addEventListener("click", goDown, false);
+        return () => {
+            DownButton.removeEventListener("click", goDown, false);
+            for (let i = 0; i > -1; i++) {
+                const button = document.getElementById(i + "header");
+                if (button === null) break;
+                button.addEventListener("click", () => { window.open(links[i].LINK, "_blank") }, false);
+            }
+        }
+    }, [links, nextSection])
+
+
 
     const layerObjects = layers.map((layer, index) => {
         return {
@@ -21,12 +47,14 @@ const Header = ({ name, links, nextSection, layers, mobile }) => {
             {!check ? <CustomParallaxBanner layers={layerObjects} /> : <BackgroundMobileContainer verticalImage={mobile[0]} horizontalImage={mobile[1]} />}
             <CenterContainer>
                 <Title>{name}</Title>
-                {links.map((link, index) => {
-                    return (<IconButton key={index} icon={link.ICON} size="2x" color="white" onClick={() => window.open(link.LINK, "_blank")} />);
-                })}
+                <FlexWarpper>
+                    {links.map((link, index) => {
+                        return (<IconButton key={index} id={index + "header"} icon={link.ICON} fontSize="50px" color="white" onClick={() => window.open(link.LINK, "_blank")} />);
+                    })}
+                </FlexWarpper>
             </CenterContainer>
             <NavContainer>
-                <IconButton icon={['fas', 'arrow-alt-circle-down']} size="3x" color="white" onClick={() => { window.scrollTo(0, window.scrollY + document.getElementById(nextSection).getBoundingClientRect().y + 4); }} />
+                <IconButton id={"buttonDown"} icon={arrowDownIcon} fontSize="50px" color="white" />
             </NavContainer>
         </Container >
     );
@@ -41,6 +69,12 @@ background-color: ${colors.HEADER_BACKGROUND_COLOR};
 
 const CustomParallaxBanner = styled(ParallaxBanner)`
     height: 100vh !important;
+`
+
+const FlexWarpper = styled.div`
+    display: flex;
+    width: fit-content;
+    margin: auto;
 `
 
 const ParallaxImage = styled.div`

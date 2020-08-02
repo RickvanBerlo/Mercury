@@ -1,4 +1,6 @@
 import calculateAge from '../../utils/calculateAge';
+import linkedin from 'react-ionicons/lib/LogoLinkedin';
+import github from 'react-ionicons/lib/LogoGithub';
 
 export default {
     NAME: "Rick van Berlo",
@@ -9,7 +11,7 @@ export default {
     CITY: "Gennep",
     AGE: `${calculateAge(new Date('May 6, 1997 23:15:30'))} jaar`,
     WEBLINKS: [
-        { ICON: ['fab', 'linkedin-in'], LINK: "https://www.linkedin.com/in/rick-van-berlo/" },
-        { ICON: ['fab', 'github'], LINK: "https://github.com/RickvanBerlo" },
+        { ICON: linkedin, LINK: "https://www.linkedin.com/in/rick-van-berlo/" },
+        { ICON: github, LINK: "https://github.com/RickvanBerlo" },
     ],
 }
