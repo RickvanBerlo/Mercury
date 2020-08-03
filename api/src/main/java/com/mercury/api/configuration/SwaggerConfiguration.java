@@ -46,4 +46,5 @@ public class SwaggerConfiguration {
                 .apis(RequestHandlerSelectors.basePackage("com.mercury.api"))
                 .paths(Predicates.not(PathSelectors.regex("/docs.*"))).build().apiInfo(apiInfo());
     }
+
 }

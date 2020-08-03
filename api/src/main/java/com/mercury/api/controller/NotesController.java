@@ -68,10 +68,10 @@ public class NotesController {
     }
 
     @RequestMapping(value = "/notes/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Note> deleteNote(@PathVariable("id") String id) {
+    public ResponseEntity<String> deleteNote(@PathVariable("id") String id) {
         try {
             service.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
