@@ -24,8 +24,6 @@ class RequestBuilder {
     }
 
     send() {
-        console.log(this.#url);
-        console.log(this.#properties);
         return fetch(this.#url, this.#properties);
     }
 }

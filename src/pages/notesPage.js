@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { getNotes, passNote } from '../stores/notes/noteActions';
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
@@ -9,8 +11,12 @@ import '../css/notesPage.css';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 import ListIcon from 'react-ionicons/lib/MdList';
 
-const Notes = ({ storage, setCurrentPage }) => {
+const Notes = ({ notes, setCurrentPage, getNotes, passNote }) => {
     const [amountOfRows, setAmountOfRows] = useState(window.innerWidth > 1300 ? 4 : window.innerWidth > 900 ? 3 : 2);
+
+    useEffect(() => {
+        getNotes();
+    }, [getNotes])
 
     const NoItemsIcon = styled(ListIcon)`
         margin: 0;
@@ -23,7 +29,8 @@ const Notes = ({ storage, setCurrentPage }) => {
         }
     `
     const goToEditNote = (note = undefined) => {
-        setCurrentPage(pageNames.NOTEEDIT, { props: note });
+        passNote(note);
+        setCurrentPage(pageNames.NOTEEDIT);
     }
 
     const onResize = (e) => {
@@ -37,11 +44,10 @@ const Notes = ({ storage, setCurrentPage }) => {
             window.addEventListener('resize', onResize, false);
         }
     }, [])
-
     return (
         <Container>
-            {areThereNotes(storage.shared.getNotes()) === false && <NoItemsIcon id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>}
-            {createNotes(storage.shared.getNotes(), amountOfRows, goToEditNote)}
+            {areThereNotes(notes) === false && <NoItemsIcon id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>}
+            {createNotes(notes, amountOfRows, goToEditNote)}
             <AddButton onClick={goToEditNote}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
@@ -85,6 +91,15 @@ const createNote = (note, goToEditNote) => {
     )
 }
 
+const mapStateToProps = state => {
+    return { notes: state.noteReducer.notes };
+};
+
+const mapDispatchToProps = {
+    getNotes,
+    passNote
+}
+
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
@@ -113,12 +128,12 @@ const Description = styled.div`
 `
 
 const NoteContainer = styled.div`
-    width: 90%;
-    max-width: 90%;
+    width: 95%;
+    max-width: 95%;
     margin-left: 10px;
     margin-top: 10px;
     border: 1px solid ${colors.GRAY};
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    box-shadow: 0px 1.5px 3px 0px ${colors.BLACK};
     border-radius: 10px;
 `
 
@@ -142,4 +157,4 @@ const AddButton = styled.div`
     box-shadow: 0px 2px 10px 0px ${colors.BLACK};
 `
 
-export default Notes;
+export default connect(mapStateToProps, mapDispatchToProps)(Notes);

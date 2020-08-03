@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect } from "react";
+import { connect } from "react-redux";
+import { removeNote, replace, add } from '../stores/notes/noteActions';
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
@@ -8,20 +10,20 @@ import FormBuilder from '../utils/formBuilder';
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 
-const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
+const NoteEdit = ({ removeNote, add, replace, setCurrentPage, note }) => {
 
     const goBack = useCallback(() => {
         setCurrentPage(pageNames.NOTES);
     }, [setCurrentPage])
 
     const goRemove = useCallback(() => {
-        storage.shared.removeNote(props);
+        removeNote(note.id);
         goBack();
-    }, [goBack, storage, props])
+    }, [goBack, note, removeNote])
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        props.id === undefined ? storage.shared.addNote(values) : storage.shared.editNote(values);
+        note.id === undefined ? add(values) : replace(values);
         setCurrentPage(pageNames.NOTES);
     }
 
@@ -30,40 +32,50 @@ const NoteEdit = ({ storage, setCurrentPage, props = {} }) => {
         const removeButton = document.getElementById("remove");
         backButton.addEventListener("click", goBack, false);
         backButton.addEventListener("touchend", goBack, false);
-        props.id && removeButton.addEventListener("click", goRemove, false);
-        props.id && removeButton.addEventListener("touchend", goRemove, false);
+        note.id && removeButton.addEventListener("click", goRemove, false);
+        note.id && removeButton.addEventListener("touchend", goRemove, false);
         return () => {
             backButton.removeEventListener("click", goBack, false);
             backButton.removeEventListener("touchend", goBack, false);
-            props.id && removeButton.removeEventListener("click", goRemove, false);
-            props.id && removeButton.removeEventListener("touchend", goRemove, false);
+            note.id && removeButton.removeEventListener("click", goRemove, false);
+            note.id && removeButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [goBack, goRemove, props]);
+    }, [goBack, goRemove, note]);
 
     return (
         <Container>
             <TopBar>
-                <Title>{props.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
+                <Title>{note.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
-                {props.id && <RightButtonContainer>
+                {note.id && <RightButtonContainer>
                     <IconButton id="remove" icon={TrashIcon} fontSize="35px" color={colors.DARK_GREEN} />
                 </RightButtonContainer>}
             </TopBar>
             <EventContainer>
-                {buildForm(onSubmit, props)}
+                {buildForm(onSubmit, note)}
             </EventContainer>
         </Container>
     )
 }
 
-const buildForm = (onSubmit, props) => {
+const buildForm = (onSubmit, note) => {
     const builder = new FormBuilder();
-    builder.addHiddenInput("id", { value: props.id, required: false });
-    builder.addTextInput("title", { value: props.title, required: true, placeholder: "Title", label: "Titel" });
-    builder.addTextEditorInput("description", { value: props.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
+    builder.addHiddenInput("id", { value: note.id, required: false });
+    builder.addTextInput("title", { value: note.title, required: true, placeholder: "Title", label: "Titel" });
+    builder.addTextEditorInput("description", { value: note.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("NoteForm", "Verzenden", onSubmit);
+}
+
+const mapStateToProps = state => {
+    return { note: state.noteReducer.passedNote };
+};
+
+const mapDispatchToProps = {
+    removeNote,
+    replace,
+    add
 }
 
 const Container = styled.div`
@@ -108,4 +120,4 @@ const EventContainer = styled.div`
     height: calc(100% - 80px);
 `
 
-export default NoteEdit;
+export default connect(mapStateToProps, mapDispatchToProps)(NoteEdit);

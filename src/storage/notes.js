@@ -1,4 +1,4 @@
-import * as database from "../database/notes";
+import * as database from "../databases/notes";
 
 let notes = [];
 

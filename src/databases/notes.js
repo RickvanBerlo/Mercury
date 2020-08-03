@@ -19,7 +19,8 @@ export const replaceNote = (data) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES, data.id)
         .addMethod(method.PUT)
         .addHeaders(header.JSON)
-        .send(data);
+        .addBody(data)
+        .send();
 }
 
 export const deleteNote = (id) => {
