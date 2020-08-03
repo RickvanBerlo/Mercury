@@ -8,7 +8,7 @@
             "console": "internalConsole",
             "mainClass": "com.mercury.api.Api",
             "projectName": "api",
-            "args": ""
+            "vmArgs": "-Dspring.profiles.active=dev"
         }
     ]
 }
