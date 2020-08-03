@@ -4,7 +4,9 @@ import colors from '../constants/colors';
 import { lerp, invlerp } from '../utils/lerp';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
-import IconButton from '../components/buttons/cv/iconButton';
+import IconButton from '../components/buttons/dasboard/iconButton';
+
+import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
 import background from '../assets/background.jpg';
 import Snackbar from '../components/notification/snackbar';
@@ -31,9 +33,16 @@ const Authentication = ({ history, ToggleLogin = true }) => {
     }
 
     useEffect(() => {
+        const backButtonClick = () => {
+            TogglePages(true, setToggle);
+        }
+
+        const backButton = document.getElementById("backButton");
         window.addEventListener("resize", calculateDegreeAndFormWith, false);
+        backButton.addEventListener('click', backButtonClick, false);
         return () => {
             window.removeEventListener("resize", calculateDegreeAndFormWith, false);
+            backButton.removeEventListener('click', backButtonClick, false);
         }
     }, [])
 
@@ -65,7 +74,7 @@ const Authentication = ({ history, ToggleLogin = true }) => {
                             <Link href='#' onClick={() => { TogglePages(false, setToggle) }}>Nog geen Account? Registreer hier!</Link>
                         </BottomContainer>
                         <TopContainer toggle={toggle}>
-                            <IconButton icon={['fas', 'arrow-left']} padding="0px" size="2x" onClick={() => { TogglePages(true, setToggle) }} />
+                            <IconButton id={"backButton"} icon={PreviousIcon} fontSize="40px" />
                         </TopContainer>
                     </OffsetTransform>
                 </ContainerLeft>

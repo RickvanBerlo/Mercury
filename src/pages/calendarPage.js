@@ -42,7 +42,7 @@ const reducer = (state, action) => {
     }
 }
 
-const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
+const Calendar = ({ storage, history, selectedDay = new Date() }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
     const direction = useRef(undefined);
@@ -60,7 +60,8 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
 
     const navigateToDayPage = (day, allDayEvents, timedEvents) => {
         if (!isDragging.current)
-            setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
+            history.push(pageNames.DAY.toLowerCase());
+        //{ selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents }
         isDragging.current = false; //is placed here because this function is called every time when the calendar is drag + event drag is called before this one.
     }
 
@@ -198,17 +199,17 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, history)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, history)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, history)}
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { setCurrentPage(pageNames.EVENTEDIT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENTEDIT); }}>
+            <AddButton onClick={() => { history.push(pageNames.EVENTEDIT.toLowerCase()); }} onTouchEnd={() => { history.push(pageNames.EVENTEDIT.toLowerCase()); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
@@ -259,14 +260,14 @@ const getDayNames = () => {
     return names;
 }
 
-const createMonth = (getEventsOfDay, currentDate, callback, setCurrentPage) => {
+const createMonth = (getEventsOfDay, currentDate, callback, history) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
             <WeekContainer key={UUID()}>
-                {createWeek(getEventsOfDay, firstDayOfMonth, currentDate.getMonth(), callback, setCurrentPage)}
+                {createWeek(getEventsOfDay, firstDayOfMonth, currentDate.getMonth(), callback, history)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
@@ -290,15 +291,15 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
+const createWeek = (getEventsOfDay, firstDayOfWeek, month, callback, history) => {
     return (
         <DaysContainer>
-            {createDays(getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage)}
+            {createDays(getEventsOfDay, firstDayOfWeek, month, callback, history)}
         </DaysContainer>
     )
 }
 
-const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
+const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, history) => {
     const days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
@@ -316,15 +317,15 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentP
                 onTouchEnd={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
-                        if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} /> }
-                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} setCurrentPage={setCurrentPage} date={date} dayEventsObj={dayEventsObj} /> }
+                        if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} history={history} /> }
+                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} history={history} date={date} dayEventsObj={dayEventsObj} /> }
                         else return null;
                     }
                     return null;
                 })}
                 {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
-                    if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} /> }
-                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} setCurrentPage={setCurrentPage} date={date} dayEventsObj={dayEventsObj} /> }
+                    if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} history={history} /> }
+                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} history={history} date={date} dayEventsObj={dayEventsObj} /> }
                     else return null;
                 })}
                 <DayNumber

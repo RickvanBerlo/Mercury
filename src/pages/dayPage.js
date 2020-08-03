@@ -14,7 +14,7 @@ import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEvents }) => {
+const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) => {
     const scroll = useRef(false);
     let currentDragPosition = undefined;
     let dragStartingPosition = undefined;
@@ -24,8 +24,9 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     const endTime = useRef("00:00");
 
     const goBack = useCallback(() => {
-        setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
-    }, [setCurrentPage, selectedDay])
+        history.push(pageNames.CALENDAR.toLowerCase());
+        //{ selectedDay: selectedDay }
+    }, [history, selectedDay])
 
     const setScroll = () => {
         scroll.current = true;
@@ -33,7 +34,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const goToEventEdit = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: selectedDay, props: { startTime: startTime.current, endTime: endTime.current } });
+            history.push(pageNames.EVENTEDIT.toLowerCase());
+        // { selectedDay: selectedDay, props: { startTime: startTime.current, endTime: endTime.current } }
         scroll.current = false;
     }
 
@@ -41,7 +43,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
         e.stopPropagation();
         e.preventDefault();
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, props: props });
+            history.push(pageNames.EVENT.toLowerCase());
+        //{ selectedDay: selectedDay, props: props }
         scroll.current = false;
     }
 

@@ -5,11 +5,12 @@ import colorChanger from '../../utils/colorChanger';
 import { pageNames } from '../../constants/pages';
 import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ setCurrentPage, placedDate, offset, props }) => {
+const Event = ({ history, placedDate, offset, props }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToEvent = (e) => {
-        setCurrentPage(pageNames.EVENT, { props: props });
+        history.push(pageNames.EVENT.toLowerCase());
+        //{props}
         e.stopPropagation();
     }
 

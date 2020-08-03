@@ -11,7 +11,7 @@ import '../css/notesPage.css';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 import ListIcon from 'react-ionicons/lib/MdList';
 
-const Notes = ({ notes, setCurrentPage, getNotes, passNote }) => {
+const Notes = ({ notes, getNotes, passNote, history }) => {
     const [amountOfRows, setAmountOfRows] = useState(window.innerWidth > 1300 ? 4 : window.innerWidth > 900 ? 3 : 2);
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const Notes = ({ notes, setCurrentPage, getNotes, passNote }) => {
     `
     const goToEditNote = (note = undefined) => {
         passNote(note);
-        setCurrentPage(pageNames.NOTEEDIT);
+        history.push(pageNames.NOTEEDIT.toLowerCase());
     }
 
     const onResize = (e) => {

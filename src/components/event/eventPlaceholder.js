@@ -4,11 +4,12 @@ import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 import { pageNames } from '../../constants/pages';
 
-const EventPlaceholder = ({ setCurrentPage, offset, date, dayEventsObj }) => {
+const EventPlaceholder = ({ history, offset, date, dayEventsObj }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToDay = (e) => {
-        setCurrentPage(pageNames.DAY, { selectedDay: date, allDayEvents: dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], timedEvents: dayEventsObj !== undefined ? dayEventsObj.timedEvents : [] });
+        history.push(pageNames.DAY.toLowerCase());
+        //{ selectedDay: date, allDayEvents: dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], timedEvents: dayEventsObj !== undefined ? dayEventsObj.timedEvents : [] }
         e.stopPropagation();
     }
 

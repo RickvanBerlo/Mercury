@@ -12,18 +12,21 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ storage, setCurrentPage, props = {} }) => {
+const Event = ({ storage, history, props = {} }) => {
 
     useEffect(() => {
         const goRemove = () => {
             storage.shared.removeEvent(props);
-            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
+            history.push(pageNames.CALENDAR.toLowerCase());
+            //{ selectedDay: props.selectedDay }
         }
         const goBack = () => {
-            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
+            history.push(pageNames.CALENDAR.toLowerCase());
+            //{ selectedDay: props.selectedDay }
         }
         const goEdit = () => {
-            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: props.selectedDay, props: props });
+            history.push(pageNames.EVENTEDIT.toLowerCase());
+            //{ selectedDay: props.selectedDay, props: props }
         }
         const backButton = document.getElementById("goBack");
         const EditButton = document.getElementById("edit");
@@ -42,7 +45,7 @@ const Event = ({ storage, setCurrentPage, props = {} }) => {
             RemoveButton.removeEventListener("click", goRemove, false);
             RemoveButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [setCurrentPage, props, storage]);
+    }, [history, props, storage]);
 
     return (
         <Container>

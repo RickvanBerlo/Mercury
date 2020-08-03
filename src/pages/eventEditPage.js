@@ -9,16 +9,17 @@ import dependencieFunctions from '../components/form/dependencies/dependencieFun
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import GenerateUUID from "../utils/GenerateUUID";
 
-const EventEdit = ({ storage, setCurrentPage, props = {} }) => {
+const EventEdit = ({ storage, history, props = {} }) => {
 
     const goBack = useCallback(() => {
-        setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
-    }, [setCurrentPage, props])
+        history.push(pageNames.CALENDAR.toLowerCase());
+        // { selectedDay: props.selectedDay }
+    }, [history, props])
 
     const onSubmit = (event, values) => {
         event.preventDefault();
         storage.shared.setEvent(values, props.id === undefined ? true : false);
-        setCurrentPage(pageNames.CALENDAR);
+        history.push(pageNames.CALENDAR.toLowerCase());
     }
 
     useEffect(() => {

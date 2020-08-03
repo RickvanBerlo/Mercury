@@ -1,7 +1,5 @@
 import React from "react";
-import {
-    Switch
-} from "react-router-dom";
+import { Switch } from "react-router-dom";
 import PrivateRoute from './privateRoute';
 import PublicRoute from './publicRoute';
 
@@ -20,8 +18,9 @@ const Routes = () => {
             <PublicRoute path="/register" render={(routeProps) => {
                 return <Authentication ToggleLogin={false} {...routeProps} />
             }} />
-            <PrivateRoute path="/dashboard" component={Dashboard} />
-            <PublicRoute component={CurriculemVitae} />
+            <PrivateRoute path={"/*"} render={(routeProps) => {
+                return <Dashboard {...routeProps} />
+            }} />
         </Switch>
     );
 }
