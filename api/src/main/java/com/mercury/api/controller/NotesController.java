@@ -25,8 +25,8 @@ public class NotesController {
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         try {
-            Note _tutorial = service.save(new Note(note.getTitle(), note.getDescription()));
-            return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
+            Note savedNote = service.save(new Note(note.getTitle(), note.getDescription()));
+            return new ResponseEntity<>(savedNote, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

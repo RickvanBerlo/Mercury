@@ -10,6 +10,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -43,16 +45,17 @@ public class FileStorageService {
         }
     }
 
-    public void createFolder(String folder) {
-        Path path = Paths.get(this.fileStorageLocation + "\\" + folder);
+    public Path createFolder(String path) {
+        Path savedPath = Paths.get(this.fileStorageLocation + "\\" + path);
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(savedPath);
+            return savedPath;
         } catch (IOException ex) {
-            throw new FileStorageException("Could not create path:" + path.toAbsolutePath(), ex);
+            throw new FileStorageException("Could not create path:" + savedPath.toAbsolutePath(), ex);
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public Path storeFile(MultipartFile file) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -66,7 +69,7 @@ public class FileStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return fileName;
+            return targetLocation;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
