@@ -1,34 +1,46 @@
 import React, { useEffect, useState, useRef } from "react";
+import { connect } from "react-redux";
+import { createDir, addFile, addFiles, peekDir, removeDir, removeFile, removeFiles } from '../stores/storage/storageActions';
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import GenerateUUID from "../utils/GenerateUUID";
+import formBuilder from '../utils/formBuilder';
+import Model from '../components/model/model';
 import '../css/storagePage.css';
 
 import DocumentIcon from 'react-ionicons/lib/MdDocument';
 import FolderIcon from 'react-ionicons/lib/MdFolderOpen';
+import DesktopIcon from 'react-ionicons/lib/MdDesktop';
 import ImageIcon from 'react-ionicons/lib/MdImage';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 import CloseIcon from 'react-ionicons/lib/MdClose';
+import AlertIcon from 'react-ionicons/lib/MdAlert';
 
-const Storage = ({ storage }) => {
-    const [update, setUpdate] = useState(true);
+const Storage = ({ createDir, addFile, addFiles, peekDir, removeDir, removeFile, removeFiles, files, currentPath }) => {
     const timer = useRef(undefined);
     const pressDown = useRef(false);
-    const [path, setPath] = useState('/');
+    const editState = useRef(false);
+    const [toggle, setToggle] = useState(null);
     const selectedItems = useRef([]);
+
 
     const addDocument = (e) => {
         document.getElementById("fileUpload").click();
     }
 
-    const addFolder = (e) => {
+    const openModal = () => {
+        setToggle(!toggle);
+    }
 
+    const onSubmit = (event, value) => {
+        event.preventDefault();
+        setToggle(!toggle);
+        createDir(value.NAME);
     }
 
     const fileUpload = (e) => {
-        storage.shared.addFile(e.target.files[0]);
-        setUpdate(!update);
+        addFile(e.target.files[0]);
     }
 
     const mouseUp = (e, name) => {
@@ -37,9 +49,8 @@ const Storage = ({ storage }) => {
             pressDown.current = false;
             clearTimeout(timer.current);
             timer.current = undefined;
-            if (path === "Remove") {
+            if (editState.current) {
                 selectedItems.current[name] = name;
-                setUpdate(!update);
             }
             //else download file or open map.
         }
@@ -55,15 +66,14 @@ const Storage = ({ storage }) => {
         if (pressDown.current) {
             console.log("long");
             timer.current = undefined;
-            setPath("Remove");
+            editState.current = true;
             selectedItems.current[name] = name;
-            setUpdate(!update);
         }
     }
 
     const undo = (e) => {
         selectedItems.current = [];
-        setPath("/");
+        peekDir(currentPath.split(/[/]+/).pop());
     }
 
     const enterDropzone = (e) => {
@@ -81,21 +91,17 @@ const Storage = ({ storage }) => {
     }
 
     useEffect(() => {
+        peekDir("/");
+
         const dropFile = (e) => {
             e.preventDefault();
-            for (let i = 0; i < e.dataTransfer.files.length; i++) {
-                storage.shared.addFile(e.dataTransfer.files[i]);
-            }
+            addFiles(e.dataTransfer.files);
             document.getElementById("dropzone").classList.remove("dragging");
-            setUpdate(!update);
         }
 
         const removeItems = (e) => {
-            for (const name in selectedItems.current) {
-                storage.shared.removeFile(name);
-            }
+            removeFiles(selectedItems.current);
             selectedItems.current = [];
-            setPath('/');
         }
         const dropzone = document.getElementById("dropzone");
         const documentButton = document.getElementById("addDocument");
@@ -103,7 +109,7 @@ const Storage = ({ storage }) => {
         const undoButton = document.getElementById("undo");
         const removeButton = document.getElementById("remove");
         documentButton.addEventListener("click", addDocument, false);
-        folderButton.addEventListener("click", addFolder, false);
+        folderButton.addEventListener("click", openModal, false);
         undoButton.addEventListener("click", undo, false);
         removeButton.addEventListener("click", removeItems, false);
         dropzone.addEventListener("dragenter", enterDropzone, false);
@@ -113,7 +119,7 @@ const Storage = ({ storage }) => {
         window.addEventListener("drop", preventDefault, false);
         return () => {
             documentButton.removeEventListener("click", addDocument, false);
-            folderButton.removeEventListener("click", addFolder, false);
+            folderButton.removeEventListener("click", openModal, false);
             undoButton.removeEventListener("click", undo, false);
             removeButton.removeEventListener("click", removeItems, false);
             dropzone.removeEventListener("dragenter", enterDropzone, false);
@@ -122,53 +128,69 @@ const Storage = ({ storage }) => {
             window.removeEventListener("dragover", preventDefault, false);
             window.removeEventListener("drop", preventDefault, false);
         }
-    }, [storage, update])
+    }, [addFiles, removeFiles, peekDir])
 
     return (
         <Container>
             <TopBar>
-                <Title>{path}</Title>
-                <PositionLeftButtonContainer hide={path !== "Remove" ? true : false}>
+                <Title>{currentPath}</Title>
+                <PositionLeftButtonContainer hide={currentPath.split('/')[0] === "" ? true : false}>
                     <IconButton id="undo" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionLeftButtonContainer>
                 <PositionRightButtonContainer>
-                    <VisibilityContainer hide={path !== "Remove" ? true : false}><IconButton id="remove" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={path !== "Remove" ? false : true}><IconButton id="addDocument" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={path !== "Remove" ? false : true}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={!editState.current}><IconButton id="remove" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={editState.current}><IconButton id="addDocument" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
 
                 </PositionRightButtonContainer>
             </TopBar>
             <ItemsContainer id="dropzone">
                 <FileUpload id="fileUpload" onChange={fileUpload} type="file" />
-                {createItems(storage.shared.getFiles(), selectedItems, mouseUp, mouseDown)}
+                {createItems(files, currentPath, selectedItems, mouseUp, mouseDown)}
             </ItemsContainer>
+            <Model toggle={toggle} setToggle={setToggle} title="Toevoegen Map" content={buildForm(onSubmit)} />
         </Container>
     )
 }
 
-const createItems = (items, selectedItems, mouseUp, mouseDown) => {
+const buildForm = (onSubmit) => {
+    const builder = new formBuilder();
+    builder.addTextInput("NAME", { required: true, placeholder: "Name", label: "Naam" });
+    return (
+        <ContentContainer>
+            {builder.getForm("directoryForm", "Aanmaken", onSubmit, { reset: true })}
+        </ContentContainer>
+    )
+}
+
+const createItems = (items, currentPath, selectedItems, mouseUp, mouseDown) => {
     const itemComponents = [];
-    for (const item in items) {
+    items[currentPath].forEach((item) => {
         itemComponents.push(
             <ItemContainer key={GenerateUUID()} color={selectedItems.current[item] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, items[item].name) }} onMouseUp={(e) => { mouseUp(e, items[item].name) }}>
                 <CenterImageContainer>
-                    {getCorrectIcon(items[item].type)}
+                    {getCorrectIcon(item.fileName)}
                 </CenterImageContainer>
-                <ItemText>{items[item].name.replace(/\.[^/.]+$/, "")}</ItemText>
-                <ItemText>{getCorrectSize(items[item].size)}</ItemText>
-                <ItemText>{new Date(items[item].lastModifiedDate).toLocaleDateString("fr-CA")}</ItemText>
+                <ItemText>{item.fileName}</ItemText>
+                <ItemText>{getCorrectSize(item.size)}</ItemText>
+                <ItemText>{new Date(item.lastModifiedDate).toLocaleDateString("fr-CA")}</ItemText>
             </ItemContainer>
         );
-    }
+    })
 
     return itemComponents;
 }
 
-const getCorrectIcon = (type) => {
-    if (type === undefined) return <FolderIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
-    switch (type.split('/')[0]) {
-        case "image": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
-        default: return <DocumentIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+const getCorrectIcon = (fileName) => {
+    if (fileName.split('.')[1] === undefined) return <FolderIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+    switch (fileName.split('.')[1].toLowerCase()) {
+        case "png": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "jpg": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "svg": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "exe": return <DesktopIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "docx": return <DocumentIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "txt": return <DocumentIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        default: return <AlertIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
     }
 }
 
@@ -178,14 +200,32 @@ const getCorrectSize = (bytes) => {
     else if (bytes >= 1024) { bytes = (bytes / 1024).toFixed(2) + " KB"; }
     else if (bytes > 1) { bytes = bytes + " bytes"; }
     else if (bytes === 1) { bytes = bytes + " byte"; }
-    else { bytes = "0 bytes"; }
+    else { bytes = "-"; }
     return bytes;
+}
+
+const mapStateToProps = state => {
+    return { files: state.storageReducer.storage, currentPath: state.storageReducer.currentPath };
+};
+
+const mapDispatchToProps = {
+    createDir,
+    addFile,
+    addFiles,
+    peekDir,
+    removeDir,
+    removeFile,
+    removeFiles
 }
 
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
+`
+
+const ContentContainer = styled.div`
+    width: 400px;
 `
 
 const FileUpload = styled.input`
@@ -266,4 +306,4 @@ const ItemText = styled.p`
     text-overflow: ellipsis;
 `
 
-export default Storage;
+export default connect(mapStateToProps, mapDispatchToProps)(Storage);

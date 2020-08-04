@@ -12,21 +12,27 @@ export const getNotes = () => {
 }
 
 export const getNote = (id) => {
-
+    return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES)
+        .addMethod(method.GET)
+        .addHeaders(header.JSON)
+        .addURLExtendion(id)
+        .send();
 }
 
 export const replaceNote = (data) => {
-    return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES, data.id)
+    return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES)
         .addMethod(method.PUT)
         .addHeaders(header.JSON)
-        .addBody(data)
+        .addURLExtendion(data.id)
+        .addBodyJson(data)
         .send();
 }
 
 export const deleteNote = (id) => {
-    return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES, id)
+    return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES)
         .addMethod(method.DELETE)
         .addHeaders(header.JSON)
+        .addURLExtendion(id)
         .send();
 }
 
@@ -34,7 +40,7 @@ export const addNote = (props) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.NOTES)
         .addMethod(method.POST)
         .addHeaders(header.JSON)
-        .addBody(props)
+        .addBodyJson(props)
         .send();
 }
 
