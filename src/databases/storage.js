@@ -20,50 +20,56 @@ export const getContent = (path) => {
         .send();
 }
 
-export const removeDir = (dir) => {
+export const deleteDir = (dir) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_DIR)
         .addMethod(method.DELETE)
         .addHeaders(header.JSON)
-        .addBody({ "dir": dir })
+        .addBodyString(dir)
         .send();
 }
 
-export const uploadFile = (file) => {
+export const uploadFile = (file, path) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("path", path);
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_FILE)
         .addMethod(method.POST)
-        .addHeaders(header.JSON)
-        .addBody(file)
+        .addFormdata(formData)
         .send();
 }
 
-export const uploadFiles = (files) => {
+export const uploadFiles = (files, path) => {
+    console.log(path);
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+    formData.append("path", path);
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_FILES)
         .addMethod(method.POST)
-        .addHeaders(header.JSON)
-        .addBody(files)
+        .addFormdata(formData)
         .send();
 }
 
-export const downloadFile = (name) => {
+export const downloadFile = (path) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_FILE)
         .addMethod(method.GET)
-        .addHeaders(header.JSON)
-        .addURLExtendion(name)
+        .addURLExtendion(path)
         .send();
 }
 
-export const removeFile = (file) => {
+export const deleteFile = (file) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_FILE)
         .addMethod(method.DELETE)
         .addHeaders(header.JSON)
-        .addBody(file)
+        .addBodyJson(file)
         .send();
 }
 
-export const removeFiles = (files) => {
+export const deleteFiles = (files) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.STORAGE_FILES)
         .addMethod(method.DELETE)
         .addHeaders(header.JSON)
-        .addBody(files)
+        .addBodyJson(files)
         .send();
 }

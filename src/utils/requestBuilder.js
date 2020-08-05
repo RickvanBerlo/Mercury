@@ -30,6 +30,11 @@ class RequestBuilder {
         return this;
     }
 
+    addFormdata(formdata) {
+        this.#properties.body = formdata;
+        return this;
+    }
+
     addHeaders(header) {
         this.#properties.headers = header;
         return this;
@@ -47,6 +52,11 @@ class RequestBuilder {
 
     logData() {
         console.log(this.#properties);
+        return this;
+    }
+
+    addEntycpe(enctype) {
+        this.#properties.enctype = enctype;
         return this;
     }
 

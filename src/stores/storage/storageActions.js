@@ -3,24 +3,28 @@ import * as database from '../../databases/storage';
 export const actions = {
     ADD_FILE: "ADD_FILE",
     ADD_FILES: "ADD_FILES",
-    REMOVE_DIR: "REMOVE_DIR",
+    DELETE_DIR: "DELETE_DIR",
     ADD_DIR: "ADD_DIR",
     PEEK_FOLDER: "PEEK_FOLDER",
-    REMOVE_FILE: "REMOVE_FILE",
-    REMOVE_FILES: "REMOVE_FILES",
+    DELETE_FILE: "DELETE_FILE",
+    DELETE_FILES: "DELETE_FILES",
+    ADD_SELECTEDFILE: "ADD_SELECTEDFILE",
+    DELETE_SELECTEDFILES: "DELETE_SELECTEDFILES",
+    DELETE_SELECTEDFILE: "DELETE_SELECTEDFILE",
+    DOWNLOAD_FILE: "DOWNLOAD_FILE",
 }
 
-export const addFile = (file) => {
+export const addFile = (file, path) => {
     return {
         type: actions.ADD_FILE,
-        payload: database.uploadFile(file).then(response => response.json())
+        payload: database.uploadFile(file, path).then(response => response.json())
     }
 }
 
-export const addFiles = (files) => {
+export const addFiles = (files, path) => {
     return {
         type: actions.ADD_FILES,
-        payload: database.uploadFiles(files).then(response => response.json()),
+        payload: database.uploadFiles(files, path).then(response => response.json()),
     }
 }
 
@@ -38,23 +42,54 @@ export const peekDir = (dir) => {
     }
 }
 
-export const removeDir = (dir) => {
+export const deleteDir = (dir) => {
     return {
-        type: actions.REMOVE_DIR,
-        payload: database.removeDir(dir).then(response => response.json()),
+        type: actions.DELETE_DIR,
+        payload: database.deleteDir(dir).then(response => response.json()),
     }
 }
 
-export const removeFile = (file) => {
+export const deleteFile = (file) => {
     return {
-        type: actions.REMOVE_FILE,
-        payload: database.removeFile(file).then(response => response.json()),
+        type: actions.DELETE_FILE,
+        payload: database.deleteFile(file).then(response => response.json()),
     }
 }
 
-export const removeFiles = (files) => {
+export const deleteFiles = (files) => {
+    let fileInfos = [];
+    for (var key in files) {
+        fileInfos.push(files[key]);
+    }
     return {
-        type: actions.REMOVE_FILES,
-        payload: database.removeFiles(files).then(response => response.json()),
+        type: actions.DELETE_FILES,
+        payload: database.deleteFiles(fileInfos),
+    }
+}
+
+export const addSelectedFile = (file) => {
+    return {
+        type: actions.ADD_SELECTEDFILE,
+        payload: file,
+    }
+}
+
+export const deleteSelectedFile = (file) => {
+    return {
+        type: actions.DELETE_SELECTEDFILE,
+        payload: file,
+    }
+}
+
+export const deleteSelectedFiles = () => {
+    return {
+        type: actions.DELETE_SELECTEDFILES,
+    }
+}
+
+export const downloadFile = (path) => {
+    return {
+        type: actions.DOWNLOAD_FILE,
+        payload: database.downloadFile(path),
     }
 }

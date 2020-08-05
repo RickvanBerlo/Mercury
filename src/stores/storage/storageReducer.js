@@ -1,47 +1,78 @@
-import { actions } from './storageActions'
+import { actions } from './storageActions';
 
-const InitState = { storage: { "/": [] }, currentPath: "/", selectedFiles: [] }
+const InitState = { storage: { "/": [] }, currentPath: "/", selectedFiles: {} }
 
 const fulfilled = "_FULFILLED";
 
-const removeFromArray = (array, from, to) => {
-    var rest = array.slice((to || from) + 1 || array.length);
-    array.length = from < 0 ? array.length + from : from;
-    return array.push.apply(array, rest);
+const deleteFromArray = (array, obj) => {
+    const index = array.findIndex(item => item.fileName === obj.fileName);
+    array.splice(index, 1)
+    return array;
 };
+
+function containsObject(obj, list) {
+    let bool = false;
+    bool = list.find((file) => {
+        return (file.fileName === obj.fileName)
+    })
+    return bool;
+}
 
 export default (state = InitState, action) => {
 
     switch (action.type) {
         case (actions.ADD_FILE + fulfilled):
-            state.storage[state.currentFolder].push(action.payload);
-            return { ...state, storage: state.storage };
+            state.storage[state.currentPath].push(action.payload);
+            return { ...state, storage: { ...state.storage } };
         case (actions.ADD_FILES + fulfilled):
             action.payload.forEach((file) => {
-                state.storage[state.currentFolder].push(file);
+                state.storage[state.currentPath].push(file);
             })
-            return Object.assign({}, state, { ...state, storage: state.storage });
+            return { ...state, storage: { ...state.storage } };
         case (actions.ADD_DIR + fulfilled):
             state.storage[action.payload.fileName] = [];
             state.storage[state.currentPath].push(action.payload);
-            console.log(state);
             return { ...state, storage: { ...state.storage } };
         case (actions.PEEK_FOLDER + fulfilled):
-            state.currentFolder = action.payload.path;
-            if (state.storage[state.currentFolder] === undefined) state.storage[state.currentFolder] = [];
+            state.currentPath = action.payload.path;
+            if (state.storage[state.currentPath] === undefined) state.storage[state.currentPath] = [];
             action.payload.files.forEach((file) => {
-                state.storage[state.currentFolder].push(file);
+                if (!containsObject(file, state.storage[state.currentPath])) {
+                    state.storage[state.currentPath].push(file);
+                }
             })
-            return { ...state, storage: { ...state.storage }, currentFolder: state.currentFolder };
-        case (actions.REMOVE_DIR + fulfilled):
-            delete state.storage[state.currentFolder];
+            return { ...state, storage: { ...state.storage }, currentPath: state.currentPath };
+        case (actions.DELETE_DIR + fulfilled):
+            delete state.storage[state.currentPath];
             return { ...state, storage: state.storage };
-        case (actions.REMOVE_FILE + fulfilled):
-        case (actions.REMOVE_FILES + fulfilled):
-            state.selectedFiles.forEach((file) => {
-                state.storage[state.currentFolder] = removeFromArray(state.storage[state.currentFolder], state.storage[state.currentFolder].indexOf(file));
+        case (actions.DELETE_FILE + fulfilled):
+        case (actions.DELETE_FILES + fulfilled):
+            for (const key in state.selectedFiles) {
+                state.storage[state.currentPath] = deleteFromArray(state.storage[state.currentPath], state.selectedFiles[key]);
+            }
+            return { ...state, storage: { ...state.storage }, selectedFiles: {} }
+        case (actions.ADD_SELECTEDFILE):
+            state.selectedFiles[action.payload.fileName] = action.payload;
+            return { ...state, selectedFiles: { ...state.selectedFiles } };
+        case (actions.DELETE_SELECTEDFILE):
+            delete state.selectedFiles[action.payload.fileName];
+            return { ...state, selectedFiles: { ...state.selectedFiles } };
+        case (actions.DELETE_SELECTEDFILES):
+            return { ...state, selectedFiles: {} };
+        case (actions.DOWNLOAD_FILE + fulfilled):
+            const array = action.payload.url.split('/');
+            const name = array[array.length - 1];
+            action.payload.blob().then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = name;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
             })
-            return { ...state, storage: state.storage };
+            return state;
         default:
             return state;
     }

@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { connect } from "react-redux";
-import { createDir, addFile, addFiles, peekDir, removeDir, removeFile, removeFiles } from '../stores/storage/storageActions';
+import { createDir, addFile, addFiles, peekDir, deleteDir, deleteFile, deleteFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile, downloadFile } from '../stores/storage/storageActions';
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import GenerateUUID from "../utils/GenerateUUID";
 import formBuilder from '../utils/formBuilder';
 import Model from '../components/model/model';
+import isEmpty from '../utils/objectIsEmpty';
 import '../css/storagePage.css';
 
 import DocumentIcon from 'react-ionicons/lib/MdDocument';
@@ -15,65 +16,78 @@ import DesktopIcon from 'react-ionicons/lib/MdDesktop';
 import ImageIcon from 'react-ionicons/lib/MdImage';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 import CloseIcon from 'react-ionicons/lib/MdClose';
+import arrowBackIcon from 'react-ionicons/lib/MdArrowBack';
 import AlertIcon from 'react-ionicons/lib/MdAlert';
 
-const Storage = ({ createDir, addFile, addFiles, peekDir, removeDir, removeFile, removeFiles, files, currentPath }) => {
+const LONG_PRESS_TIME = 500;
+
+const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDir, deleteFile, deleteFiles, files, currentPath, selectedFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile }) => {
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const editState = useRef(false);
     const [toggle, setToggle] = useState(null);
-    const selectedItems = useRef([]);
 
 
-    const addDocument = (e) => {
-        document.getElementById("fileUpload").click();
-    }
-
-    const openModal = () => {
-        setToggle(!toggle);
+    const addDocuments = (e) => {
+        document.getElementById("filesUpload").click();
     }
 
     const onSubmit = (event, value) => {
         event.preventDefault();
         setToggle(!toggle);
-        createDir(value.NAME);
+        if (currentPath === "/") createDir(currentPath + value.NAME);
+        else createDir(currentPath + "/" + value.NAME);
     }
 
-    const fileUpload = (e) => {
-        addFile(e.target.files[0]);
+    const filesUpload = (e) => {
+        addFiles(e.target.files, currentPath);
     }
 
-    const mouseUp = (e, name) => {
+    const mouseUp = (e, file) => {
         if (timer.current !== undefined) {
             console.log("short");
             pressDown.current = false;
             clearTimeout(timer.current);
             timer.current = undefined;
-            if (editState.current) {
-                selectedItems.current[name] = name;
-            }
+            changeStateSelectedFiles(file);
             //else download file or open map.
         }
 
     }
 
-    const mouseDown = (e, name) => {
-        timer.current = setTimeout((event) => { longPress(event, name) }, 500);
+    const changeStateSelectedFiles = (file) => {
+        if (editState.current) {
+            if (selectedFiles[file.fileName] !== undefined) {
+                deleteSelectedFile(file);
+                if (isEmpty(selectedFiles)) {
+                    editState.current = false;
+                }
+            }
+            else {
+                addSelectedFile(file);
+            }
+        }
+        else {
+            if (file.fileType === null) {
+                peekDir(file.path);
+            } else {
+                downloadFile(file.path)
+            }
+        }
+    }
+
+    const mouseDown = (e, file) => {
+        timer.current = setTimeout((event) => { longPress(event, file) }, LONG_PRESS_TIME);
         pressDown.current = true;
     }
 
-    const longPress = (e, name) => {
+    const longPress = (e, file) => {
         if (pressDown.current) {
             console.log("long");
             timer.current = undefined;
             editState.current = true;
-            selectedItems.current[name] = name;
+            changeStateSelectedFiles(file);
         }
-    }
-
-    const undo = (e) => {
-        selectedItems.current = [];
-        peekDir(currentPath.split(/[/]+/).pop());
     }
 
     const enterDropzone = (e) => {
@@ -90,63 +104,86 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, removeDir, removeFile,
         e.preventDefault();
     }
 
-    useEffect(() => {
-        peekDir("/");
+    const openModal = useCallback(() => {
+        setToggle(!toggle);
+    }, [toggle]);
 
+    const undo = useCallback(() => {
+        const array = currentPath.split(/[/]+/);
+        array.pop();
+
+        peekDir("/" + array.pop());
+    }, [currentPath, peekDir]);
+
+
+    const deleteItems = useCallback(() => {
+        deleteFiles(selectedFiles);
+        editState.current = false;
+    }, [selectedFiles, deleteFiles]);
+
+    useEffect(() => {
         const dropFile = (e) => {
             e.preventDefault();
             addFiles(e.dataTransfer.files);
             document.getElementById("dropzone").classList.remove("dragging");
         }
 
-        const removeItems = (e) => {
-            removeFiles(selectedItems.current);
-            selectedItems.current = [];
+        const ActionDeleteSelectedFileButton = (e) => {
+            deleteSelectedFiles();
+            editState.current = false;
         }
+
         const dropzone = document.getElementById("dropzone");
-        const documentButton = document.getElementById("addDocument");
+        const documentsButton = document.getElementById("addDocuments");
         const folderButton = document.getElementById("addFolder");
         const undoButton = document.getElementById("undo");
-        const removeButton = document.getElementById("remove");
-        documentButton.addEventListener("click", addDocument, false);
+        const deleteItemsButton = document.getElementById("deleteItems");
+        const deleteSelectedFilesButton = document.getElementById("deleteSelectedFiles");
+        documentsButton.addEventListener("click", addDocuments, false);
         folderButton.addEventListener("click", openModal, false);
         undoButton.addEventListener("click", undo, false);
-        removeButton.addEventListener("click", removeItems, false);
+        deleteSelectedFilesButton.addEventListener("click", ActionDeleteSelectedFileButton, false);
+        deleteItemsButton.addEventListener("click", deleteItems, false);
         dropzone.addEventListener("dragenter", enterDropzone, false);
         dropzone.addEventListener("dragleave", exitDropzone, false);
         dropzone.addEventListener("drop", dropFile, false);
         window.addEventListener("dragover", preventDefault, false);
         window.addEventListener("drop", preventDefault, false);
         return () => {
-            documentButton.removeEventListener("click", addDocument, false);
+            documentsButton.removeEventListener("click", addDocuments, false);
             folderButton.removeEventListener("click", openModal, false);
             undoButton.removeEventListener("click", undo, false);
-            removeButton.removeEventListener("click", removeItems, false);
+            deleteSelectedFilesButton.removeEventListener("click", ActionDeleteSelectedFileButton, false);
+            deleteItemsButton.removeEventListener("click", deleteItems, false);
             dropzone.removeEventListener("dragenter", enterDropzone, false);
             dropzone.removeEventListener("dragleave", exitDropzone, false);
             dropzone.removeEventListener("drop", dropFile, false);
             window.removeEventListener("dragover", preventDefault, false);
             window.removeEventListener("drop", preventDefault, false);
         }
-    }, [addFiles, removeFiles, peekDir])
+    }, [addFiles, peekDir, openModal, undo, deleteSelectedFiles, selectedFiles, deleteItems])
 
+    useEffect(() => {
+        peekDir("/");
+    }, [peekDir])
     return (
         <Container>
             <TopBar>
                 <Title>{currentPath}</Title>
-                <PositionLeftButtonContainer hide={currentPath.split('/')[0] === "" ? true : false}>
-                    <IconButton id="undo" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                <PositionLeftButtonContainer>
+                    <VisibilityContainer hide={currentPath.split('/')[1] === "" ? true : false}><IconButton id="undo" icon={arrowBackIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
                 </PositionLeftButtonContainer>
                 <PositionRightButtonContainer>
-                    <VisibilityContainer hide={!editState.current}><IconButton id="remove" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={editState.current}><IconButton id="addDocument" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={!editState.current}><IconButton id="deleteItems" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    <VisibilityContainer hide={editState.current}><IconButton id="addDocuments" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
                     <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
 
                 </PositionRightButtonContainer>
             </TopBar>
             <ItemsContainer id="dropzone">
-                <FileUpload id="fileUpload" onChange={fileUpload} type="file" />
-                {createItems(files, currentPath, selectedItems, mouseUp, mouseDown)}
+                <FilesUpload id="filesUpload" onChange={filesUpload} type="file" multiple />
+                {createItems(files, currentPath, selectedFiles, mouseUp, mouseDown)}
             </ItemsContainer>
             <Model toggle={toggle} setToggle={setToggle} title="Toevoegen Map" content={buildForm(onSubmit)} />
         </Container>
@@ -163,11 +200,11 @@ const buildForm = (onSubmit) => {
     )
 }
 
-const createItems = (items, currentPath, selectedItems, mouseUp, mouseDown) => {
+const createItems = (items, currentPath, selectedFiles, mouseUp, mouseDown) => {
     const itemComponents = [];
     items[currentPath].forEach((item) => {
         itemComponents.push(
-            <ItemContainer key={GenerateUUID()} color={selectedItems.current[item] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, items[item].name) }} onMouseUp={(e) => { mouseUp(e, items[item].name) }}>
+            <ItemContainer key={GenerateUUID()} color={selectedFiles[item.fileName] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, item) }} onMouseUp={(e) => { mouseUp(e, item) }}>
                 <CenterImageContainer>
                     {getCorrectIcon(item.fileName)}
                 </CenterImageContainer>
@@ -184,11 +221,11 @@ const createItems = (items, currentPath, selectedItems, mouseUp, mouseDown) => {
 const getCorrectIcon = (fileName) => {
     if (fileName.split('.')[1] === undefined) return <FolderIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
     switch (fileName.split('.')[1].toLowerCase()) {
-        case "png": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
-        case "jpg": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "png":
+        case "jpg":
         case "svg": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
         case "exe": return <DesktopIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
-        case "docx": return <DocumentIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
+        case "docx":
         case "txt": return <DocumentIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
         default: return <AlertIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
     }
@@ -205,7 +242,7 @@ const getCorrectSize = (bytes) => {
 }
 
 const mapStateToProps = state => {
-    return { files: state.storageReducer.storage, currentPath: state.storageReducer.currentPath };
+    return { files: state.storageReducer.storage, currentPath: state.storageReducer.currentPath, selectedFiles: state.storageReducer.selectedFiles };
 };
 
 const mapDispatchToProps = {
@@ -213,9 +250,13 @@ const mapDispatchToProps = {
     addFile,
     addFiles,
     peekDir,
-    removeDir,
-    removeFile,
-    removeFiles
+    downloadFile,
+    deleteDir,
+    deleteFile,
+    deleteFiles,
+    addSelectedFile,
+    deleteSelectedFiles,
+    deleteSelectedFile
 }
 
 const Container = styled.div`
@@ -228,7 +269,7 @@ const ContentContainer = styled.div`
     width: 400px;
 `
 
-const FileUpload = styled.input`
+const FilesUpload = styled.input`
     display: none;
 `
 
@@ -255,7 +296,6 @@ const VisibilityContainer = styled.div`
 
 const PositionLeftButtonContainer = styled.div`
     position: absolute;
-    display: ${props => props.hide ? "none" : "visible"}
     top: 5px;
     left: 10px;
 `
@@ -270,6 +310,7 @@ const Title = styled.p`
     line-height: 50px;
     text-align:center;
     margin: 0;
+    text-overflow: ellipsis;
     color: ${colors.DARK_GREEN};
 `
 
