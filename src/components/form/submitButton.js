@@ -21,6 +21,8 @@ const SubmitButton = styled.input`
     border-radius: 10px;
     padding: 5px 20px;
     margin-bottom: 10px;
+    max-width: 150px;
+    flex: 1;
     color: ${colors.BLACK}
     outline: none;
     font: 18px 'Open Sans Bold',sans-serif;

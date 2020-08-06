@@ -34,7 +34,7 @@ export default (state = InitState, action) => {
             state.storage[state.currentPath].push(action.payload);
             return { ...state, storage: { ...state.storage } };
         case (actions.PEEK_FOLDER + fulfilled):
-            state.currentPath = action.payload.path;
+            state.currentPath = action.payload.path === "" ? "/" : action.payload.path;
             if (state.storage[state.currentPath] === undefined) state.storage[state.currentPath] = [];
             action.payload.files.forEach((file) => {
                 if (!containsObject(file, state.storage[state.currentPath])) {

@@ -1,5 +1,6 @@
 import React, { useState, cloneElement, useRef, useEffect } from "react";
 import styled from 'styled-components';
+import colors from '../../constants/colors';
 
 import SubmitButton from './submitButton';
 
@@ -77,7 +78,11 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
             {elements.map((element, index) => {
                 return cloneElement(element, { key: `${index}${name}`, getValues: getValues, refresh: refresh, classname: name }, null);
             })}
-            <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
+            <FlexContainer>
+                <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
+                {props.onDelete !== undefined && <Spacer />}
+                {props.onDelete !== undefined && <DeleteButton><DeleteButtonText>Delete</DeleteButtonText></DeleteButton>}
+            </FlexContainer>
         </Form>
     )
 }
@@ -92,6 +97,36 @@ const CheckIfAllAreValid = (validations) => {
 
 
 const Form = styled.form`
+`
+
+const FlexContainer = styled.div`
+    display: flex;
+`
+
+const Spacer = styled.div`
+    flex: 1;
+`
+
+const DeleteButtonText = styled.p`
+    text-align: center;
+    margin: auto;
+    line-height: 40px;
+`
+
+const DeleteButton = styled.div`
+    background-color: ${colors.WHITE};
+    height: 37px;
+    border-radius: 10px;
+    color: ${colors.BLACK}
+    border-width: 2px;
+    border-style: outset;
+    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-image: initial;
+    width: fit-content;
+    flex: 1;
+    max-width: 150px;
+    outline: none;
+    font: 18px 'Open Sans Bold',sans-serif;
 `
 
 export default FormWrapper;

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { connect } from "react-redux";
 import { getNotes, passNote } from '../stores/notes/noteActions';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
@@ -21,9 +21,12 @@ const Notes = ({ notes, getNotes, passNote, history }) => {
     const NoItemsIcon = styled(ListIcon)`
         margin: 0;
         position: absolute;
+        z-index: 1;
         top: 50%;
         left: 50%;
+        opacity: 1;
         transform: translate(-50%, -50%);
+        animation: ${props => props.show ? fadeout : fadein} 0.4s linear forwards;
         &:hover{
             cursor:pointer;
         }
@@ -46,7 +49,7 @@ const Notes = ({ notes, getNotes, passNote, history }) => {
     }, [])
     return (
         <Container>
-            {areThereNotes(notes) === false && <NoItemsIcon id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>}
+            <NoItemsIcon show={areThereNotes(notes)} id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>
             {createNotes(notes, amountOfRows, goToEditNote)}
             <AddButton onClick={goToEditNote}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -65,10 +68,12 @@ const areThereNotes = (notes) => {
 const createNotes = (notes, amountOfRows, goToEditNote) => {
     const notesComponents = [[], [], [], []];
     let divider = 0;
+    let i = 0;
 
     for (const key in notes) {
-        notesComponents[divider].push(createNote(notes[key], goToEditNote));
+        notesComponents[divider].push(createNote(notes[key], goToEditNote, i));
         divider++;
+        i++;
         if (divider === amountOfRows) divider = 0;
     }
 
@@ -82,9 +87,9 @@ const createNotes = (notes, amountOfRows, goToEditNote) => {
     )
 }
 
-const createNote = (note, goToEditNote) => {
+const createNote = (note, goToEditNote, delay) => {
     return (
-        <NoteContainer key={UUID()}>
+        <NoteContainer key={UUID()} delay={delay}>
             <Title onClick={(e) => { goToEditNote(note) }}>{note.title}</Title>
             <Description className="description" dangerouslySetInnerHTML={{ __html: note.description }} />
         </NoteContainer >
@@ -127,14 +132,44 @@ const Description = styled.div`
     font: 18px 'Open Sans Bold',sans-serif;
 `
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+const fadeout = keyframes`
+  from { 
+    opacity: 1
+  }
+  to {
+    opacity: 0
+  }
+`
+
+const fadein_enlarge = keyframes`
+  from { 
+    opacity: 0;
+    transform: scale(0,0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1,1);
+  }
+`
+
 const NoteContainer = styled.div`
     width: 95%;
     max-width: 95%;
     margin-left: 10px;
+    opacity: 0;
     margin-top: 10px;
     border: 1px solid ${colors.GRAY};
     box-shadow: 0px 1.5px 3px 0px ${colors.BLACK};
     border-radius: 10px;
+    animation: ${props => css`${fadein_enlarge} 0.4s linear ${props.delay * 0.1}s forwards`};
 `
 
 const ScrollVerticalContainer = styled.div`
@@ -157,4 +192,9 @@ const AddButton = styled.div`
     box-shadow: 0px 2px 10px 0px ${colors.BLACK};
 `
 
-export default connect(mapStateToProps, mapDispatchToProps)(Notes);
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+const MemoNotes = memo(connect(mapStateToProps, mapDispatchToProps)(Notes), areEqual)
+export default MemoNotes;

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
+import { connect } from "react-redux";
 import styled from 'styled-components';
 
-const Config = () => {
+const Config = ({ }) => {
     return (
         <Container>
             <Text>Config</Text>
@@ -18,5 +19,16 @@ const Container = styled.div`
 const Text = styled.p`
     margin: 0
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default Config;
+const mapStateToProps = state => {
+    return {};
+};
+
+const mapDispatchToProps = {
+}
+
+const MemoConfig = memo(connect(mapStateToProps, mapDispatchToProps)(Config), areEqual)
+export default MemoConfig;

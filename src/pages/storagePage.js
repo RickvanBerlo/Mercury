@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, memo } from "react";
 import { connect } from "react-redux";
-import { createDir, addFile, addFiles, peekDir, deleteDir, deleteFile, deleteFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile, downloadFile } from '../stores/storage/storageActions';
-import styled from 'styled-components';
+import { createDir, addFiles, peekDir, deleteFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile, downloadFile } from '../stores/storage/storageActions';
+import styled, { keyframes, css } from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import GenerateUUID from "../utils/GenerateUUID";
 import formBuilder from '../utils/formBuilder';
 import Model from '../components/model/model';
-import isEmpty from '../utils/objectIsEmpty';
 import '../css/storagePage.css';
 
 import DocumentIcon from 'react-ionicons/lib/MdDocument';
@@ -21,10 +20,11 @@ import AlertIcon from 'react-ionicons/lib/MdAlert';
 
 const LONG_PRESS_TIME = 500;
 
-const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDir, deleteFile, deleteFiles, files, currentPath, selectedFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile }) => {
+const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, files, currentPath, selectedFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile }) => {
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const editState = useRef(false);
+    const animation = useRef(true);
     const [toggle, setToggle] = useState(null);
 
 
@@ -45,7 +45,6 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
 
     const mouseUp = (e, file) => {
         if (timer.current !== undefined) {
-            console.log("short");
             pressDown.current = false;
             clearTimeout(timer.current);
             timer.current = undefined;
@@ -54,14 +53,13 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
         }
 
     }
-
     const changeStateSelectedFiles = (file) => {
         if (editState.current) {
             if (selectedFiles[file.fileName] !== undefined) {
-                deleteSelectedFile(file);
-                if (isEmpty(selectedFiles)) {
+                if (Object.keys(selectedFiles).length === 1) {
                     editState.current = false;
                 }
+                deleteSelectedFile(file);
             }
             else {
                 addSelectedFile(file);
@@ -83,9 +81,8 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
 
     const longPress = (e, file) => {
         if (pressDown.current) {
-            console.log("long");
-            timer.current = undefined;
             editState.current = true;
+            timer.current = undefined;
             changeStateSelectedFiles(file);
         }
     }
@@ -109,17 +106,17 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
     }, [toggle]);
 
     const undo = useCallback(() => {
-        const array = currentPath.split(/[/]+/);
-        array.pop();
-
-        peekDir("/" + array.pop());
+        peekDir(currentPath.substr(0, currentPath.lastIndexOf("/")));
     }, [currentPath, peekDir]);
-
 
     const deleteItems = useCallback(() => {
         deleteFiles(selectedFiles);
         editState.current = false;
     }, [selectedFiles, deleteFiles]);
+
+    useEffect(() => {
+        animation.current = Object.keys(selectedFiles).length > 0 ? false : true;
+    }, [selectedFiles])
 
     useEffect(() => {
         const dropFile = (e) => {
@@ -166,10 +163,12 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
     useEffect(() => {
         peekDir("/");
     }, [peekDir])
+
+    if (editState.current === true) animation.current = false;
     return (
         <Container>
             <TopBar>
-                <Title>{currentPath}</Title>
+                <Title key={GenerateUUID()}>{currentPath}</Title>
                 <PositionLeftButtonContainer>
                     <VisibilityContainer hide={currentPath.split('/')[1] === "" ? true : false}><IconButton id="undo" icon={arrowBackIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
                     <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
@@ -183,7 +182,7 @@ const Storage = ({ createDir, addFile, addFiles, peekDir, downloadFile, deleteDi
             </TopBar>
             <ItemsContainer id="dropzone">
                 <FilesUpload id="filesUpload" onChange={filesUpload} type="file" multiple />
-                {createItems(files, currentPath, selectedFiles, mouseUp, mouseDown)}
+                {createItems(files, currentPath, selectedFiles, mouseUp, mouseDown, animation.current)}
             </ItemsContainer>
             <Model toggle={toggle} setToggle={setToggle} title="Toevoegen Map" content={buildForm(onSubmit)} />
         </Container>
@@ -200,11 +199,11 @@ const buildForm = (onSubmit) => {
     )
 }
 
-const createItems = (items, currentPath, selectedFiles, mouseUp, mouseDown) => {
+const createItems = (items, currentPath, selectedFiles, mouseUp, mouseDown, animation) => {
     const itemComponents = [];
-    items[currentPath].forEach((item) => {
+    items[currentPath].forEach((item, index) => {
         itemComponents.push(
-            <ItemContainer key={GenerateUUID()} color={selectedFiles[item.fileName] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, item) }} onMouseUp={(e) => { mouseUp(e, item) }}>
+            <ItemContainer key={GenerateUUID()} delay={index} animation={animation} color={selectedFiles[item.fileName] !== undefined ? colors.LIGHT_GRAY : colors.WHITE} onMouseDown={(e) => { mouseDown(e, item) }} onMouseUp={(e) => { mouseUp(e, item) }}>
                 <CenterImageContainer>
                     {getCorrectIcon(item.fileName)}
                 </CenterImageContainer>
@@ -247,12 +246,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     createDir,
-    addFile,
     addFiles,
     peekDir,
     downloadFile,
-    deleteDir,
-    deleteFile,
     deleteFiles,
     addSelectedFile,
     deleteSelectedFiles,
@@ -273,11 +269,20 @@ const FilesUpload = styled.input`
     display: none;
 `
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+
 const ItemsContainer = styled.div`
     width: 100%;
     height: calc(100% -  50px);
     border: 0px solid ${colors.DARK_GREEN};
-    transition: all 0.3s linear;
+    transition: background-color 0.3s linear;
     &:dragging{
         background-color: ${colors.BLACK};
     }
@@ -312,6 +317,7 @@ const Title = styled.p`
     margin: 0;
     text-overflow: ellipsis;
     color: ${colors.DARK_GREEN};
+    animation ${fadein} 0.4s linear forwards;
 `
 
 const TopBar = styled.div`
@@ -328,8 +334,10 @@ const ItemContainer = styled.div`
     border-bottom: 1px solid ${colors.BLACK};
     display: flex;
     cursor: pointer;
+    opacity: ${props => props.animation ? 0 : 1};
     background-color: ${props => props.color};
     transition: background-color 0.3s linear;
+    animation: ${props => props.animation ? css`${fadein} 0.2s linear ${props.delay * 0.1}s forwards` : css`none`};
     &:hover{
         background-color: ${colors.LIGHT_GRAY};
     }
@@ -346,5 +354,9 @@ const ItemText = styled.p`
     user-select: none;
     text-overflow: ellipsis;
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Storage);
+const MemoStorage = memo(connect(mapStateToProps, mapDispatchToProps)(Storage), areEqual)
+export default MemoStorage;

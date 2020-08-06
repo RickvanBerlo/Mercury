@@ -9,7 +9,7 @@ class RequestBuilder {
     }
 
     addURLExtendion(path) {
-        this.#url += path;
+        this.#url += ("/" + path);
         return this;
     }
 

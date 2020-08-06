@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import styled from 'styled-components';
 import backgroundImage from '../assets/background.jpg';
 import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
@@ -6,9 +6,15 @@ import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
 import Model from '../components/model/model';
-import getRandomColor from '../utils/randomColor';
+import UUID from '../utils/GenerateUUID';
+import { connect } from "react-redux";
+import Clock from '../components/clock/clock';
+import BackgroundImage from '../components/backgroundImage/backgroundImage';
+import { deleteWeblink, getWeblinks, add, replace } from '../stores/weblinks/weblinkActions';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
+
+const LONG_PRESS_TIME = 500;
 
 const StyledIcon = styled(AddIcon)`
         transition: background-color 0.2s linear;
@@ -18,14 +24,16 @@ const StyledIcon = styled(AddIcon)`
         padding-top: 12px;
     `
 
-const Home = ({ storage }) => {
-    const [time, setTime] = useState(getTime());
+const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
     const [toggle, setToggle] = useState(null);
-    let scroll = useRef(false);
-    let timeout = useRef(null);
-    let searchText = useRef("");
+    const scroll = useRef(false);
+    const searchText = useRef("");
+    const selectedWeblink = useRef(undefined);
+    const timer = useRef(undefined);
+    const pressDown = useRef(false);
 
     const changeToggle = () => {
+        selectedWeblink.current = undefined;
         setToggle(!toggle);
     }
 
@@ -43,20 +51,39 @@ const Home = ({ storage }) => {
 
     const onSubmit = (event, value) => {
         event.preventDefault();
-        storage.weblinks.push({ ...value, COLOR: getRandomColor() });
+        selectedWeblink.current = undefined;
+        add({ ...value });
         changeToggle();
     }
 
+    const mouseUp = (e, key) => {
+        if (timer.current !== undefined) {
+            pressDown.current = false;
+            navigateToLink(weblinks[key].url, true)
+        }
+
+    }
+
+    const mouseDown = (e, key) => {
+        timer.current = setTimeout((event) => { longPress(event, key) }, LONG_PRESS_TIME);
+        pressDown.current = true;
+    }
+
+    const longPress = (e, key) => {
+        if (pressDown.current) {
+            timer.current = undefined;
+            selectedWeblink.current = weblinks[key];
+            setToggle(true);
+        }
+    }
+
+    const actionDeleteWeblink = () => {
+
+    }
+
     useEffect(() => {
-        const updateTime = () => {
-            setTime(getTime())
-            timeout.current = setTimeout(updateTime, 500);
-        }
-        updateTime();
-        return () => {
-            clearTimeout(timeout.current);
-        }
-    }, [timeout, setTime]);
+        getWeblinks();
+    }, [getWeblinks])
 
     useEffect(() => {
         window.addEventListener("touchmove", setScroll, false);
@@ -73,47 +100,49 @@ const Home = ({ storage }) => {
 
     return (
         <Container>
-            <BackgroundContainer backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundContainer>
-            <Clock>{time}</Clock>
+            <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
+            <Clock />
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 <WebsiteLinksContainer>
-                    {makeWebsiteLinks(storage.weblinks, navigateToLink, changeToggle)}
+                    {makeWebsiteLinks(weblinks, navigateToLink, changeToggle, mouseDown, mouseUp)}
                 </WebsiteLinksContainer>
             </CenterContainer>
-            <Model toggle={toggle} setToggle={setToggle} title="Snelkoppeling toevoegen" content={buildForm(onSubmit)} />
+            <Model toggle={toggle} setToggle={setToggle} title={selectedWeblink.current === undefined ? "Snelkoppeling toevoegen" : "Snelkoppelin aanpassen"} content={buildForm(onSubmit, actionDeleteWeblink, selectedWeblink.current)} />
         </Container>
     )
 }
 
-const buildForm = (onSubmit) => {
+const buildForm = (onSubmit, actionDeleteWeblink, weblink = {}) => {
+    console.log(weblink);
     const regex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/i;
     const builder = new formBuilder();
-    builder.addTextInput("NAME", { required: true, placeholder: "Title", label: "Title" });
-    builder.addTextInput("LINK", { required: true, placeholder: "www.website.com", label: "Link", validation: (value) => { if (value.match(regex) !== null) return true; return false; } });
+    builder.addHiddenInput("id", { value: weblink.id });
+    builder.addTextInput("title", { value: weblink.title, required: true, placeholder: "Title", label: "Title" });
+    builder.addTextInput("url", { required: true, value: weblink.url, placeholder: "www.website.com", label: "Link", validation: (value) => { if (value.match(regex) !== null) return true; return false; } });
+    builder.addColorInput("color", { value: weblink.color, label: "Kleur", });
     return (
-        <ContentContainer>
-            {builder.getForm("weblinkForm", "Aanmaken", onSubmit, { reset: true })}
+        <ContentContainer key={UUID()}>
+            {builder.getForm("weblinkForm", "Aanmaken", onSubmit, { reset: true, onDelete: actionDeleteWeblink })}
         </ContentContainer>
     )
 }
 
-const makeWebsiteLinks = (weblinks, navigateToLink, changeToggle) => {
-    const links = weblinks.map((weblink, index) => {
-        return (
-            <WebsiteLinkContainer key={"weblink" + index}>
-                <WebsiteLink
-                    onClick={(event) => { navigateToLink(weblink.LINK, true) }}
-                    onTouchEnd={(event) => { navigateToLink(weblink.LINK, true) }}
-                >
-                    <DefaultIcon color={weblink.COLOR}>
-                        <DefaultIconText>{weblink.NAME.charAt(0)}</DefaultIconText>
-                    </DefaultIcon>
-                </WebsiteLink>
-                <WebsiteName>{weblink.NAME}</WebsiteName>
-            </WebsiteLinkContainer>
-        )
-    })
+const makeWebsiteLinks = (weblinks, navigateToLink, changeToggle, mouseDown, mouseUp) => {
+    const links = [];
+    for (const key in weblinks) {
+        links.push(<WebsiteLinkContainer key={"weblink-" + weblinks[key].id}>
+            <WebsiteLink
+                onMouseDown={(e) => { mouseDown(e, key) }}
+                onMouseUp={(e) => { mouseUp(e, key) }}
+            >
+                <DefaultIcon color={weblinks[key].color}>
+                    <DefaultIconText>{weblinks[key].title.charAt(0)}</DefaultIconText>
+                </DefaultIcon>
+            </WebsiteLink>
+            <WebsiteName>{weblinks[key].title}</WebsiteName>
+        </WebsiteLinkContainer>)
+    }
     links.push(
         <WebsiteLinkContainer key={"weblink-1"}>
             <WebsiteLink
@@ -128,14 +157,15 @@ const makeWebsiteLinks = (weblinks, navigateToLink, changeToggle) => {
     return links;
 }
 
-const getTime = () => {
-    const today = new Date();
-    let h = today.getHours();
-    let m = today.getMinutes();
-    let s = today.getSeconds();
-    m = m < 10 ? "0" + m : m;
-    s = s < 10 ? "0" + s : s;
-    return h + ":" + m + ":" + s;
+const mapStateToProps = state => {
+    return { weblinks: state.weblinkReducer.weblinks };
+};
+
+const mapDispatchToProps = {
+    deleteWeblink,
+    getWeblinks,
+    add,
+    replace
 }
 
 const Container = styled.div`
@@ -148,7 +178,6 @@ const Container = styled.div`
 const ContentContainer = styled.div`
     width: 400px;
 `
-
 const SearchBar = styled.input`
     font: 18px 'Open Sans Bold',sans-serif;
     border: 1px solid gray;
@@ -159,38 +188,6 @@ const SearchBar = styled.input`
     outline: none;
     margin-bottom: 50px;
 
-`
-
-const BackgroundContainer = styled.div`
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0px;
-    left: 0;
-    box-sizing: border-box;
-    background: url(${props => props.backgroundImage}) bottom;
-    background-size: 100vw;
-    background-repeat: no-repeat;
-    @media (max-width: 767px) {
-        background: url(${props => props.mobileBackgroundImage}) center;
-        background-size: cover;
-        @media (max-height: 467px) {
-            background: url(${props => props.backgroundImage}) bottom;
-            background-size: 100vw;
-            background-repeat: no-repeat;
-        }
-    }
-`
-
-const Clock = styled.p`
-    position: absolute;
-    user-select: none;
-    margin: 0;
-    font-size: ${mobilecheck() ? "80px" : "100px"};
-    color: ${colors.WHITE}
-    top: 25%;
-    text-align: center;
-    width: 100vw;
 `
 
 const CenterContainer = styled.div`
@@ -220,7 +217,7 @@ const WebsiteLinkContainer = styled.div`
     width: ${mobilecheck() ? "80px" : "100px"};
     height: 100px;
     background-color: ${colors.TRANSPARENT};
-    transition: background-color 0.3s linear;
+    transition: all 0.3s linear;
     &:hover{
         background-color: ${colors.TRANSPARENT_20_WHITE};
         cursor: pointer;
@@ -264,5 +261,9 @@ const DefaultIconText = styled.p`
     color: ${colors.WHITE};
     font-size: 30px;
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default Home;
+const MemoHome = memo(connect(mapStateToProps, mapDispatchToProps)(Home), areEqual)
+export default MemoHome;
