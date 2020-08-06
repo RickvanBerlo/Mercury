@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.Getter;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,7 +21,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
-@Getter
 public class FileStorageService {
     private final Path fileStorageLocation;
 
@@ -100,7 +97,10 @@ public class FileStorageService {
         File[] allContents = directory.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
-                deleteFile(file);
+                if (file.isDirectory())
+                    deleteDirectory(createRelativePath(file.toPath()));
+                else
+                    deleteFile(file);
             }
         }
         return directory.delete();
@@ -120,6 +120,10 @@ public class FileStorageService {
         } catch (SecurityException e) {
             throw new FileStorageException("could not remove file: " + file.getPath(), e);
         }
+    }
+
+    public String createRelativePath(Path path) {
+        return '/' + this.fileStorageLocation.relativize(path).toString().replace('\\', '/');
     }
 
 }

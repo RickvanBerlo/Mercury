@@ -45,8 +45,8 @@ public class FileStorageController {
             throw new FileStorageException("no contentType found", e);
         }
         File storedfile = storedPath.toFile();
-        FileInfo fileInfo = new FileInfo(storedfile.getName(), createRelativePath(storedPath), contentType,
-                storedfile.lastModified(), storedfile.length());
+        FileInfo fileInfo = new FileInfo(storedfile.getName(), fileStorageService.createRelativePath(storedPath),
+                contentType, storedfile.lastModified(), storedfile.length());
         return new ResponseEntity<>(fileInfo, HttpStatus.OK);
     }
 
@@ -60,8 +60,8 @@ public class FileStorageController {
             } catch (IOException e) {
                 throw new FileStorageException("no contentType found", e);
             }
-            return new FileInfo(file.getName(), createRelativePath(filePath), contentType, file.lastModified(),
-                    file.length());
+            return new FileInfo(file.getName(), fileStorageService.createRelativePath(filePath), contentType,
+                    file.lastModified(), file.length());
         }).collect(Collectors.toList());
         return new ResponseEntity<>(new Directory(path, files), HttpStatus.OK);
     }
@@ -84,7 +84,7 @@ public class FileStorageController {
         }
         File storedfile = storedPath.toFile();
 
-        return new FileInfo(storedfile.getName(), createRelativePath(storedPath), contentType,
+        return new FileInfo(storedfile.getName(), fileStorageService.createRelativePath(storedPath), contentType,
                 storedfile.lastModified(), storedfile.length());
     }
 
@@ -125,16 +125,12 @@ public class FileStorageController {
     @RequestMapping(value = "/storage/files", method = RequestMethod.DELETE)
     public ResponseEntity<FileInfo> deleteFiles(@RequestBody Collection<FileInfo> files) {
         for (FileInfo fileInfo : files) {
-            if (fileInfo.getSize() == 0) {
+            if (fileInfo.getFileType() == null) {
                 fileStorageService.deleteDirectory(fileInfo.getPath());
             } else {
                 fileStorageService.deleteFile(fileInfo.getPath());
             }
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    private String createRelativePath(Path path) {
-        return '/' + fileStorageService.getFileStorageLocation().relativize(path).toString().replace('\\', '/');
     }
 }
