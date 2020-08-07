@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, memo } from "react";
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import backgroundImage from '../assets/background.jpg';
 import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
 import colors from '../constants/colors';
@@ -10,7 +10,8 @@ import UUID from '../utils/GenerateUUID';
 import { connect } from "react-redux";
 import Clock from '../components/clock/clock';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
-import { deleteWeblink, getWeblinks, add, replace } from '../stores/weblinks/weblinkActions';
+import { deleteWeblink, getWeblinks, add } from '../stores/weblinks/weblinkActions';
+import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
@@ -24,18 +25,13 @@ const StyledIcon = styled(AddIcon)`
         padding-top: 12px;
     `
 
-const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
-    const [toggle, setToggle] = useState(null);
+const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive }) => {
     const scroll = useRef(false);
     const searchText = useRef("");
-    const selectedWeblink = useRef(undefined);
+    const [selectedWeblink, setSelectedWeblink] = useState({});
     const timer = useRef(undefined);
     const pressDown = useRef(false);
-
-    const changeToggle = () => {
-        selectedWeblink.current = undefined;
-        setToggle(!toggle);
-    }
+    const addWeblinkModelId = useRef(UUID());
 
     const navigateToLink = (link, newTab) => {
         if (!scroll.current) {
@@ -49,21 +45,14 @@ const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
         scroll.current = true;
     }
 
-    const onSubmit = (event, value) => {
-        event.preventDefault();
-        if (selectedWeblink.current !== undefined) {
-            replace(value)
-        } else {
-            add(value);
-        }
-        selectedWeblink.current = undefined;
-        changeToggle();
-    }
-
     const mouseUp = (e, key) => {
         if (timer.current !== undefined) {
             pressDown.current = false;
-            navigateToLink(weblinks[key].url, true)
+            if (selectedWeblink.id === key) {
+                deleteWeblink(key);
+            } else {
+                navigateToLink(weblinks[key].url, true)
+            }
         }
 
     }
@@ -76,16 +65,12 @@ const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
     const longPress = (e, key) => {
         if (pressDown.current) {
             timer.current = undefined;
-            selectedWeblink.current = weblinks[key];
-            setToggle(true);
+            if (selectedWeblink.id === weblinks[key].id) {
+                setSelectedWeblink({});
+            } else {
+                setSelectedWeblink(weblinks[key]);
+            }
         }
-    }
-
-    const actionDeleteWeblink = (e) => {
-        e.preventDefault();
-        setToggle(false);
-        deleteWeblink(selectedWeblink.current.id);
-        selectedWeblink.current = undefined;
     }
 
     useEffect(() => {
@@ -93,6 +78,21 @@ const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
     }, [getWeblinks])
 
     useEffect(() => {
+        const onSubmit = (event, value) => {
+            event.preventDefault();
+            add(value);
+            setModelInactive(addWeblinkModelId.current);
+        }
+
+        addModel(
+            addWeblinkModelId.current,
+            <Model
+                key={addWeblinkModelId.current}
+                id={addWeblinkModelId.current}
+                title={"Snelkoppeling toevoegen"}
+                content={buildForm(onSubmit)}
+            />
+        )
         window.addEventListener("touchmove", setScroll, false);
         document.getElementById('searchbar').focus();
         document.getElementById('searchbar').onkeydown = function (e) {
@@ -103,7 +103,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
         }
-    }, [])
+    }, [add, setModelInactive, addModel])
 
     return (
         <Container>
@@ -112,10 +112,9 @@ const Home = ({ deleteWeblink, getWeblinks, add, replace, weblinks }) => {
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 <WebsiteLinksContainer>
-                    {makeWebsiteLinks(weblinks, changeToggle, mouseDown, mouseUp)}
+                    {makeWebsiteLinks(weblinks, () => { setModelActive(addWeblinkModelId.current) }, selectedWeblink, mouseDown, mouseUp)}
                 </WebsiteLinksContainer>
             </CenterContainer>
-            <Model toggle={toggle} setToggle={setToggle} title={selectedWeblink.current === undefined ? "Snelkoppeling toevoegen" : "Snelkoppelin aanpassen"} content={buildForm(onSubmit, selectedWeblink.current !== undefined ? actionDeleteWeblink : undefined, selectedWeblink.current)} />
         </Container>
     )
 }
@@ -134,7 +133,7 @@ const buildForm = (onSubmit, actionDeleteWeblink, weblink = {}) => {
     )
 }
 
-const makeWebsiteLinks = (weblinks, changeToggle, mouseDown, mouseUp) => {
+const makeWebsiteLinks = (weblinks, setModelActive, selectedWeblink, mouseDown, mouseUp) => {
     const links = [];
     for (const key in weblinks) {
         links.push(<WebsiteLinkContainer key={"weblink-" + weblinks[key].id}>
@@ -146,14 +145,14 @@ const makeWebsiteLinks = (weblinks, changeToggle, mouseDown, mouseUp) => {
                     <DefaultIconText>{weblinks[key].title.charAt(0)}</DefaultIconText>
                 </DefaultIcon>
             </WebsiteLink>
-            <WebsiteName>{weblinks[key].title}</WebsiteName>
+            <WebsiteName>{selectedWeblink.id === key ? "verwijderen" : weblinks[key].title}</WebsiteName>
         </WebsiteLinkContainer>)
     }
     links.push(
         <WebsiteLinkContainer key={"weblink-1"}>
             <WebsiteLink
-                onClick={(event) => { changeToggle() }}
-                onTouchEnd={(event) => { changeToggle() }}
+                onClick={(event) => { setModelActive() }}
+                onTouchEnd={(event) => { setModelActive() }}
             >
                 <StyledIcon fontSize="35" />
             </WebsiteLink>
@@ -171,8 +170,19 @@ const mapDispatchToProps = {
     deleteWeblink,
     getWeblinks,
     add,
-    replace
+    addModel,
+    setModelActive,
+    setModelInactive,
 }
+
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
 
 const Container = styled.div`
     width: 100vw;
@@ -240,6 +250,7 @@ const WebsiteLink = styled.div`
     margin: auto;
     margin-top: 10px;
     background-color: ${colors.WHITE};
+    animation ${fadein} 0.4s linear forwards;
 `
 const WebsiteName = styled.p`
     margin: 4px;

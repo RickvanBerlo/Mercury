@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, memo } from "react";
+import React, { useEffect, useRef, useCallback, memo } from "react";
 import { connect } from "react-redux";
 import { createDir, addFiles, peekDir, deleteFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile, downloadFile } from '../stores/storage/storageActions';
 import styled, { keyframes, css } from 'styled-components';
@@ -7,6 +7,7 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import GenerateUUID from "../utils/GenerateUUID";
 import formBuilder from '../utils/formBuilder';
 import Model from '../components/model/model';
+import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 import '../css/storagePage.css';
 
 import DocumentIcon from 'react-ionicons/lib/MdDocument';
@@ -20,23 +21,16 @@ import AlertIcon from 'react-ionicons/lib/MdAlert';
 
 const LONG_PRESS_TIME = 500;
 
-const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, files, currentPath, selectedFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile }) => {
+const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFiles, peekDir, downloadFile, deleteFiles, files, currentPath, selectedFiles, addSelectedFile, deleteSelectedFiles, deleteSelectedFile }) => {
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const editState = useRef(false);
     const animation = useRef(true);
-    const [toggle, setToggle] = useState(null);
-
+    const storedCurrentPath = useRef(currentPath);
+    const addDocumentModelId = useRef(GenerateUUID());
 
     const addDocuments = (e) => {
         document.getElementById("filesUpload").click();
-    }
-
-    const onSubmit = (event, value) => {
-        event.preventDefault();
-        setToggle(!toggle);
-        if (currentPath === "/") createDir(currentPath + value.NAME);
-        else createDir(currentPath + "/" + value.NAME);
     }
 
     const filesUpload = (e) => {
@@ -53,6 +47,7 @@ const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, file
         }
 
     }
+
     const changeStateSelectedFiles = (file) => {
         if (editState.current) {
             if (selectedFiles[file.fileName] !== undefined) {
@@ -102,8 +97,8 @@ const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, file
     }
 
     const openModal = useCallback(() => {
-        setToggle(!toggle);
-    }, [toggle]);
+        setModelActive(addDocumentModelId.current);
+    }, [setModelActive]);
 
     const undo = useCallback(() => {
         peekDir(currentPath.substr(0, currentPath.lastIndexOf("/")));
@@ -161,6 +156,28 @@ const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, file
     }, [addFiles, peekDir, openModal, undo, deleteSelectedFiles, selectedFiles, deleteItems])
 
     useEffect(() => {
+        storedCurrentPath.current = currentPath;
+    }, [currentPath])
+
+    useEffect(() => {
+        const onSubmit = (event, value) => {
+            event.preventDefault();
+            setModelInactive(addDocumentModelId.current);
+            if (storedCurrentPath.current === "/") createDir(storedCurrentPath.current + value.NAME);
+            else createDir(storedCurrentPath.current + "/" + value.NAME);
+        }
+        addModel(
+            addDocumentModelId.current,
+            <Model
+                key={addDocumentModelId.current}
+                id={addDocumentModelId.current}
+                title="Toevoegen Map"
+                content={buildForm(onSubmit)}
+            />
+        )
+    }, [addModel, createDir, setModelInactive])
+
+    useEffect(() => {
         peekDir("/");
     }, [peekDir])
 
@@ -184,7 +201,6 @@ const Storage = ({ createDir, addFiles, peekDir, downloadFile, deleteFiles, file
                 <FilesUpload id="filesUpload" onChange={filesUpload} type="file" multiple />
                 {createItems(files, currentPath, selectedFiles, mouseUp, mouseDown, animation.current)}
             </ItemsContainer>
-            <Model toggle={toggle} setToggle={setToggle} title="Toevoegen Map" content={buildForm(onSubmit)} />
         </Container>
     )
 }
@@ -252,7 +268,10 @@ const mapDispatchToProps = {
     deleteFiles,
     addSelectedFile,
     deleteSelectedFiles,
-    deleteSelectedFile
+    deleteSelectedFile,
+    addModel,
+    setModelActive,
+    setModelInactive
 }
 
 const Container = styled.div`

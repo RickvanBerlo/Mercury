@@ -1,5 +1,3 @@
-import * as database from '../../databases/notes';
-
 export const actions = {
     ADD_MESSAGE: "ADD_MESSAGE",
     POP_MESSAGE: "POP_MESSAGE",

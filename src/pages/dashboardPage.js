@@ -1,22 +1,27 @@
-import React, { useState } from "react";
-import styled from 'styled-components';
+import React from "react";
+import { connect } from "react-redux";
 import SideMenu from '../components/sideMenu/sideMenu';
+import ModelsContainer from '../components/model/modelsContainer';
 import DashboardRoutes from '../routes/dashboardRoutes';
 import SnackBar from '../components/notification/snackbar';
 import { getAllSideMenuButtonPages } from '../utils/pageSelector';
+import { removeAllModels } from '../stores/models/modelActions'
 
-const Dashboard = ({ history }) => {
-
+const Dashboard = ({ history, removeAllModels }) => {
+    removeAllModels();
     return (
-        <Container>
+        <div>
             <DashboardRoutes history={history} />
             <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />
             <SnackBar />
-        </Container>
+            <ModelsContainer />
+        </div>
     )
 }
 
-const Container = styled.div`
-`
+const mapDispatchToProps = {
+    removeAllModels,
+}
 
-export default Dashboard;
+
+export default connect(null, mapDispatchToProps)(Dashboard);

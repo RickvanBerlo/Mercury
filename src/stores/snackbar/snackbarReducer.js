@@ -12,7 +12,7 @@ export default (state = InitState, action) => {
         case (actions.POP_MESSAGE):
             state.messages.pop();
             return { ...state, messages: [...state.messages] };
-        case (actions.POP_MESSAGE):
+        case (actions.SET_TIME):
             return { ...state, timeInSeconds: action.payload };
         default:
             return state;

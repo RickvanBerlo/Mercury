@@ -26,7 +26,7 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     const goBack = useCallback(() => {
         history.push(pageNames.CALENDAR.toLowerCase());
         //{ selectedDay: selectedDay }
-    }, [history, selectedDay])
+    }, [history])
 
     const setScroll = () => {
         scroll.current = true;

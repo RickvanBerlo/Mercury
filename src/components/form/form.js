@@ -1,6 +1,5 @@
 import React, { useState, cloneElement, useRef, useEffect } from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
 
 import SubmitButton from './submitButton';
 
@@ -79,8 +78,6 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
             })}
             <FlexContainer>
                 <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
-                {props.onDelete !== undefined && <Spacer />}
-                {props.onDelete !== undefined && <DeleteButton onClick={props.onDelete}><DeleteButtonText>Delete</DeleteButtonText></DeleteButton>}
             </FlexContainer>
         </Form>
     )
@@ -100,36 +97,6 @@ const Form = styled.form`
 
 const FlexContainer = styled.div`
     display: flex;
-`
-
-const Spacer = styled.div`
-    flex: 1;
-`
-
-const DeleteButtonText = styled.p`
-    text-align: center;
-    margin: auto;
-    line-height: 40px;
-`
-
-const DeleteButton = styled.div`
-    background-color: ${colors.WHITE};
-    height: 37px;
-    border-radius: 10px;
-    color: ${colors.BLACK}
-    border-width: 2px;
-    border-style: outset;
-    border-color: ${colors.GRAY}
-    border-image: initial;
-    flex: 1;
-    min-width: 150px;
-    font: 18px 'Open Sans Bold',sans-serif;
-    &:active{
-        border-style: inset;
-    }
-    &:hover{
-        cursor: pointer;
-    }
 `
 
 export default FormWrapper;

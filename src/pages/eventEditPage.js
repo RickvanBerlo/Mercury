@@ -14,7 +14,7 @@ const EventEdit = ({ storage, history, props = {} }) => {
     const goBack = useCallback(() => {
         history.push(pageNames.CALENDAR.toLowerCase());
         // { selectedDay: props.selectedDay }
-    }, [history, props])
+    }, [history])
 
     const onSubmit = (event, values) => {
         event.preventDefault();
