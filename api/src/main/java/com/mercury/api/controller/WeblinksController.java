@@ -69,10 +69,10 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteNote(@PathVariable("id") String id) {
+    public ResponseEntity<Weblink> deleteNote(@PathVariable("id") String id) {
         try {
             service.deleteById(id);
-            return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
