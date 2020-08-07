@@ -17,7 +17,7 @@ const Model = ({ setModelInactive, activeModels, id, title, content }) => {
     }, [activeModels, id]);
 
     const getIndex = useCallback(() => {
-        return Math.abs(activeModels.findIndex((modelId) => modelId === id));
+        return Math.abs(activeModels.findIndex((modelId) => modelId === id)) + 1;
     }, [activeModels, id]);
 
     useEffect(() => {

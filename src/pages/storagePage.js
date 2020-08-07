@@ -121,8 +121,8 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
         }
 
         const ActionDeleteSelectedFileButton = (e) => {
-            deleteSelectedFiles();
             editState.current = false;
+            deleteSelectedFiles();
         }
 
         const dropzone = document.getElementById("dropzone");
@@ -185,23 +185,28 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
     return (
         <Container>
             <TopBar>
-                <Title key={GenerateUUID()}>{currentPath}</Title>
-                <PositionLeftButtonContainer>
-                    <VisibilityContainer hide={currentPath.split('/')[1] === "" ? true : false}><IconButton id="undo" icon={arrowBackIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                </PositionLeftButtonContainer>
-                <PositionRightButtonContainer>
-                    <VisibilityContainer hide={!editState.current}><IconButton id="deleteItems" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={editState.current}><IconButton id="addDocuments" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                    <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-
-                </PositionRightButtonContainer>
+                <ButtonContainer>
+                    <FloatLeftContainer>
+                        <VisibilityContainer hide={(currentPath.split('/')[1] === "") ? true : (editState.current ? true : false)}><IconButton id="undo" icon={arrowBackIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    </FloatLeftContainer>
+                </ButtonContainer>
+                <TitleContainer>
+                    <Title key={GenerateUUID()} length={currentPath.length}>{currentPath}</Title>
+                </TitleContainer>
+                <ButtonContainer>
+                    <FloatRightContainer>
+                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteItems" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={editState.current}><IconButton id="addDocuments" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                    </FloatRightContainer>
+                </ButtonContainer>
             </TopBar>
             <ItemsContainer id="dropzone">
                 <FilesUpload id="filesUpload" onChange={filesUpload} type="file" multiple />
                 {createItems(files, currentPath, selectedFiles, mouseUp, mouseDown, animation.current)}
             </ItemsContainer>
-        </Container>
+        </Container >
     )
 }
 
@@ -297,6 +302,39 @@ const fadein = keyframes`
   }
 `
 
+const blinkCaret = keyframes`
+    from{
+        border-color: transparent; 
+    } 
+    50% {
+        border-right: .05em solid ${colors.DARK_GREEN};
+    }
+    to { 
+      border-color: transparent; 
+    }
+`
+
+const typing = keyframes`
+    from { width: 0 }
+    to { width: 100 % }
+`
+
+const FloatLeftContainer = styled.div`
+    display: flex;
+`
+
+const FloatRightContainer = styled.div`
+    display: flex;
+    float: right;
+`
+
+const ButtonContainer = styled.div`
+    margin: auto;
+    margin-right: 10px; 
+    margin-left: 10px;
+    width: 200px;
+`
+
 const ItemsContainer = styled.div`
     width: 100%;
     height: calc(100% -  50px);
@@ -307,21 +345,8 @@ const ItemsContainer = styled.div`
     }
 `
 
-const PositionRightButtonContainer = styled.div`
-    position: absolute;
-    top: 5px;
-    right: 20px;
-    display: flex;
-`
-
 const VisibilityContainer = styled.div`
-    display: ${props => props.hide ? "none" : "visible"}
-`
-
-const PositionLeftButtonContainer = styled.div`
-    position: absolute;
-    top: 5px;
-    left: 10px;
+    display: ${props => props.hide ? "none" : "block"}
 `
 
 const CenterImageContainer = styled.div`
@@ -331,17 +356,21 @@ const CenterImageContainer = styled.div`
 const Title = styled.p`
     font-size: 25px;
     width: 100%;
-    line-height: 50px;
-    text-align:center;
-    margin: 0;
-    text-overflow: ellipsis;
+    margin: auto;
+    margin-top: 10px;
+    overflow: hidden;
     color: ${colors.DARK_GREEN};
-    animation ${fadein} 0.4s linear forwards;
+    animation ${props => css`${typing} ${props.length * 0.1}s steps(${props.length}, end), ${blinkCaret} 0.5s step-end ${props.length / 3.6} `};
+`
+
+const TitleContainer = styled.div`
 `
 
 const TopBar = styled.div`
     position: relative;
-    z-index: 2;
+    justify-content: space-between;
+    z-index: 1;
+    display: flex;
     width: 100vw;
     height: 50px;
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
