@@ -6,13 +6,12 @@ import SnackBar from '../components/notification/snackbar';
 import { getAllSideMenuButtonPages } from '../utils/pageSelector';
 
 const Dashboard = ({ history }) => {
-    const [snackbarText, setSnackBarText] = useState("Goedemorgen Rick");
 
     return (
         <Container>
-            <DashboardRoutes history={history} setSnackBarText={setSnackBarText} />
+            <DashboardRoutes history={history} />
             <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />
-            <SnackBar text={snackbarText} setText={setSnackBarText} timeInSeconds={3} />
+            <SnackBar />
         </Container>
     )
 }

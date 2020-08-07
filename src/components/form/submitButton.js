@@ -21,12 +21,16 @@ const SubmitButton = styled.input`
     border-radius: 10px;
     padding: 5px 20px;
     margin-bottom: 10px;
+    min-width: 150px;
     max-width: 150px;
     flex: 1;
     color: ${colors.BLACK}
     outline: none;
     font: 18px 'Open Sans Bold',sans-serif;
     transition: opacity 0.2s linear;
+    &:hover{
+        cursor: pointer;
+    }
 `
 
 export default SubmitButtonWrapper;

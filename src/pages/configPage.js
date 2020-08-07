@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { connect } from "react-redux";
 import styled from 'styled-components';
 
-const Config = ({ }) => {
+const Config = () => {
     return (
         <Container>
             <Text>Config</Text>

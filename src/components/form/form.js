@@ -72,7 +72,6 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
             inputs.current[element.props.name] = tmpElements[index];
         });
     }, [name, elements])
-
     return (
         <Form onSubmit={handleSubmit}>
             {elements.map((element, index) => {
@@ -81,7 +80,7 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
             <FlexContainer>
                 <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
                 {props.onDelete !== undefined && <Spacer />}
-                {props.onDelete !== undefined && <DeleteButton><DeleteButtonText>Delete</DeleteButtonText></DeleteButton>}
+                {props.onDelete !== undefined && <DeleteButton onClick={props.onDelete}><DeleteButtonText>Delete</DeleteButtonText></DeleteButton>}
             </FlexContainer>
         </Form>
     )
@@ -120,13 +119,17 @@ const DeleteButton = styled.div`
     color: ${colors.BLACK}
     border-width: 2px;
     border-style: outset;
-    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-color: ${colors.GRAY}
     border-image: initial;
-    width: fit-content;
     flex: 1;
-    max-width: 150px;
-    outline: none;
+    min-width: 150px;
     font: 18px 'Open Sans Bold',sans-serif;
+    &:active{
+        border-style: inset;
+    }
+    &:hover{
+        cursor: pointer;
+    }
 `
 
 export default FormWrapper;

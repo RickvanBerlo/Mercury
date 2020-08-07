@@ -1,33 +1,35 @@
 import React, { useEffect, memo, useState, useRef } from 'react';
+import { connect } from "react-redux";
+import { removeMessage } from '../../stores/snackbar/snackbarActions';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 
 
-const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
+const Snackbar = ({ removeMessage, messages, timeInSeconds }) => {
     const [showSnackbar, setShowSnackbar] = useState(null);
     const timeout = useRef(null);
 
     useEffect(() => {
         const setTextToEmpty = (event) => {
-            if (event.elapsedTime === 0.5) setText("");
+            if (event.elapsedTime === 0.5) removeMessage();
         }
         const snackbar = document.getElementById("snackbar");
         snackbar.addEventListener("animationend", setTextToEmpty, false);
         return () => {
             snackbar.removeEventListener("animationend", setTextToEmpty, false);
         }
-    }, [setText])
+    }, [messages, removeMessage])
 
     useEffect(() => {
-        if (text === "") setShowSnackbar(null);
+        if (messages.length === 0) setShowSnackbar(null);
         else {
             setShowSnackbar(true);
             timeout.current = (setTimeout(() => { setShowSnackbar(false) }, timeInSeconds * 1000));
         }
-    }, [text, timeInSeconds])
+    }, [messages, timeInSeconds])
     return (
         <SnackBarContainer id="snackbar" enable={showSnackbar} onTouchStart={() => { disableTimer(timeout, setShowSnackbar) }} onClick={() => { disableTimer(timeout, setShowSnackbar) }}>
-            <Text>{text}</Text>
+            <Text>{messages[messages.length - 1]}</Text>
         </SnackBarContainer>
     )
 }
@@ -35,6 +37,14 @@ const Snackbar = ({ text, setText, timeInSeconds = 1 }) => {
 const disableTimer = (timeout, setShowSnackbar) => {
     timeout.current = clearTimeout(timeout.current);
     setShowSnackbar(false);
+}
+
+const mapStateToProps = state => {
+    return { messages: state.snackbarReducer.messages, timeInSeconds: state.snackbarReducer.timeInSeconds };
+};
+
+const mapDispatchToProps = {
+    removeMessage,
 }
 
 const Show = keyframes`
@@ -77,9 +87,8 @@ const SnackBarContainer = styled.div`
 `
 
 const areEqual = (prevProps, nextProps) => {
-    if (prevProps.text === nextProps.text) return true;
-    return false;
+    return true;
 }
 
-const MemoSnackbar = memo(Snackbar, areEqual);
+const MemoSnackbar = memo(connect(mapStateToProps, mapDispatchToProps)(Snackbar), areEqual)
 export default MemoSnackbar;

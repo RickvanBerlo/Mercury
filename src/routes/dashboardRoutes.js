@@ -6,14 +6,14 @@ import { pageNames, pages } from '../constants/pages';
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import '../css/dashboardTransition.css';
 
-const DashboardRoutes = ({ history, setSnackBarText }) => {
+const DashboardRoutes = ({ history }) => {
     const createPrivateRoutes = () => {
         const privateRoutes = [];
         for (const key in pageNames) {
             const Page = pages[pageNames[key]].PAGE;
             privateRoutes.push(
                 <PrivateRoute key={key} path={"/" + pageNames[key]} render={(routeProps) => {
-                    return <Page history={history} setSnackBarText={setSnackBarText} {...routeProps} />
+                    return <Page history={history} {...routeProps} />
                 }} />
             )
         }

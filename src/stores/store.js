@@ -5,11 +5,13 @@ import Promise from 'redux-promise-middleware';
 import noteReducer from './notes/noteReducer';
 import storageReducer from './storage/storageReducer';
 import weblinkReducer from './weblinks/weblinkReducer';
+import snackbarReducer from './snackbar/snackbarReducer';
 
 const allReducers = combineReducers({
     noteReducer,
     storageReducer,
-    weblinkReducer
+    weblinkReducer,
+    snackbarReducer
 })
 
 export default createStore(allReducers, applyMiddleware(ReduxThunk, Logger, Promise));
