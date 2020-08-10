@@ -8,13 +8,14 @@ import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
 import { datediff } from '../utils/date';
+import { connect } from "react-redux";
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) => {
+const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
     const scroll = useRef(false);
     let currentDragPosition = undefined;
     let dragStartingPosition = undefined;
@@ -24,8 +25,7 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     const endTime = useRef("00:00");
 
     const goBack = useCallback(() => {
-        history.push(pageNames.CALENDAR.toLowerCase());
-        //{ selectedDay: selectedDay }
+        history.goBack();
     }, [history])
 
     const setScroll = () => {
@@ -35,7 +35,6 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     const goToEventEdit = () => {
         if (!scroll.current)
             history.push(pageNames.EVENTEDIT.toLowerCase());
-        // { selectedDay: selectedDay, props: { startTime: startTime.current, endTime: endTime.current } }
         scroll.current = false;
     }
 
@@ -44,7 +43,6 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
         e.preventDefault();
         if (!scroll.current)
             history.push(pageNames.EVENT.toLowerCase());
-        //{ selectedDay: selectedDay, props: props }
         scroll.current = false;
     }
 
@@ -56,10 +54,12 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     }
 
     const startDrag = (e, id) => {
-        e.preventDefault();
-        ispressedDown.current = true;
-        document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
-        startTime.current = id;
+        if (e.button === 0) {
+            e.preventDefault();
+            ispressedDown.current = true;
+            document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
+            startTime.current = id;
+        }
     }
 
     const dragOver = (e, id) => {
@@ -70,8 +70,8 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     }
 
     const drag = (e, id) => {
-        e.preventDefault();
-        if (ispressedDown.current) {
+        if (ispressedDown.current && e.button === 0) {
+            e.preventDefault();
             if (dragStartingPosition === undefined) dragStartingPosition = e.clientY;
             isdragging.current = true;
             document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
@@ -80,8 +80,8 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     }
 
     const endDrag = (e, id) => {
-        e.preventDefault();
-        if (isdragging.current && ispressedDown.current) {
+        if (isdragging.current && ispressedDown.current && e.button === 0) {
+            e.preventDefault();
             isdragging.current = false;
             ispressedDown.current = false;
             endTime.current = id;
@@ -111,7 +111,8 @@ const Day = ({ history, selectedDay = new Date(), timedEvents, allDayEvents }) =
     }
 
     const showAllDayEventsAnim = () => {
-        document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
+        const amount = allDayEvents.length === 0 ? 1 : allDayEvents.length;
+        document.getElementById("allDayContainer").style.maxHeight = `${amount * 40}px`;
     }
 
     const ToggleShowAllDay = (bool) => {
@@ -205,6 +206,9 @@ const createAllDayEvents = (events, goToEvent, selectedDay) => {
             </AllDayEvent>
         )
     }
+    if (eventComponents.length === 0) {
+        eventComponents.push(<Text key={UUID()}>geen events gevonden...</Text>)
+    }
 
     return eventComponents;
 }
@@ -229,6 +233,11 @@ const diffQuarter = (startTime, endTime) => {
     return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
 }
 
+const mapStateToProps = state => {
+    return { allDayEvents: state.eventReducer.passedEventsOfDay.allDayEvents, timedEvents: state.eventReducer.passedEventsOfDay.timedEvents, selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay) };
+};
+
+
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
@@ -240,7 +249,7 @@ const AllDayContainer = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     width: 100vw;
-    box-shadow: 0px 3px 5px 0px ${colors.BLACK};
+    box-shadow: 0px 3px 6px -1px ${colors.BLACK};
     z-index: 1;
     max-height: 0;
     overflow: hidden;
@@ -392,6 +401,15 @@ const Title = styled.p`
     color: ${colors.DARK_GREEN};
 `
 
+const Text = styled.p`
+    font-size: 18px;
+    width: 100%;
+    line-height: 40px;
+    text-align:center;
+    margin: 0;
+    color: ${colors.DARK_GREEN};
+`
+
 const TopBar = styled.div`
     position: relative;
     z-index: 2;
@@ -424,4 +442,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-export default memo(Day, areEqual);
+const MemoDay = memo(connect(mapStateToProps, null)(Day), areEqual)
+export default MemoDay;

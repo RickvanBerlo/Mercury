@@ -6,14 +6,8 @@ import GenerateUUID from '../../utils/GenerateUUID';
 
 const ColorSelector = ({ items, defaultItem, callback, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
-    // const currentToggleValue = useRef(toggle);
-    // const oldToggleValue = useRef(false);
-    const ID = useRef(GenerateUUID());
 
-    // useEffect(() => {
-    //     oldToggleValue.current = currentToggleValue.current;
-    //     currentToggleValue.current = toggle;
-    // }, [toggle, oldToggleValue, currentToggleValue])
+    const ID = useRef(GenerateUUID());
 
     useEffect(() => {
         const Selector = document.getElementById(ID.current);

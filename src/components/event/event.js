@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
-import { pageNames } from '../../constants/pages';
 import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ history, placedDate, offset, props }) => {
+const Event = ({ navigateToEventPage, placedDate, offset, props }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToEvent = (e) => {
-        history.push(pageNames.EVENT.toLowerCase());
-        //{props}
+        navigateToEventPage();
         e.stopPropagation();
     }
 

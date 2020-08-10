@@ -12,8 +12,7 @@ import GenerateUUID from "../utils/GenerateUUID";
 const EventEdit = ({ storage, history, props = {} }) => {
 
     const goBack = useCallback(() => {
-        history.push(pageNames.CALENDAR.toLowerCase());
-        // { selectedDay: props.selectedDay }
+        history.goBack();
     }, [history])
 
     const onSubmit = (event, values) => {

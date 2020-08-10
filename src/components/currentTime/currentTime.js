@@ -46,7 +46,7 @@ const Container = styled.div`
     height: 2px;
     opacity: 0;
     background-color: ${colors.DARK_GREEN};
-    z-index: 2;
+    z-index: 0;
     transition: opacity 0.2s linear, top 0.1s linear;
 `
 

@@ -7,7 +7,7 @@ const ModelsContainer = ({ models }) => {
     for (const key in models) {
         array.push(models[key]);
     }
-    console.log(array);
+
     return (
         <div>
             {array}

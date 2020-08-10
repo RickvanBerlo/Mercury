@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
-import { pageNames } from '../../constants/pages';
 
-const EventPlaceholder = ({ history, offset, date, dayEventsObj }) => {
+const EventPlaceholder = ({ navigateToDayPage, offset }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToDay = (e) => {
-        history.push(pageNames.DAY.toLowerCase());
-        //{ selectedDay: date, allDayEvents: dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], timedEvents: dayEventsObj !== undefined ? dayEventsObj.timedEvents : [] }
+        navigateToDayPage();
         e.stopPropagation();
     }
 
