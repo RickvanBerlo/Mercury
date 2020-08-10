@@ -23,7 +23,7 @@ public class WeblinksController {
     private WeblinkService service;
 
     @RequestMapping(value = "/weblinks", method = RequestMethod.POST)
-    public ResponseEntity<Weblink> createNote(@RequestBody Weblink weblink) {
+    public ResponseEntity<Weblink> createWeblink(@RequestBody Weblink weblink) {
         try {
             Weblink savedWeblink = service.save(new Weblink(weblink.getTitle(), weblink.getUrl(), weblink.getColor()));
             return new ResponseEntity<>(savedWeblink, HttpStatus.CREATED);
@@ -33,7 +33,7 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks", method = RequestMethod.GET)
-    public ResponseEntity<List<Weblink>> getNotes() {
+    public ResponseEntity<List<Weblink>> getWeblinks() {
         List<Weblink> weblinks = new ArrayList<>();
         try {
             weblinks = service.findAll();
@@ -44,7 +44,7 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Weblink> getNote(@PathVariable("id") String id) {
+    public ResponseEntity<Weblink> getWeblink(@PathVariable("id") String id) {
         try {
             Optional<Weblink> weblink = service.findById(id);
             return new ResponseEntity<>(weblink.get(), HttpStatus.OK);
@@ -54,7 +54,7 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Weblink> replaceNote(@PathVariable("id") String id, @RequestBody Weblink weblink) {
+    public ResponseEntity<Weblink> replaceWeblink(@PathVariable("id") String id, @RequestBody Weblink weblink) {
         Optional<Weblink> retrived_weblink = service.findById(id);
 
         if (retrived_weblink.isPresent()) {
@@ -69,7 +69,7 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Weblink> deleteNote(@PathVariable("id") String id) {
+    public ResponseEntity<Weblink> deleteWeblink(@PathVariable("id") String id) {
         try {
             service.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -79,7 +79,7 @@ public class WeblinksController {
     }
 
     @RequestMapping(value = "/weblinks", method = RequestMethod.DELETE)
-    public ResponseEntity<Weblink> deleteNotes() {
+    public ResponseEntity<Weblink> deleteWeblinks() {
         try {
             service.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
