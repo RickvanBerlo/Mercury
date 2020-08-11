@@ -12,15 +12,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest
-class noteControllerTests {
+class NoteControllerTests {
 
 	@Autowired
 	private NotesController noteController;
 
 	@Test
 	public void getEmptyNotes() {
+		noteController.deleteNotes();
 		List<Note> notes = noteController.getNotes().getBody();
-
 		Assertions.assertTrue(notes.isEmpty());
 	}
 
