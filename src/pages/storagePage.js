@@ -43,7 +43,6 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
             clearTimeout(timer.current);
             timer.current = undefined;
             changeStateSelectedFiles(file);
-            //else download file or open map.
         }
 
     }
