@@ -1,5 +1,6 @@
 package com.mercury.api.service.event;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +20,6 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> findAll() {
-        return eventRepository.findAll();
-    }
-
     public Optional<Event> findById(String id) {
         return eventRepository.findById(id);
     }
@@ -33,5 +30,11 @@ public class EventService {
 
     public void deleteAll() {
         eventRepository.deleteAll();
+    }
+
+    public List<Event> getAllEventsOfMonth(LocalDate month) {
+        LocalDate start = month.withDayOfMonth(1);
+        LocalDate end = month.withDayOfMonth(month.lengthOfMonth());
+        return eventRepository.findByStartDateBetweenOrEndDateBetween(start, end, start, end);
     }
 }

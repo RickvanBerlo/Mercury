@@ -1,5 +1,6 @@
 package com.mercury.api.model.event;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -21,8 +22,8 @@ public class Event {
     private String title;
     private String description;
     private boolean allDay;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String color;
     private String startTime;
     private String endTime;
@@ -35,7 +36,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(String title, String description, boolean allDay, Date startDate, Date endDate, String color,
+    public Event(String title, String description, boolean allDay, LocalDate startDate, LocalDate endDate, String color,
             String startTime, String endTime) {
         this.title = title;
         this.description = description;

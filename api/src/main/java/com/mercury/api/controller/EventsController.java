@@ -1,6 +1,6 @@
 package com.mercury.api.controller;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,10 +34,10 @@ public class EventsController {
     }
 
     @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public ResponseEntity<List<Event>> getEvents() {
-        List<Event> events = new ArrayList<>();
+    public ResponseEntity<List<Event>> getEventOfMonth(@RequestParam String month) {
         try {
-            events = service.findAll();
+            LocalDate date = LocalDate.parse(month);
+            List<Event> events = service.getAllEventsOfMonth(date);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
