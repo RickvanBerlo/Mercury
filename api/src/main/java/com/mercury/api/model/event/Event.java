@@ -1,7 +1,8 @@
 package com.mercury.api.model.event;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -21,26 +22,26 @@ public class Event {
 
     private String title;
     private String description;
-    private boolean allDay;
+    private boolean hasTime;
     private LocalDate startDate;
     private LocalDate endDate;
     private String color;
-    private String startTime;
-    private String endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     @CreatedDate
-    private Date createdDate;
+    private Instant createdDate;
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private Instant lastModifiedDate;
 
     public Event() {
     }
 
-    public Event(String title, String description, boolean allDay, LocalDate startDate, LocalDate endDate, String color,
-            String startTime, String endTime) {
+    public Event(String title, String description, boolean hasTime, LocalDate startDate, LocalDate endDate,
+            String color, LocalTime startTime, LocalTime endTime) {
         this.title = title;
         this.description = description;
-        this.allDay = allDay;
+        this.hasTime = hasTime;
         this.startDate = startDate;
         this.endDate = endDate;
         this.color = color;

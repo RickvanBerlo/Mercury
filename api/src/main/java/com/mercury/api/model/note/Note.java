@@ -1,6 +1,6 @@
 package com.mercury.api.model.note;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -21,9 +21,9 @@ public class Note {
     private String title;
     private String description;
     @CreatedDate
-    private Date createdDate;
+    private Instant createdDate;
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private Instant lastModifiedDate;
 
     public Note() {
     }

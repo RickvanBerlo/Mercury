@@ -1,5 +1,7 @@
 package com.mercury.api.configuration;
 
+import java.time.LocalTime;
+
 import com.google.common.base.Predicates;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +44,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2).select()
+        return new Docket(DocumentationType.SWAGGER_2).directModelSubstitute(LocalTime.class, String.class).select()
                 .apis(RequestHandlerSelectors.basePackage("com.mercury.api"))
                 .paths(Predicates.not(PathSelectors.regex("/docs.*"))).build().apiInfo(apiInfo());
     }
