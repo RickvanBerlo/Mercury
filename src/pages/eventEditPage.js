@@ -1,23 +1,25 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
-import { pageNames } from '../constants/pages';
 import FormBuilder from '../utils/formBuilder';
 import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
+import { connect } from "react-redux";
+import { addEvent } from '../stores/events/eventActions';
+import { pageNames } from '../constants/pages';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
-import GenerateUUID from "../utils/GenerateUUID";
 
-const EventEdit = ({ storage, history, props = {} }) => {
+const EventEdit = ({ addEvent, history, event, selectedDay }) => {
 
     const goBack = useCallback(() => {
+
         history.goBack();
     }, [history])
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        storage.shared.setEvent(values, props.id === undefined ? true : false);
+        addEvent(values);
         history.push(pageNames.CALENDAR.toLowerCase());
     }
 
@@ -34,37 +36,44 @@ const EventEdit = ({ storage, history, props = {} }) => {
     return (
         <Container>
             <TopBar>
-                <Title>{props.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
+                <Title>{event.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
             </TopBar>
             <EventContainer>
-                {buildForm(onSubmit, props.selectedDay === undefined ? new Date() : props.selectedDay, props)}
+                {buildForm(onSubmit, selectedDay === undefined ? new Date() : selectedDay, event)}
             </EventContainer>
         </Container>
     )
 }
 
-const buildForm = (onSubmit, selectedDay, props) => {
+const buildForm = (onSubmit, selectedDay, event) => {
     const value = selectedDay.toLocaleDateString('en-CA');
     const builder = new FormBuilder();
-    builder.addHiddenInput("id", { value: props.id === undefined ? GenerateUUID() : props.id, required: true });
-    builder.addTextInput("title", { value: props.title, required: true, placeholder: "Title", label: "Titel" });
-    builder.addDateInput("startDate", { required: true, value: props.startDate === undefined ? value : props.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen, disableToggleTime] }] });
-    builder.addDateInput("endDate", { required: true, value: props.endDate === undefined ? value : props.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen, disableToggleTime] }] });
-    builder.addCheckboxInput("time", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
-    builder.addTimeInput("startTime", { value: props.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
-    builder.addTimeInput("endTime", { value: props.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
-    builder.addColorInput("color", { value: props.color, label: "Kleur", });
-    builder.addTextAreaInput("description", { value: props.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
+    builder.addTextInput("title", { value: event.title, required: true, placeholder: "Title", label: "Titel" });
+    builder.addDateInput("startDate", { required: true, value: event.startDate === undefined ? value : event.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen, disableToggleTime] }] });
+    builder.addDateInput("endDate", { required: true, value: event.endDate === undefined ? value : event.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen, disableToggleTime] }] });
+    builder.addCheckboxInput("hasTime", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
+    builder.addTimeInput("startTime", { value: event.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
+    builder.addTimeInput("endTime", { value: event.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
+    builder.addColorInput("color", { value: event.color, label: "Kleur", });
+    builder.addTextEditorInput("description", { value: event.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("eventForm", "Verzenden", onSubmit);
 }
 
 const disableToggleTime = (dependencyValue, objectValue, object, changeValidation, inputs) => {
     let bool = true;
     if (new Date(dependencyValue).getTime() !== new Date(objectValue).getTime()) bool = false;
-    dependencieFunctions.checkbox.hideCheckbox(bool, objectValue, inputs["time"], changeValidation, inputs);
+    dependencieFunctions.checkbox.hideCheckbox(bool, objectValue, inputs["hasTime"], changeValidation, inputs);
+}
+
+const mapStateToProps = state => {
+    return { event: state.eventReducer.passedEvent, selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay) };
+};
+
+const mapDispatchToProps = {
+    addEvent
 }
 
 
@@ -89,8 +98,6 @@ const Title = styled.p`
 `
 
 const TopBar = styled.div`
-    position: relative;
-    z-index: 2;
     width: 100vw;
     height: 50px;
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
@@ -103,5 +110,9 @@ const EventContainer = styled.div`
     max-width: 80%;
     height: calc(100% - 80px);
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default EventEdit;
+const MemoEventEdit = memo(connect(mapStateToProps, mapDispatchToProps)(EventEdit), areEqual)
+export default MemoEventEdit;

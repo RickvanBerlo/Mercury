@@ -43,7 +43,6 @@ export const getEvent = (id) => {
     }
 }
 
-//WIP
 export const getEventsOfMonth = (month) => {
     return {
         type: actions.GET_EVENTS_OF_MONTH,
@@ -60,7 +59,7 @@ export const passEventsOfDay = (timedEvents, allDayEvents) => {
 
 export const passEvent = (event) => {
     return {
-        type: actions.PASS_EVENTS_OF_DAY,
+        type: actions.PASS_EVENT,
         payload: event
     }
 }

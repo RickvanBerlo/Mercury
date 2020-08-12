@@ -7,7 +7,7 @@ import repositories from '../constants/repositories';
 export const getEventsOfMonth = (month) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.EVENTS)
         .addMethod(method.GET)
-        .addHeaders(header.JSON)
+        .addURLParams({ month: month })
         .send();
 }
 

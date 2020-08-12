@@ -4,11 +4,14 @@ import colors from '../../constants/colors';
 import Model from '../model/model';
 import ItemSelector from '../itemSelector/itemSelector';
 import generateUUID from '../../utils/GenerateUUID';
+import { connect } from "react-redux";
+import { addModel, setModelActive, setModelInactive } from '../../stores/models/modelActions';
 
-const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
+const TimePickerWrapper = ({ name, getValues, refresh, classname, addModel, setModelActive, setModelInactive, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "00:00" : props.value);
-    const [toggle, setToggle] = useState(null);
+    const storedValue = useRef(value);
     const UUID = useRef(generateUUID());
+    const timePickerModelId = useRef(generateUUID());
 
     useEffect(() => {
         getValues(name, value, props.validation(value))
@@ -20,40 +23,46 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
     }, [refresh]);
 
     useEffect(() => {
-        const changeToggle = () => {
-            setToggle(!toggle);
+        const setActive = () => {
+            setModelActive(timePickerModelId.current);
         }
 
         const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
                     setValue("00:00");
-                    setToggle(null);
                     break;
                 default: console.error("no case was found for " + value + " in the Callback function in TimePicker!");
             }
         }
         document.getElementById(UUID.current).callback = callback;
         const timePicker = document.getElementById(name);
-        timePicker.addEventListener("click", changeToggle, false);
+        timePicker.addEventListener("click", setActive, false);
         return () => {
-            timePicker.removeEventListener("click", changeToggle, false);
+            timePicker.removeEventListener("click", setActive, false);
         }
-    }, [props, name, toggle])
+    }, [props, name, setModelActive])
 
-    const modelOnsubmit = (newValue) => {
-        setValue(newValue);
-        setToggle(!toggle);
-    }
+    useEffect(() => {
+        storedValue.current = value;
+    }, [value])
 
-    const createContent = () => {
-        return (
-            <div>
-                <ItemSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} toggle={toggle} marginBottom={"20px"} />
-            </div>
+    useEffect(() => {
+        const modelOnsubmit = (newValue) => {
+            setValue(newValue);
+            setModelInactive(timePickerModelId.current);
+        }
+
+        addModel(
+            timePickerModelId.current,
+            <Model
+                key={timePickerModelId.current}
+                id={timePickerModelId.current}
+                title="Selecteer een kleur"
+                content={createContent(modelOnsubmit, storedValue.current)}
+            />
         )
-    }
-
+    }, [addModel, setModelInactive])
     return (
         <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
@@ -68,23 +77,32 @@ const TimePickerWrapper = ({ name, getValues, refresh, classname, props }) => {
             <StyledTimePicker id={name} className="input" title={`Selecteer een tijd.`}>
                 <Time>{value}</Time>
             </StyledTimePicker>
-            <Model
-                toggle={toggle}
-                setToggle={setToggle}
-                title="Selecteer een tijd"
-                content={createContent()}
-            />
         </Container >
+    )
+}
+
+const mapDispatchToProps = {
+    addModel,
+    setModelActive,
+    setModelInactive
+}
+
+const createContent = (modelOnSubmit, value) => {
+    return (
+        <div>
+            <ItemSelector items={createItems()} defaultItem={value} callback={modelOnSubmit} marginBottom={"20px"} />
+        </div>
     )
 }
 
 const createItems = () => {
     let array = [];
-    for (let i = 0; i < (24 * 4); i++) {
-        const hours = (i / 4) < 10 ? "0" + Math.floor(i / 4) : Math.floor(i / 4);
-        let minutes = (((i / 4) - Math.floor(i / 4)) * 4) * 15;
-        if (minutes === 0) minutes = "00"
-        array.push(hours + ":" + minutes)
+    for (let i = 0; i < 24; i++) {
+        for (let j = 0; j < 60; j += 5) {
+            const minutes = j < 10 ? "0" + j : j;
+            const hour = i < 10 ? "0" + i : i;
+            array.push(hour + ":" + minutes);
+        }
     }
     return array;
 }
@@ -135,5 +153,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoTimePickerWrapper = memo(TimePickerWrapper, areEqual)
+const MemoTimePickerWrapper = memo(connect(null, mapDispatchToProps)(TimePickerWrapper), areEqual)
 export default MemoTimePickerWrapper;

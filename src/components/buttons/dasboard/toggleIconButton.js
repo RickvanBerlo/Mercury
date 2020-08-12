@@ -8,7 +8,7 @@ const IconButton = ({ id, iconOne = DefaultIcon, iconTwo = DefaultIcon, fontSize
     const FirstStyledIcon = styled(iconOne)`
         transition: background-color 0.2s linear;
         border-radius: ${props => props.round ? "100px" : "0px"};
-        box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
+        box-shadow: inset 0px 0px 7px 15px ${colors.WHITE};
         -webkit-tap-highlight-color: transparent;
         &:hover{
             background-color: ${colors.GRAY}
@@ -29,7 +29,7 @@ const IconButton = ({ id, iconOne = DefaultIcon, iconTwo = DefaultIcon, fontSize
     const SecondStyledIcon = styled(iconTwo)`
     transition: background-color 0.2s linear;
     border-radius: ${props => props.round ? "100px" : "0px"};
-    box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
+    box-shadow: inset 0px 0px 7px 15px ${colors.WHITE};
     -webkit-tap-highlight-color: transparent;
     &:hover{
         background-color: ${colors.GRAY}

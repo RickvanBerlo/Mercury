@@ -2,7 +2,7 @@ import React, { useEffect, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import { connect } from "react-redux";
-import { getEventsOfMonth, passEventsOfDay, setCurrentMonth, setCurrentYear, setNextMonth, setPreviousMonth, setCurrentDay } from '../stores/events/eventActions';
+import { getEventsOfMonth, passEventsOfDay, setCurrentMonth, setCurrentYear, setNextMonth, setPreviousMonth, setCurrentDay, passEvent } from '../stores/events/eventActions';
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 import { mobilecheck } from '../utils/deviceCheck';
 import IconButton from '../components/buttons/dasboard/iconButton';
@@ -22,7 +22,7 @@ const DEAD_ZONE_SCROLL = 150;
 const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
 
-const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel, setModelActive, setCurrentMonth, setCurrentYear, setModelInactive, setNextMonth, setPreviousMonth, currentMonth, currentYear, setCurrentDay }) => {
+const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel, setModelActive, setCurrentMonth, setCurrentYear, setModelInactive, setNextMonth, setPreviousMonth, currentMonth, currentYear, setCurrentDay, passEvent }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
     const direction = useRef(undefined);
@@ -32,14 +32,17 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
 
     const navigateToDayPage = (date, allDayEvents, timedEvents) => {
         if (!isDragging.current) {
+            passEventsOfDay(timedEvents, allDayEvents);
             setCurrentDay(date.getDate())
             history.push(pageNames.DAY.toLowerCase());
         }
     }
 
     const navigateToEventPage = (event) => {
-        if (!isDragging.current)
+        if (!isDragging.current) {
+            passEvent(event);
             history.push(pageNames.EVENT.toLowerCase());
+        }
     }
 
     const pushAnimNextMonth = () => {
@@ -122,9 +125,6 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
         calendarNext.addEventListener("touchend", pushAnimNextMonth, false);
         calendarPrev.addEventListener("click", pushAnimPreviousMonth, false);
         calendarPrev.addEventListener("touchend", pushAnimPreviousMonth, false);
-        // monthContainer.addEventListener("touchstart", startDrag, false);
-        // monthContainer.addEventListener("touchmove", moveDrag, false);
-        // window.addEventListener("touchend", endDrag, false);
         return () => {
             Array.from(monthContainers).forEach(monthContainer => {
                 monthContainer.removeEventListener('wheel', scroll, { passive: true });
@@ -137,11 +137,12 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
             calendarNext.removeEventListener("touchend", pushAnimNextMonth, false);
             calendarPrev.removeEventListener("click", pushAnimPreviousMonth, false);
             calendarPrev.removeEventListener("touchend", pushAnimPreviousMonth, false);
-            // monthContainer.removeEventListener("touchstart", startDrag, false);
-            // monthContainer.removeEventListener("touchmove", moveDrag, false);
-            // window.removeEventListener("touchend", endDrag, false);
         }
     }, [setNextMonth, setPreviousMonth]);
+
+    useEffect(() => {
+        getEventsOfMonth(new Date(currentYear, currentMonth, 1).toLocaleDateString("fr-CA"))
+    }, [currentYear, currentMonth, getEventsOfMonth])
 
     useEffect(() => {
         addModel(
@@ -186,17 +187,17 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(() => { }, monthContainerPositions.current[0] === 0 ? currentMonthDate : monthContainerPositions.current[0] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[0] === 0 ? currentMonthDate : monthContainerPositions.current[0] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(() => { }, monthContainerPositions.current[1] === 0 ? currentMonthDate : monthContainerPositions.current[1] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[1] === 0 ? currentMonthDate : monthContainerPositions.current[1] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(() => { }, monthContainerPositions.current[2] === 0 ? currentMonthDate : monthContainerPositions.current[2] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[2] === 0 ? currentMonthDate : monthContainerPositions.current[2] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { history.push(pageNames.EVENTEDIT.toLowerCase()); }} onTouchEnd={() => { history.push(pageNames.EVENTEDIT.toLowerCase()); }}>
+            <AddButton onClick={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }} onTouchEnd={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
@@ -277,14 +278,14 @@ const getDayNames = () => {
 
 
 //creates day squares in the calendar
-const createMonth = (getEventsOfDay, currentDate, navigateToDayPage, navigateToEventPage) => {
+const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
             <WeekContainer key={UUID()}>
-                {createWeek(getEventsOfDay, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage)}
+                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
@@ -308,24 +309,23 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (getEventsOfDay, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
+const createWeek = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
     return (
         <DaysContainer>
-            {createDays(getEventsOfDay, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage)}
+            {createDays(events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage)}
         </DaysContainer>
     )
 }
 
-const createDays = (getEventsOfDay, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
+const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
     const days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
-
     for (let i = 0; i < 7; i++) {
         const date = new Date(firstDayOfWeek);
         let amountofEvents = 0;
         //get events
-        const dayEventsObj = getEventsOfDay(firstDayOfWeek.toLocaleDateString("fr-CA"));
+        const dayEventsObj = events[firstDayOfWeek.toLocaleDateString("fr-CA")];
         //make day
         days.push(
             <Day
@@ -334,14 +334,14 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, navigateToDayPage, na
                 onTouchEnd={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
-                        if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                        if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
                         else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} navigateToDayPage={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }} /> }
                         else return null;
                     }
                     return null;
                 })}
                 {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
-                    if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                    if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
                     else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} navigateToDayPage={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }} /> }
                     else return null;
                 })}
@@ -373,7 +373,8 @@ const mapDispatchToProps = {
     setModelInactive,
     setNextMonth,
     setPreviousMonth,
-    setCurrentDay
+    setCurrentDay,
+    passEvent
 }
 
 const Container = styled.div`

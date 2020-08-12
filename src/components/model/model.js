@@ -104,12 +104,10 @@ const MiddleContainer = styled.div`
 `
 
 const BackgroundPopup = styled.div`
-    position: absolute;
+    position: fixed;
     z-index: ${props => props.index};
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     background-color: ${props => props.enable ? colors.TRANSPARENT_80 : colors.TRANSPARENT};
     visibility: ${props => props.enable ? "visible" : "hidden"}
     transition: visibility 0.1s ${props => props.enable ? "0s" : "0.5s"} linear, background-color 0.4s linear;

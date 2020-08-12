@@ -36,7 +36,7 @@ const Event = ({ navigateToEventPage, placedDate, offset, props }) => {
 
 const Container = styled.div`
     position: relative;
-    margin-top: ${props => ((props.offset * 23)) + 3}px;
+    margin-top: ${props => ((props.offset * 21)) + 3}px;
     margin-left: 3px;
     height: 16%;
     width: calc(100% + (${props => props.width} * 100%) - 6px);
@@ -47,7 +47,7 @@ const Container = styled.div`
     transition: background-color 0.3s linear;
     box-shadow: 0px 1px 2px 0px ${colors.BLACK};
     &:hover{
-        background-color: ${colorChanger(colors.RED, -0.2)}
+        background-color: ${props => colorChanger(props.color, -0.2)}
         cursor: pointer;
     }
     @media (max-width: 767px) {

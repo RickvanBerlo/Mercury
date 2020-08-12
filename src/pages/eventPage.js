@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, memo, useCallback } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
+import { connect } from "react-redux";
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
@@ -12,22 +13,22 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ storage, history, props = {} }) => {
+const Event = ({ event, history, props = {} }) => {
+
+    const goBack = useCallback(() => {
+        history.goBack();
+    }, [history])
+
+    const goRemove = useCallback(() => {
+        history.push(pageNames.CALENDAR.toLowerCase());
+    }, [history])
+
+    const goEdit = useCallback(() => {
+        history.push(pageNames.EVENTEDIT.toLowerCase());
+    }, [history])
 
     useEffect(() => {
-        const goRemove = () => {
-            storage.shared.removeEvent(props);
-            history.push(pageNames.CALENDAR.toLowerCase());
-            //{ selectedDay: props.selectedDay }
-        }
-        const goBack = () => {
-            history.push(pageNames.CALENDAR.toLowerCase());
-            //{ selectedDay: props.selectedDay }
-        }
-        const goEdit = () => {
-            history.push(pageNames.EVENTEDIT.toLowerCase());
-            //{ selectedDay: props.selectedDay, props: props }
-        }
+
         const backButton = document.getElementById("goBack");
         const EditButton = document.getElementById("edit");
         const RemoveButton = document.getElementById("remove");
@@ -45,12 +46,12 @@ const Event = ({ storage, history, props = {} }) => {
             RemoveButton.removeEventListener("click", goRemove, false);
             RemoveButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [history, props, storage]);
+    }, [history, goBack, goEdit, goRemove]);
 
     return (
         <Container>
             <TopBar>
-                <Title>{props.title}</Title>
+                <Title>{event.title}</Title>
                 <LeftButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </LeftButtonContainer>
@@ -64,26 +65,36 @@ const Event = ({ storage, history, props = {} }) => {
                     <CalendarIcon id="calendar" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
                     <Seperator>-</Seperator>
                     <TextContainer>
-                        <Text>{props.startDate}</Text>
-                        <Text>{props.endDate}</Text>
+                        <Text>{event.startDate}</Text>
+                        <Text>{event.endDate}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <SpacingContainer>
                     <ClockIcon id="clock" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
                     <Seperator>-</Seperator>
                     <TextContainer>
-                        <Text>{props.startTime}</Text>
-                        <Text>{props.endTime}</Text>
+                        <Text>{event.startTime}</Text>
+                        <Text>{event.endTime}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <Line />
                 <DescriptionContainer>
                     <DescriptionIcon id="description" fontSize="35px" color={colors.DARK_GREEN} style={{ paddingTop: "13px" }} />
-                    <Description>{props.description}</Description>
+                    <Description dangerouslySetInnerHTML={{ __html: event.description }}></Description>
                 </DescriptionContainer>
             </ContentContainer>
         </Container>
     )
+}
+
+const mapStateToProps = state => {
+    return {
+        event: state.eventReducer.passedEvent
+    };
+};
+
+const mapDispatchToProps = {
+
 }
 
 const Container = styled.div`
@@ -180,5 +191,9 @@ const TopBar = styled.div`
     height: 50px;
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default Event;
+const MemoEvent = memo(connect(mapStateToProps, mapDispatchToProps)(Event), areEqual)
+export default MemoEvent;

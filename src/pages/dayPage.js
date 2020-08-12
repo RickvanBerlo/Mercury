@@ -9,13 +9,14 @@ import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
 import { datediff } from '../utils/date';
 import { connect } from "react-redux";
+import { passEvent } from '../stores/events/eventActions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
+const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => {
     const scroll = useRef(false);
     let currentDragPosition = undefined;
     let dragStartingPosition = undefined;
@@ -38,11 +39,13 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
         scroll.current = false;
     }
 
-    const goToEvent = (e, props) => {
+    const goToEvent = (e, event) => {
         e.stopPropagation();
         e.preventDefault();
-        if (!scroll.current)
+        if (!scroll.current) {
+            passEvent(event);
             history.push(pageNames.EVENT.toLowerCase());
+        }
         scroll.current = false;
     }
 
@@ -121,13 +124,11 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
     }
 
     useEffect(() => {
-        const today = new Date();
-        document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
         }
-    }, [allDayEvents])
+    }, [])
 
     return (
         <Container>
@@ -141,11 +142,12 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
                 </PositionButtonRightContainer>
             </TopBar>
             <AllDayContainer id={"allDayContainer"}>
-                {createAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
+                {placeAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
+                {placeTimedEvents(timedEvents, goToEvent)}
                 <CurrentTime />
-                {createDayGrid(click, drag, dragOver, startDrag, endDrag, timedEvents, goToEvent)}
+                {createDayGrid(click, drag, dragOver, startDrag, endDrag)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -154,14 +156,14 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay }) => {
     )
 }
 
-const createDayGrid = (click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
+const createDayGrid = (click, drag, dragOver, startDrag, endDrag) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
-            <HourContainer key={UUID()}>
+            <HourContainer key={UUID()} offset={i}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag, events, goToEvent)}
+                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -172,30 +174,32 @@ const createDayGrid = (click, drag, dragOver, startDrag, endDrag, events, goToEv
     return array;
 }
 
-const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
+const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
         containers.push(
             <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseOut={(e) => { dragOver(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
-                {createTimedEvents(createTime(hour, i), events, goToEvent)}
             </QuarterContainer>
         )
     }
     return containers;
 }
 
-const createTimedEvents = (quarter, events, goToEvent) => {
+const placeTimedEvents = (events, goToEvent) => {
     let eventComponents = [];
+    events.sort(sortEventsOnTime)
     for (let i = 0; i < events.length; i++) {
-        if (events[i].startTime === quarter) {
-            let offset = getOffset(quarter, events);
-            eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
-        }
+        let diff = diffBetweenTime("00:00", events[i].startTime)
+        eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offset={diff * 3} height={diffBetweenTime(events[i].startTime, events[i].endTime) * 3} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
     }
     return eventComponents;
 }
 
-const createAllDayEvents = (events, goToEvent, selectedDay) => {
+const sortEventsOnTime = (first, second) => {
+    return diffBetweenTime(second.startTime, first.startTime)
+}
+
+const placeAllDayEvents = (events, goToEvent, selectedDay) => {
     let eventComponents = [];
 
     for (let i = 0; i < events.length; i++) {
@@ -213,29 +217,27 @@ const createAllDayEvents = (events, goToEvent, selectedDay) => {
     return eventComponents;
 }
 
-const getOffset = (quarter, events) => {
-    let offset = 0;
-    for (let i = 0; i < events.length; i++) {
-        if (diffQuarter(events[i].startTime, quarter) < diffQuarter(events[i].startTime, events[i].endTime) && diffQuarter(events[i].startTime, quarter) > 0) {
-            offset += 1;
-        }
-    }
-    return offset;
-}
-
 const createTime = (hour, quarter) => {
     return `${hour < 10 ? "0" + hour : hour}:${quarter * 15 === 0 ? "00" : quarter * 15}`;
 }
 
-const diffQuarter = (startTime, endTime) => {
+const diffBetweenTime = (startTime, endTime) => {
     const start = startTime.split(':');
     const end = endTime.split(':');
-    return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
+    return ((parseInt(end[0]) * 60) + (parseInt(end[1]))) - ((parseInt(start[0]) * 60) + (parseInt(start[1])));
 }
 
 const mapStateToProps = state => {
-    return { allDayEvents: state.eventReducer.passedEventsOfDay.allDayEvents, timedEvents: state.eventReducer.passedEventsOfDay.timedEvents, selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay) };
+    return {
+        allDayEvents: state.eventReducer.passedEventsOfDay.allDayEvents,
+        timedEvents: state.eventReducer.passedEventsOfDay.timedEvents,
+        selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay)
+    };
 };
+
+const mapDispatchToProps = {
+    passEvent,
+}
 
 
 const Container = styled.div`
@@ -295,18 +297,19 @@ const ColorBubble = styled.div`
 `
 
 const TimedEvent = styled.div`
-    position: relative;
+    position: absolute;
+    width: calc(100% - 26px);
     text-align: center;
-    flex: 1;
-    height: calc(${props => (props.height * 100) + 100}% + ${props => props.height + 1}px);
+    height: calc(${props => props.height}px);
     background-color: ${props => props.color};
-    margin-left: ${props => 6 + (props.offset * 6)}px;
-    margin-right: ${props => 6 + (props.offset * 6)}px;
+    margin-top: ${props => props.offset}px;
+    margin-left: 3px;
+    margin-right: 3px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
     box-shadow: 0px 1px 2px 0px ${colors.BLACK};
     &:hover{
-        background-color: ${colorChanger(colors.RED, -0.2)}
+        background-color: ${props => colorChanger(props.color, -0.2)}
         cursor: pointer;
     }
     @media (max-width: 767px) {
@@ -390,6 +393,8 @@ const HourContainer = styled.div`
     min-height: 180px;
     width: 100%;
     display: flex;
+    position: abolute;
+    top: ${props => props.offset * 180}px;
 `
 
 const Title = styled.p`
@@ -419,6 +424,7 @@ const TopBar = styled.div`
 `
 
 const DayContainer = styled.div`
+    position:absolute;
     width: 100vw;
     height: calc(100% - 50px);
     overflow: auto;
@@ -442,5 +448,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoDay = memo(connect(mapStateToProps, null)(Day), areEqual)
+const MemoDay = memo(connect(mapStateToProps, mapDispatchToProps)(Day), areEqual)
 export default MemoDay;
