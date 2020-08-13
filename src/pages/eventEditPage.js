@@ -5,21 +5,22 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import FormBuilder from '../utils/formBuilder';
 import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
 import { connect } from "react-redux";
-import { addEvent } from '../stores/events/eventActions';
+import { addEvent, replaceEvent } from '../stores/events/eventActions';
 import { pageNames } from '../constants/pages';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
-const EventEdit = ({ addEvent, history, event, selectedDay }) => {
+const EventEdit = ({ addEvent, replaceEvent, history, event, selectedDay }) => {
 
     const goBack = useCallback(() => {
 
         history.goBack();
     }, [history])
 
-    const onSubmit = (event, values) => {
-        event.preventDefault();
-        addEvent(values);
+    const onSubmit = (e, values) => {
+        e.preventDefault();
+        if (Object.keys(event).length === 0) addEvent(values);
+        else replaceEvent(values);
         history.push(pageNames.CALENDAR.toLowerCase());
     }
 
@@ -51,6 +52,7 @@ const EventEdit = ({ addEvent, history, event, selectedDay }) => {
 const buildForm = (onSubmit, selectedDay, event) => {
     const value = selectedDay.toLocaleDateString('en-CA');
     const builder = new FormBuilder();
+    builder.addHiddenInput("id", { value: event.id, required: false });
     builder.addTextInput("title", { value: event.title, required: true, placeholder: "Title", label: "Titel" });
     builder.addDateInput("startDate", { required: true, value: event.startDate === undefined ? value : event.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen, disableToggleTime] }] });
     builder.addDateInput("endDate", { required: true, value: event.endDate === undefined ? value : event.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen, disableToggleTime] }] });
@@ -73,7 +75,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    addEvent
+    addEvent,
+    replaceEvent
 }
 
 

@@ -25,6 +25,7 @@ const Notes = ({ notes, getNotes, passNote, history }) => {
         top: 50%;
         left: 50%;
         opacity: 1;
+        visibility: visible;
         transform: translate(-50%, -50%);
         animation: ${props => props.show ? fadeout : fadein} 0.4s linear forwards;
         &:hover{
@@ -137,7 +138,8 @@ const fadein = keyframes`
     opacity: 0
   }
   to {
-    opacity: 1
+    opacity: 1;
+    visibility: visible;
   }
 `
 const fadeout = keyframes`
@@ -146,6 +148,7 @@ const fadeout = keyframes`
   }
   to {
     opacity: 0
+    visibility: hidden;
   }
 `
 

@@ -4,6 +4,7 @@ import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
 import { connect } from "react-redux";
+import { deleteEvent } from '../stores/events/eventActions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
@@ -13,15 +14,16 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ event, history, props = {} }) => {
+const Event = ({ event, deleteEvent, history }) => {
 
     const goBack = useCallback(() => {
         history.goBack();
     }, [history])
 
     const goRemove = useCallback(() => {
+        deleteEvent(event.id);
         history.push(pageNames.CALENDAR.toLowerCase());
-    }, [history])
+    }, [history, deleteEvent, event])
 
     const goEdit = useCallback(() => {
         history.push(pageNames.EVENTEDIT.toLowerCase());
@@ -94,7 +96,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-
+    deleteEvent
 }
 
 const Container = styled.div`

@@ -42,6 +42,7 @@ const getTime = () => {
 const Container = styled.div`
     position: relative;
     display: flow-root;
+    pointer-events: none
     width: calc(100% - 20px);
     height: 2px;
     opacity: 0;

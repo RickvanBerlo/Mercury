@@ -25,7 +25,8 @@ const SideMenu = ({ history, sideMenuButtons = [] }) => {
     }
 
     const setPositionSideMenu = async (X) => {
-        const transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
+        if (document.getElementById("sideMenu").style.left === "") document.getElementById("sideMenu").style.left = "-300px";
+        let transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
         document.getElementById("label").style.cursor = "pointer";
         document.getElementById("sideMenu").style.transform = "translateX(" + transformOffset + "px)";
         document.getElementById("sideMenu").style.transition = "transform 0.4s linear";

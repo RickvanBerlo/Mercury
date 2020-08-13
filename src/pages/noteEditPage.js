@@ -11,7 +11,6 @@ import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 
 const NoteEdit = ({ removeNote, add, replace, history, note }) => {
-    console.log(history);
     const goBack = useCallback(() => {
         history.push(pageNames.NOTES.toLowerCase());
     }, [history])

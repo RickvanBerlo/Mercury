@@ -145,9 +145,9 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => 
                 {placeAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
+                {createDayGrid(click, drag, dragOver, startDrag, endDrag)}
                 {placeTimedEvents(timedEvents, goToEvent)}
                 <CurrentTime />
-                {createDayGrid(click, drag, dragOver, startDrag, endDrag)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -189,8 +189,8 @@ const placeTimedEvents = (events, goToEvent) => {
     let eventComponents = [];
     events.sort(sortEventsOnTime)
     for (let i = 0; i < events.length; i++) {
-        let diff = diffBetweenTime("00:00", events[i].startTime)
-        eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offset={diff * 3} height={diffBetweenTime(events[i].startTime, events[i].endTime) * 3} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
+        const placement = caclulatePositionOfEvent(events, events[i]);
+        eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offsetLeft={placement.offsetLeft} offsetTop={placement.offsetTop} width={placement.width} height={placement.height} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}> <EventTitle>{events[i].title}</EventTitle></TimedEvent >)
     }
     return eventComponents;
 }
@@ -204,7 +204,7 @@ const placeAllDayEvents = (events, goToEvent, selectedDay) => {
 
     for (let i = 0; i < events.length; i++) {
         eventComponents.push(
-            <AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
+            <AllDayEvent key={events[i].id} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
                 <ColorBubble color={events[i].color}></ColorBubble>
                 <AllDayEventTitle>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
             </AllDayEvent>
@@ -225,6 +225,35 @@ const diffBetweenTime = (startTime, endTime) => {
     const start = startTime.split(':');
     const end = endTime.split(':');
     return ((parseInt(end[0]) * 60) + (parseInt(end[1]))) - ((parseInt(start[0]) * 60) + (parseInt(start[1])));
+}
+
+const caclulatePositionOfEvent = (events, event) => {
+    let offsetTop = diffBetweenTime("00:00", event.startTime) * 3;
+    let offsetLeft = undefined;
+    let height = diffBetweenTime(event.startTime, event.endTime) * 3;
+    if (height < 25) height = 25;
+    let width = undefined;
+
+    const collisionEvents = events.filter((storedEvent) => {
+        //top half
+        if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.startTime) > 0) return true;
+        //bottom half
+        else if (event.startTime.localeCompare(storedEvent.endTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
+        //inside
+        else if (event.startTime.localeCompare(storedEvent.startTime) > 0 && event.endTime.localeCompare(storedEvent.endTime) < 0) return true;
+        //outside
+        else if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
+        //same
+        else if (event.startTime.localeCompare(storedEvent.startTime) === 0 && event.endTime.localeCompare(storedEvent.endTime) === 0) return true;
+        else return false;
+    }).sort((eventA, eventB) => {
+        return eventA.startTime.localeCompare(eventB.startTime);
+    });
+    width = 100 / collisionEvents.length;
+    collisionEvents.forEach((storedEvent, index) => {
+        if (storedEvent.id === event.id) offsetLeft = width * index;
+    })
+    return { offsetTop, offsetLeft, height, width };
 }
 
 const mapStateToProps = state => {
@@ -298,12 +327,12 @@ const ColorBubble = styled.div`
 
 const TimedEvent = styled.div`
     position: absolute;
-    width: calc(100% - 26px);
+    width: calc(${props => props.width}% - 26px);
     text-align: center;
-    height: calc(${props => props.height}px);
+    height: ${props => props.height}px;
     background-color: ${props => props.color};
-    margin-top: ${props => props.offset}px;
-    margin-left: 3px;
+    margin-top: ${props => props.offsetTop}px;
+    margin-left: calc(${props => props.offsetLeft}% + 3px);
     margin-right: 3px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
@@ -314,10 +343,10 @@ const TimedEvent = styled.div`
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.RED};
+            background-color: ${props => colorChanger(props.color, -0.2)};
         }
         &:active{
-            background-color: ${colorChanger(colors.RED, -0.2)}
+            background-color: ${props => colorChanger(props.color, -0.2)}
     }
 `
 
@@ -393,7 +422,7 @@ const HourContainer = styled.div`
     min-height: 180px;
     width: 100%;
     display: flex;
-    position: abolute;
+    position: absolute;
     top: ${props => props.offset * 180}px;
 `
 

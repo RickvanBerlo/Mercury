@@ -32,6 +32,7 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
 
     const navigateToDayPage = (date, allDayEvents, timedEvents) => {
         if (!isDragging.current) {
+            passEvent({});
             passEventsOfDay(timedEvents, allDayEvents);
             setCurrentDay(date.getDate())
             history.push(pageNames.DAY.toLowerCase());
@@ -284,14 +285,14 @@ const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
-            <WeekContainer key={UUID()}>
+            <WeekContainer key={firstDayOfMonth.toLocaleDateString("fr-CA") + "_weekContainer"}>
                 {createWeek(events, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
     }
     return (
-        <MonthContainer key={UUID()}>
+        <MonthContainer key={currentDate.toLocaleDateString("fr-CA") + "_monthContainer"}>
             {weeks}
         </MonthContainer>
     )
@@ -311,7 +312,7 @@ const getCorrectWeekNumber = (now) => {
 
 const createWeek = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
     return (
-        <DaysContainer>
+        <DaysContainer key={firstDayOfWeek.toLocaleDateString("fr-CA") + "_container"}>
             {createDays(events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage)}
         </DaysContainer>
     )
@@ -323,26 +324,27 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
     const today = date.toLocaleDateString('nl');
     for (let i = 0; i < 7; i++) {
         const date = new Date(firstDayOfWeek);
-        let amountofEvents = 0;
-        //get events
         const dayEventsObj = events[firstDayOfWeek.toLocaleDateString("fr-CA")];
+        let amountofEvents = dayEventsObj === undefined ? 0 : dayEventsObj.offset;
+        let useOffset = true;
+        const navigate = () => { navigateToDayPage(date, getAllDayEvents(date, events, dayEventsObj), dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }
         //make day
         days.push(
             <Day
-                key={UUID()}
-                onClick={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}
-                onTouchEnd={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}>
+                key={date.toLocaleDateString("fr-CA")}
+                onClick={navigate}
+                onTouchEnd={navigate}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
-                        if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
-                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} navigateToDayPage={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }} /> }
+                        if (amountofEvents < 3) { useOffset = false; amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={0} navigateToDayPage={navigate} /> }
                         else return null;
                     }
                     return null;
                 })}
                 {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
-                    if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
-                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} navigateToDayPage={() => { navigateToDayPage(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }} /> }
+                    if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={useOffset ? index === 0 ? dayEventsObj.offset : 0 : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA")} offset={0} navigateToDayPage={navigate} /> }
                     else return null;
                 })}
                 <DayNumber
@@ -357,6 +359,22 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
     }
     return days;
 }
+
+//can create inv loop when offset is never updated.
+const getAllDayEvents = (dateOfDay, events, dayEventsObj = { allDayEvents: [], offset: 0 }) => {
+    const date = new Date(dateOfDay);
+    let array = dayEventsObj.allDayEvents;
+    let offset = dayEventsObj.offset;
+    while (offset > 0) {
+        date.setDate(date.getDate() - 1);
+        if (events[date.toLocaleDateString("fr-CA")].allDayEvents.length !== 0) {
+            array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
+            offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
+        }
+    }
+    return array;
+}
+
 //end square creation
 
 const mapStateToProps = state => {

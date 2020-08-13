@@ -31,7 +31,6 @@ export const replaceEvent = (data) => {
 export const deleteEvent = (id) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.EVENTS)
         .addMethod(method.DELETE)
-        .addHeaders(header.JSON)
         .addURLExtendion(id)
         .send();
 }

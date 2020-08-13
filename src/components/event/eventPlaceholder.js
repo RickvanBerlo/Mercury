@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 
@@ -28,6 +28,15 @@ const EventPlaceholder = ({ navigateToDayPage, offset }) => {
 
 }
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+
 const Container = styled.div`
     position: relative;
     margin-top: ${props => ((props.offset * 23)) + 3}px;
@@ -37,16 +46,18 @@ const Container = styled.div`
     background-color: ${colors.RED}
     border-radius: 5px;
     z-index: 1;
+    opacity: 0;
     display: flex;
     transition: background-color 0.3s linear;
     box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    animation: ${props => css`${fadein} 0.4s linear ${Math.random() * 0.4}s forwards`};
     &:hover{
         background-color: ${colorChanger(colors.RED, -0.2)}
         cursor: pointer;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.RED};
+            background-color: ${colorChanger(colors.RED, -0.2)};
         }
         &:active{
             background-color: ${colorChanger(colors.RED, -0.2)}

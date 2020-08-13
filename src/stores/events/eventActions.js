@@ -25,7 +25,7 @@ export const addEvent = (event) => {
 export const deleteEvent = (id) => {
     return {
         type: actions.DELETE_EVENT,
-        payload: database.deleteEvent(id).then(response => response.json())
+        payload: database.deleteEvent(id)
     }
 }
 

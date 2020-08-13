@@ -2,32 +2,29 @@ import { actions } from './eventActions'
 import languageSelector from '../../utils/languageSelector';
 import { datediff, parseDateYMD } from '../../utils/date'
 
-//const lookupTable = {};
 const InitState = { events: {}, passedEvent: {}, passedEventsOfDay: { timedEvents: [], allDayEvents: [] }, currentMonth: new Date().getMonth(), currentYear: new Date().getFullYear(), currentDay: new Date().getDate() }
 
 const fulfilled = "_FULFILLED";
 
 export default (state = InitState, action) => {
     let yearChange;
+    let events;
     switch (action.type) {
-        case (actions.ADD_EVENT + fulfilled):
-            console.log(action);
-            return { ...state };
         case (actions.DELETE_EVENT + fulfilled):
-            console.log(action);
-            return { ...state };
+            events = deleteEvent(state.events, state.passedEvent)
+            return { ...state, events: { ...events } };
         case (actions.GET_EVENT + fulfilled):
             console.log(action);
             return { ...state };
         case (actions.GET_EVENTS_OF_MONTH + fulfilled):
-            let events = state.events;
+            events = state.events;
             action.payload.forEach((event) => {
-                events = addEvent(state.events, event)
+                events = addEvent(state.events, event);
             })
             return { ...state, events: { ...events } };
         case (actions.REPLACE_EVENT + fulfilled):
-            console.log(action);
-            return { ...state };
+            events = replaceEvent(state.events, action.payload, state.passedEvent);
+            return { ...state, events: { ...events } };
         case actions.PASS_EVENTS_OF_DAY:
             return { ...state, passedEventsOfDay: { ...action.payload } };
         case actions.PASS_EVENT:
@@ -50,44 +47,75 @@ export default (state = InitState, action) => {
     }
 }
 
+const replaceEvent = (events, newEvent, oldEvent) => {
+    deleteEvent(events, oldEvent);
+    addEvent(events, newEvent);
+}
+
 const addEvent = (events, event) => {
     event.startDate = `${event.startDate[0]}-${event.startDate[1] < 10 ? "0" + event.startDate[1] : event.startDate[1]}-${event.startDate[2] < 10 ? "0" + event.startDate[2] : event.startDate[2]}`;
     event.endDate = `${event.endDate[0]}-${event.endDate[1] < 10 ? "0" + event.endDate[1] : event.endDate[1]}-${event.endDate[2] < 10 ? "0" + event.endDate[2] : event.endDate[2]}`;
     event.endTime = `${event.endTime[0] < 10 ? "0" + event.endTime[0] : event.endTime[0]}:${event.endTime[1] < 10 ? "0" + event.endTime[1] : event.endTime[1]}`;
     event.startTime = `${event.startTime[0] < 10 ? "0" + event.startTime[0] : event.startTime[0]}:${event.startTime[1] < 10 ? "0" + event.startTime[1] : event.startTime[1]}`;
-    placeEventInArray(events, event, event.startDate);
-    //if (event.startDate !== event.endDate) placeEventInArray(event, event, event.endDate);
+    placeEventInArray(events, event);
     return events;
 }
 
-const placeEventInArray = (events, event, date) => {
+const deleteEvent = (events, event) => {
     if (event.hasTime) {
-        placeTimedEvent(events, event, date);
+        deleteTimedEvent(events, event);
     } else {
-        calculateAllDayEventPlaces(events, event, date);
+        calculateAllDayEventPlaces(events, event, false);
     }
 }
 
-const placeTimedEvent = (events, event, date) => {
-    if (events[date] === undefined) {
-        events[date] = { offset: 0, timedEvents: [event], allDayEvents: [] }
+const deleteTimedEvent = (events, event) => {
+    const filterdEvents = events[event.startDate].timedEvents.filter((storedEvent) => { return storedEvent.id !== event.id });
+    events[event.startDate].timedEvents = filterdEvents;
+}
+
+const placeEventInArray = (events, event) => {
+    if (event.hasTime) {
+        placeTimedEvent(events, event);
     } else {
-        if (!arrayContainsEvent(event.id, events[date].timedEvents)) events[date].timedEvents.push(event);
+        calculateAllDayEventPlaces(events, event, true);
     }
 }
 
-const calculateAllDayEventPlaces = (events, event, date) => {
+const placeTimedEvent = (events, event) => {
+    if (events[event.startDate] === undefined) {
+        events[event.startDate] = { offset: 0, timedEvents: [event], allDayEvents: [] }
+    } else {
+        if (!arrayContainsEvent(event.id, events[event.startDate].timedEvents)) events[event.startDate].timedEvents.push(event);
+    }
+}
+
+const calculateAllDayEventPlaces = (events, event, addTrue_DeleteFalse) => {
     const startDate = parseDateYMD(event.startDate);
     const diffrence = datediff(event.startDate, event.endDate);
 
     startDate.setDate(startDate.getDate() + 1);
     for (let i = 0; i < diffrence; i++) {
-        if (startDate.getDay() === 0) placeAllDayEvent(events, event, startDate.toLocaleDateString("fr-CA"));
-        else if (!arrayContainsEvent(event.id, events[date].allDayEvents)) changeOffset(events, startDate.toLocaleDateString("fr-CA"), 1);
+        if (startDate.getDay() === 0) {
+            if (addTrue_DeleteFalse) placeAllDayEvent(events, event, startDate.toLocaleDateString("fr-CA"));
+            else removeAllDayEvent(events, event, startDate.toLocaleDateString("fr-CA"));
+        } else {
+            if ((events[event.startDate] === undefined && addTrue_DeleteFalse) || (!arrayContainsEvent(event.id, events[event.startDate].allDayEvents) && addTrue_DeleteFalse)) {
+                changeOffset(events, startDate.toLocaleDateString("fr-CA"), 1);
+            } else if (arrayContainsEvent(event.id, events[event.startDate].allDayEvents) && !addTrue_DeleteFalse) {
+                changeOffset(events, startDate.toLocaleDateString("fr-CA"), -1);
+            }
+        }
         startDate.setDate(startDate.getDate() + 1);
     }
 
-    placeAllDayEvent(events, event, event.startDate);
+    if (addTrue_DeleteFalse) placeAllDayEvent(events, event, event.startDate);
+    else removeAllDayEvent(events, event, event.startDate);
+}
+
+const removeAllDayEvent = (events, event, date) => {
+    const filterdEvents = events[date].allDayEvents.filter((storedEvent) => { return storedEvent.id !== event.id });
+    events[date].allDayEvents = filterdEvents;
 }
 
 const placeAllDayEvent = (events, event, date) => {

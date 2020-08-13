@@ -39,7 +39,6 @@ export const uploadFile = (file, path) => {
 }
 
 export const uploadFiles = (files, path) => {
-    console.log(path);
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i]);
