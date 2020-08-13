@@ -66,7 +66,7 @@ public class EventsController {
             _event.setStartTime(event.getStartTime());
             _event.setStartDate(event.getStartDate());
             _event.setEndDate(event.getEndDate());
-            _event.setAllDay(event.isAllDay());
+            _event.setHasTime(event.isHasTime());
             return new ResponseEntity<>(service.save(_event), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
