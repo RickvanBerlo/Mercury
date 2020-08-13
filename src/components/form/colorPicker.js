@@ -1,14 +1,17 @@
-import React, { memo, useState, useEffect, useRef } from "react";
+import React, { memo, useState, useEffect, useRef, useCallback } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import Model from '../model/model';
 import ColorSelector from '../itemSelector/colorSelector';
 import generateUUID from '../../utils/GenerateUUID';
+import { connect } from "react-redux";
+import { addModel, setModelActive, setModelInactive } from '../../stores/models/modelActions';
 
-const ColorPickerWrapper = ({ name, getValues, refresh, classname, props }) => {
+const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, setModelActive, setModelInactive, props }) => {
     const [value, setValue] = useState(props.value === undefined ? colors.RED : props.value);
-    const [toggle, setToggle] = useState(null);
+    const storedValue = useRef(value);
     const UUID = useRef(generateUUID());
+    const colorPickerModelId = useRef(generateUUID());
 
     useEffect(() => {
         getValues(name, value, props.validation(value))
@@ -16,43 +19,54 @@ const ColorPickerWrapper = ({ name, getValues, refresh, classname, props }) => {
 
     useEffect(() => {
         if (refresh)
-            setValue("00:00");
+            setValue(colors.RED);
     }, [refresh]);
 
-    useEffect(() => {
-        const changeToggle = () => {
-            setToggle(!toggle);
-        }
+    const actionSetModelActive = useCallback(() => {
+        setModelActive(colorPickerModelId.current)
+    }, [setModelActive])
 
+    const actionSetModelInactive = useCallback(() => {
+        setModelInactive(colorPickerModelId.current)
+    }, [setModelInactive])
+
+    useEffect(() => {
         const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
                     setValue(colors.RED);
-                    setToggle(null);
                     break;
                 default: console.error("no case was found for " + value + " in the Callback function in ColorPicker!");
             }
         }
         document.getElementById(UUID.current).callback = callback;
         const colorPicker = document.getElementById(name);
-        colorPicker.addEventListener("click", changeToggle, false);
+        colorPicker.addEventListener("click", actionSetModelActive, false);
         return () => {
-            colorPicker.removeEventListener("click", changeToggle, false);
+            colorPicker.removeEventListener("click", actionSetModelActive, false);
         }
-    }, [props, name, toggle])
+    }, [props, name, actionSetModelActive])
 
-    const modelOnsubmit = (newValue) => {
-        setValue(newValue);
-        setToggle(!toggle);
-    }
+    useEffect(() => {
+        storedValue.current = value;
+    }, [value])
 
-    const createContent = () => {
-        return (
-            <div>
-                <ColorSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} toggle={toggle} marginBottom={"20px"} />
-            </div>
+    useEffect(() => {
+        const modelOnsubmit = (newValue) => {
+            setValue(newValue);
+            actionSetModelInactive();
+        }
+
+        addModel(
+            colorPickerModelId.current,
+            <Model
+                key={colorPickerModelId.current}
+                id={colorPickerModelId.current}
+                title="Selecteer een kleur"
+                content={createContent(storedValue.current, modelOnsubmit)}
+            />
         )
-    }
+    }, [addModel, actionSetModelInactive])
 
     return (
         <Container id={UUID.current} className={classname}>
@@ -68,13 +82,15 @@ const ColorPickerWrapper = ({ name, getValues, refresh, classname, props }) => {
                 <Color color={value} />
             </StyledColorPicker>
             <Label>: {props.label}</Label>
-            <Model
-                toggle={toggle}
-                setToggle={setToggle}
-                title="Selecteer een kleur"
-                content={createContent()}
-            />
         </Container >
+    )
+}
+
+const createContent = (value, modelOnsubmit) => {
+    return (
+        <div>
+            <ColorSelector items={createItems()} defaultItem={value} callback={modelOnsubmit} marginBottom={"20px"} />
+        </div>
     )
 }
 
@@ -89,6 +105,12 @@ const createItems = () => {
     array.push(colors.AQUA);
     array.push(colors.PINK);
     return array;
+}
+
+const mapDispatchToProps = {
+    addModel,
+    setModelActive,
+    setModelInactive
 }
 
 const Container = styled.div`
@@ -140,5 +162,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoColorPickerWrapper = memo(ColorPickerWrapper, areEqual)
+const MemoColorPickerWrapper = memo(connect(null, mapDispatchToProps)(ColorPickerWrapper), areEqual)
 export default MemoColorPickerWrapper;

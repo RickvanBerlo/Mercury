@@ -3,7 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import colors from '../constants/colors';
 import { getCorrectPageByName } from '../utils/pageSelector';
 
-const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPageParam, storage }) => {
+const PageLoader = ({ history, nextPage, previousPage, history, currentPageParam, storage }) => {
     const [page, setPage] = useState(previousPage);
     const [visible, setVisible] = useState(true);
 
@@ -36,7 +36,7 @@ const PageLoader = ({ history, nextPage, previousPage, setCurrentPage, currentPa
     return (
         <Container>
             <PageContainer id="refresher" visible={visible}>
-                {Page && <Page setCurrentPage={setCurrentPage} storage={storage.getStorage(page)} {...currentPageParam} />}
+                {Page && <Page history={history} storage={storage.getStorage(page)} {...currentPageParam} />}
             </PageContainer>
             <MainSpinner visible={visible}><CircleOne></CircleOne><CircleTwo></CircleTwo></MainSpinner>
         </Container >

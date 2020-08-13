@@ -7,7 +7,7 @@ const IconButton = ({ id, icon = DefaultIcon, fontSize = "20px", color = colors.
     const StyledIcon = styled(icon)`
         transition: background-color 0.2s linear;
         border-radius: ${props => props.round ? "100px" : "0px"};
-        box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
+        box-shadow: inset 0px 0px 7px 15px ${colors.WHITE};
         -webkit-tap-highlight-color: transparent;
         &:hover{
             background-color: ${colors.GRAY}

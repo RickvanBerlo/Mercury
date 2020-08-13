@@ -10,11 +10,10 @@ import FormBuilder from '../utils/formBuilder';
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 
-const NoteEdit = ({ removeNote, add, replace, setCurrentPage, note }) => {
-
+const NoteEdit = ({ removeNote, add, replace, history, note }) => {
     const goBack = useCallback(() => {
-        setCurrentPage(pageNames.NOTES);
-    }, [setCurrentPage])
+        history.push(pageNames.NOTES.toLowerCase());
+    }, [history])
 
     const goRemove = useCallback(() => {
         removeNote(note.id);
@@ -24,7 +23,7 @@ const NoteEdit = ({ removeNote, add, replace, setCurrentPage, note }) => {
     const onSubmit = (event, values) => {
         event.preventDefault();
         note.id === undefined ? add(values) : replace(values);
-        setCurrentPage(pageNames.NOTES);
+        history.push(pageNames.NOTES.toLowerCase());
     }
 
     useEffect(() => {

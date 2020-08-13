@@ -4,29 +4,18 @@ import colors from '../../constants/colors';
 import GenerateUUID from '../../utils/GenerateUUID';
 
 
-const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
+const ItemSelector = ({ items, defaultItem, callback, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
-    const currentToggleValue = useRef(toggle);
-    const oldToggleValue = useRef(false);
     const ID = useRef(GenerateUUID());
 
     useEffect(() => {
-        oldToggleValue.current = currentToggleValue.current;
-        currentToggleValue.current = toggle;
-    }, [toggle, oldToggleValue, currentToggleValue])
+        const Selector = document.getElementById(ID.current);
+        Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
+
+    }, [selectedItem, items])
 
     useEffect(() => {
-        if (toggle && !oldToggleValue.current) {
-            oldToggleValue.current = true;
-            const Selector = document.getElementById(ID.current);
-            Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
-        }
-    }, [toggle, ID, selectedItem, items])
-
-    useEffect(() => {
-        if (defaultItem !== selectedItem) {
-            callback(selectedItem);
-        }
+        callback(selectedItem);
     }, [selectedItem, defaultItem, callback])
 
     const createItems = () => {
@@ -35,7 +24,6 @@ const ItemSelector = ({ items, defaultItem, callback, toggle = undefined, margin
                 <Name toggle={selectedItem === item}>{item}</Name>
             </Item>)
         })
-
     }
 
     return (

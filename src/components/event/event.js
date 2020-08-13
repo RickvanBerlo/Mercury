@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import styled from 'styled-components';
+import React, { useEffect, useState, memo } from "react";
+import styled, { css, keyframes } from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
-import { pageNames } from '../../constants/pages';
 import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ setCurrentPage, placedDate, offset, props }) => {
+const Event = ({ navigateToEventPage, placedDate, offset, props }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToEvent = (e) => {
-        setCurrentPage(pageNames.EVENT, { props: props });
+        navigateToEventPage();
         e.stopPropagation();
     }
 
@@ -35,9 +34,18 @@ const Event = ({ setCurrentPage, placedDate, offset, props }) => {
 
 }
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+
 const Container = styled.div`
     position: relative;
-    margin-top: ${props => ((props.offset * 23)) + 3}px;
+    margin-top: ${props => ((props.offset * 21)) + 3}px;
     margin-left: 3px;
     height: 16%;
     width: calc(100% + (${props => props.width} * 100%) - 6px);
@@ -45,18 +53,20 @@ const Container = styled.div`
     border-radius: 5px;
     z-index: 1;
     display: flex;
+    opacity: 0;
     transition: background-color 0.3s linear;
     box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    animation: ${props => css`${fadein} 0.4s linear ${Math.random() * 0.4}s forwards`};
     &:hover{
-        background-color: ${colorChanger(colors.RED, -0.2)}
+        background-color: ${props => colorChanger(props.color, -0.2)};
         cursor: pointer;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.RED};
+            background-color: ${props => colorChanger(props.color, -0.2)};
         }
         &:active{
-            background-color: ${colorChanger(colors.RED, -0.2)}
+            background-color: ${props => colorChanger(props.color, -0.2)};
     }
 `
 
@@ -72,6 +82,9 @@ const Title = styled.p`
     text-overflow: ellipsis;
     font-size: ${props => props.height - 2}px;
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-
-export default Event;
+const MemoEvent = memo(Event, areEqual)
+export default MemoEvent;

@@ -1,34 +1,27 @@
-import React, { useState, useRef } from "react";
-import styled from 'styled-components';
+import React from "react";
+import { connect } from "react-redux";
 import SideMenu from '../components/sideMenu/sideMenu';
+import ModelsContainer from '../components/model/modelsContainer';
+import DashboardRoutes from '../routes/dashboardRoutes';
 import SnackBar from '../components/notification/snackbar';
-import PageLoader from './pageLoader';
 import { getAllSideMenuButtonPages } from '../utils/pageSelector';
-import { pageNames } from '../constants/pages';
-import Storage from '../storage/storage';
+import { removeAllModels } from '../stores/models/modelActions'
 
-const Dashboard = ({ history }) => {
-    const [snackbarText, setSnackBarText] = useState("Goedemorgen Rick");
-    const [currentPage, setCurrentPage] = useState(pageNames.NOTES);
-    const [previousPage, setPreviousPage] = useState(null);
-    const [currentPageParam, setCurrentPageParam] = useState({});
-    const storage = useRef(new Storage());
-
-    const changePage = (name, param = {}) => {
-        setPreviousPage(currentPage);
-        setCurrentPage(name);
-        setCurrentPageParam(param);
-    }
+const Dashboard = ({ history, removeAllModels }) => {
+    removeAllModels();
     return (
-        <Container>
-            <PageLoader history={history} nextPage={currentPage} previousPage={previousPage} setCurrentPage={changePage} currentPageParam={currentPageParam} storage={storage.current} />
-            <SideMenu history={history} setCurrentPage={changePage} sideMenuButtons={getAllSideMenuButtonPages()} />
-            <SnackBar text={snackbarText} setText={setSnackBarText} timeInSeconds={3} />
-        </Container>
+        <div>
+            <DashboardRoutes history={history} />
+            <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />
+            <SnackBar />
+            <ModelsContainer />
+        </div>
     )
 }
 
-const Container = styled.div`
-`
+const mapDispatchToProps = {
+    removeAllModels,
+}
 
-export default Dashboard;
+
+export default connect(null, mapDispatchToProps)(Dashboard);

@@ -3,10 +3,10 @@ import * as database from '../../databases/notes';
 const init_Note = { id: undefined, title: undefined, description: undefined };
 
 export const actions = {
-    ADD: "ADD",
+    ADD_NOTE: "ADD_NOTE",
     REMOVE_NOTE: "REMOVE_NOTE",
     REMOVE_NOTES: "REMOVE_NOTES",
-    REPLACE: "REPLACE",
+    REPLACE_NOTE: "REPLACE_NOTE",
     GET_NOTES: "GET_NOTES",
     GET_NOTE: "GET_NOTE",
     PASS_NOTE: "PASS_NOTE",
@@ -21,7 +21,7 @@ export const passNote = (note = init_Note) => {
 
 export const add = (note) => {
     return {
-        type: actions.ADD,
+        type: actions.ADD_NOTE,
         payload: database.addNote(note).then(response => response.json())
     }
 }
@@ -42,7 +42,7 @@ export const removeNote = (id) => {
 
 export const replace = (note) => {
     return {
-        type: actions.REPLACE,
+        type: actions.REPLACE_NOTE,
         payload: database.replaceNote(note).then(response => response.json())
     }
 }

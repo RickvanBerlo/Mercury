@@ -1,18 +1,28 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo, useCallback } from "react";
 import colors from '../../constants/colors';
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import IconButton from '../buttons/dasboard/iconButton';
 import generateUUID from '../../utils/GenerateUUID';
+import { connect } from "react-redux";
+import { setModelInactive } from '../../stores/models/modelActions';
 
 import AddIcon from 'react-ionicons/lib/MdClose';
 
-const Model = ({ toggle, setToggle, title, content }) => {
+const Model = ({ setModelInactive, activeModels, id, title, content }) => {
     const UUID_Background = useRef(generateUUID());
     const UUID_CloseButton = useRef(generateUUID());
 
+    const isEnabled = useCallback(() => {
+        return activeModels.some((modelId) => modelId === id);
+    }, [activeModels, id]);
+
+    const getIndex = useCallback(() => {
+        return Math.abs(activeModels.findIndex((modelId) => modelId === id)) + 1;
+    }, [activeModels, id]);
+
     useEffect(() => {
         const hideModel = () => {
-            setToggle(false);
+            setModelInactive(id);
         }
         const modelContainer = document.getElementById(UUID_Background.current);
         const closeButton = document.getElementById(UUID_CloseButton.current);
@@ -23,15 +33,15 @@ const Model = ({ toggle, setToggle, title, content }) => {
         return () => {
             modelContainer.removeEventListener("click", hideModel, false);
             modelContainer.removeEventListener("touchend", hideModel, false);
-            closeButton.addEventListener("click", hideModel, false);
-            closeButton.addEventListener("touchend", hideModel, false);
+            closeButton.removeEventListener("click", hideModel, false);
+            closeButton.removeEventListener("touchend", hideModel, false);
         }
-    }, [setToggle]);
+    }, [setModelInactive, id]);
 
     return (
         <div>
-            <BackgroundPopup id={UUID_Background.current} enable={toggle} />
-            <Popup enable={toggle}>
+            <BackgroundPopup id={UUID_Background.current} enable={isEnabled()} index={getIndex()} />
+            <Popup enable={isEnabled()} index={getIndex()}>
                 <TopBar>
                     <Title>{title}</Title>
                     <CloseButtonContainer>
@@ -46,22 +56,13 @@ const Model = ({ toggle, setToggle, title, content }) => {
     )
 }
 
-const Show = keyframes`
-    from{
-        top: -2000px;
-    }
-    to {
-        top: 10%;
-    }
-`
-const Hide = keyframes`
-    from{
-        top: 10%;
-    }
-    to {
-        top: -1000px;
-    }
-`
+const mapStateToProps = state => {
+    return { activeModels: state.modelReducer.activeModels };
+};
+
+const mapDispatchToProps = {
+    setModelInactive,
+}
 
 const CloseButtonContainer = styled.div`
     position: absolute;
@@ -73,14 +74,14 @@ const Popup = styled.div`
     position: absolute;
     text-align: left;
     max-width: 70%;
-    top: -1000px;
-    z-index: 3;
+    top: ${props => props.enable ? "10%" : "-1000px"};
+    z-index: ${props => props.index};
     border-radius: 10px;
     left: 50%;
     transform: translate(-50%, 0%);
     background-color: ${colors.WHITE};
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
-    animation: ${props => props.enable == null ? `none` : props.enable ? css`${Show} 0.4s ease-out forwards` : css`${Hide} 0.4s ease-in forwards`};
+    transition: top 0.5s linear;
 
 `
 const TopBar = styled.div`
@@ -103,15 +104,18 @@ const MiddleContainer = styled.div`
 `
 
 const BackgroundPopup = styled.div`
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
+    position: fixed;
+    z-index: ${props => props.index};
+    height: 100%;
+    width: 100%;
     background-color: ${props => props.enable ? colors.TRANSPARENT_80 : colors.TRANSPARENT};
     visibility: ${props => props.enable ? "visible" : "hidden"}
     transition: visibility 0.1s ${props => props.enable ? "0s" : "0.5s"} linear, background-color 0.4s linear;
 `
 
-export default Model;
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+const MemoModel = memo(connect(mapStateToProps, mapDispatchToProps)(Model), areEqual)
+export default MemoModel;

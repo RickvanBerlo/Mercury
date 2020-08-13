@@ -1,27 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import colors from '../../constants/colors';
 import GenerateUUID from '../../utils/GenerateUUID';
 
 
-const ColorSelector = ({ items, defaultItem, callback, toggle = undefined, marginBottom }) => {
+const ColorSelector = ({ items, defaultItem, callback, marginBottom }) => {
     const [selectedItem, setSelectedItem] = useState(defaultItem);
-    const currentToggleValue = useRef(toggle);
-    const oldToggleValue = useRef(false);
+
     const ID = useRef(GenerateUUID());
 
     useEffect(() => {
-        oldToggleValue.current = currentToggleValue.current;
-        currentToggleValue.current = toggle;
-    }, [toggle, oldToggleValue, currentToggleValue])
+        const Selector = document.getElementById(ID.current);
+        Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
 
-    useEffect(() => {
-        if (toggle && !oldToggleValue.current) {
-            oldToggleValue.current = true;
-            const Selector = document.getElementById(ID.current);
-            Selector.scrollTop = (items.indexOf(selectedItem) * 50) - 125;
-        }
-    }, [toggle, ID, selectedItem, items])
+    }, [selectedItem, items])
 
     useEffect(() => {
         if (defaultItem !== selectedItem) {
@@ -32,7 +24,7 @@ const ColorSelector = ({ items, defaultItem, callback, toggle = undefined, margi
     const createItems = () => {
         return items.map((item) => {
             return (<Item key={GenerateUUID()} onClick={() => { setSelectedItem(item) }} onTouchEnd={() => { setSelectedItem(item) }}>
-                <Color color={item}></Color>
+                <Color color={item} selected={item === selectedItem}></Color>
             </Item>)
         })
 
@@ -71,6 +63,20 @@ const Item = styled.div`
         cursor: pointer;
     }
 `
+const pulse = keyframes`
+  from { 
+    height: 20px;
+    width: 20px;
+  }
+  50% {
+    height: 30px;
+    width: 30px;
+  }
+  to {
+    height: 20px;
+    width: 20px;
+  }
+`
 
 const Color = styled.div`
     margin: 0;
@@ -80,12 +86,11 @@ const Color = styled.div`
     transform: translate(-50%, -50%);
     background-color: ${props => props.color};
     border-radius: 20px;
-    width: 20px;
-    height: 20px;
+    width: ${props => props.selected ? "30px" : "20px"};
+    height: ${props => props.selected ? "30px" : "20px"};
     transition: all 0.3s linear;
     &:hover{
-        width: 30px;
-        height: 30px;
+        animation: ${props => props.selected ? "none" : css`${pulse} 1s linear infinite`};
     }
 `
 

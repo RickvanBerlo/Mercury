@@ -23,8 +23,8 @@ export const pageNames = {
     CALENDAR: "Calendar",
     NOTES: "Notes",
     STORAGE: "Storage",
-    SCRUMBOARDS: "Srumboards",
-    BILLS: "Bills",
+    //SCRUMBOARDS: "Srumboards",
+    //BILLS: "Bills",
     CONFIG: "Config",
     DAY: "Day",
     EVENTEDIT: "EventEdit",
@@ -32,16 +32,16 @@ export const pageNames = {
     NOTEEDIT: "NoteEdit",
 }
 
-export const pages = [
-    { NAME: pageNames.HOME, PAGE: HomePage, ICON: HomeIcon },
-    { NAME: pageNames.CALENDAR, PAGE: CalendarPage, ICON: CalanderIcon },
-    { NAME: pageNames.NOTES, PAGE: NotesPage, ICON: NotesIcon },
-    { NAME: pageNames.STORAGE, PAGE: StoragePage, ICON: StorageIcon },
-    //{ NAME: pageNames.SCRUMBOARDS, PAGE: ScrumboardsPage, ICON: ScrumboardsIcon },
-    //{ NAME: pageNames.BILLS, PAGE: BillsPage, ICON: BillsIcon },
-    { NAME: pageNames.CONFIG, PAGE: ConfigPage, ICON: ConfigIcon },
-    { NAME: pageNames.DAY, PAGE: DayPage },
-    { NAME: pageNames.EVENTEDIT, PAGE: EventEditPage },
-    { NAME: pageNames.EVENT, PAGE: EventPage },
-    { NAME: pageNames.NOTEEDIT, PAGE: NoteEditPage },
-]
+export const pages = {
+    "Home": { PAGE: HomePage, ICON: HomeIcon },
+    "Calendar": { PAGE: CalendarPage, ICON: CalanderIcon },
+    "Notes": { PAGE: NotesPage, ICON: NotesIcon },
+    "Storage": { PAGE: StoragePage, ICON: StorageIcon },
+    //"Srumboards": { PAGE: ScrumboardsPage, ICON: ScrumboardsIcon },
+    //"Bills": { PAGE: BillsPage, ICON: BillsIcon },
+    "Config": { PAGE: ConfigPage, ICON: ConfigIcon },
+    "Day": { PAGE: DayPage },
+    "EventEdit": { PAGE: EventEditPage },
+    "Event": { PAGE: EventPage },
+    "NoteEdit": { PAGE: NoteEditPage },
+};

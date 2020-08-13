@@ -42,11 +42,12 @@ const getTime = () => {
 const Container = styled.div`
     position: relative;
     display: flow-root;
+    pointer-events: none
     width: calc(100% - 20px);
     height: 2px;
     opacity: 0;
     background-color: ${colors.DARK_GREEN};
-    z-index: 2;
+    z-index: 0;
     transition: opacity 0.2s linear, top 0.1s linear;
 `
 

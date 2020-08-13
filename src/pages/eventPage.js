@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, memo, useCallback } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { pageNames } from '../constants/pages';
+import { connect } from "react-redux";
+import { deleteEvent } from '../stores/events/eventActions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
@@ -12,19 +14,23 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ storage, setCurrentPage, props = {} }) => {
+const Event = ({ event, deleteEvent, history }) => {
+
+    const goBack = useCallback(() => {
+        history.goBack();
+    }, [history])
+
+    const goRemove = useCallback(() => {
+        deleteEvent(event.id);
+        history.push(pageNames.CALENDAR.toLowerCase());
+    }, [history, deleteEvent, event])
+
+    const goEdit = useCallback(() => {
+        history.push(pageNames.EVENTEDIT.toLowerCase());
+    }, [history])
 
     useEffect(() => {
-        const goRemove = () => {
-            storage.shared.removeEvent(props);
-            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
-        }
-        const goBack = () => {
-            setCurrentPage(pageNames.CALENDAR, { selectedDay: props.selectedDay });
-        }
-        const goEdit = () => {
-            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: props.selectedDay, props: props });
-        }
+
         const backButton = document.getElementById("goBack");
         const EditButton = document.getElementById("edit");
         const RemoveButton = document.getElementById("remove");
@@ -42,12 +48,12 @@ const Event = ({ storage, setCurrentPage, props = {} }) => {
             RemoveButton.removeEventListener("click", goRemove, false);
             RemoveButton.removeEventListener("touchend", goRemove, false);
         }
-    }, [setCurrentPage, props, storage]);
+    }, [history, goBack, goEdit, goRemove]);
 
     return (
         <Container>
             <TopBar>
-                <Title>{props.title}</Title>
+                <Title>{event.title}</Title>
                 <LeftButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </LeftButtonContainer>
@@ -61,26 +67,36 @@ const Event = ({ storage, setCurrentPage, props = {} }) => {
                     <CalendarIcon id="calendar" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
                     <Seperator>-</Seperator>
                     <TextContainer>
-                        <Text>{props.startDate}</Text>
-                        <Text>{props.endDate}</Text>
+                        <Text>{event.startDate}</Text>
+                        <Text>{event.endDate}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <SpacingContainer>
                     <ClockIcon id="clock" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
                     <Seperator>-</Seperator>
                     <TextContainer>
-                        <Text>{props.startTime}</Text>
-                        <Text>{props.endTime}</Text>
+                        <Text>{event.startTime}</Text>
+                        <Text>{event.endTime}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <Line />
                 <DescriptionContainer>
                     <DescriptionIcon id="description" fontSize="35px" color={colors.DARK_GREEN} style={{ paddingTop: "13px" }} />
-                    <Description>{props.description}</Description>
+                    <Description dangerouslySetInnerHTML={{ __html: event.description }}></Description>
                 </DescriptionContainer>
             </ContentContainer>
         </Container>
     )
+}
+
+const mapStateToProps = state => {
+    return {
+        event: state.eventReducer.passedEvent
+    };
+};
+
+const mapDispatchToProps = {
+    deleteEvent
 }
 
 const Container = styled.div`
@@ -177,5 +193,9 @@ const TopBar = styled.div`
     height: 50px;
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
 `
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
 
-export default Event;
+const MemoEvent = memo(connect(mapStateToProps, mapDispatchToProps)(Event), areEqual)
+export default MemoEvent;

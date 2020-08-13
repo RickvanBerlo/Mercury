@@ -1,14 +1,18 @@
-import React, { useEffect, useReducer, useRef, memo } from "react";
+import React, { useEffect, useRef, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
+import { connect } from "react-redux";
+import { getEventsOfMonth, passEventsOfDay, setCurrentMonth, setCurrentYear, setNextMonth, setPreviousMonth, setCurrentDay, passEvent } from '../stores/events/eventActions';
+import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 import { mobilecheck } from '../utils/deviceCheck';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
 import { pageNames } from '../constants/pages';
-import MonthSelector from '../components/monthSelector/monthSelector';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
 import EventPlaceholder from '../components/event/eventPlaceholder';
+import Model from '../components/model/model';
+import ItemSelector from '../components/itemSelector/itemSelector';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -18,89 +22,64 @@ const DEAD_ZONE_SCROLL = 150;
 const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
 
-const reducer = (state, action) => {
-    let date;
-    switch (action.type) {
-        case 'nextMonth':
-            date = state.currentDate.getDate()
-            if (date > 29)
-                state.currentDate.setDate(date - 5);
-            state.currentDate.setMonth(state.currentDate.getMonth() + 1);
-            return { ...state };
-        case 'prevMonth':
-            date = state.currentDate.getDate()
-            if (date > 29)
-                state.currentDate.setDate(date - 5);
-            state.currentDate.setMonth(state.currentDate.getMonth() - 1);
-            return { ...state };
-        case 'newMonth':
-            return { ...state, monthSelectorToggle: false, currentDate: new Date(action.year, action.month, 1) };
-        case 'openMonthSelector':
-            return { ...state, monthSelectorToggle: true }
-        default:
-            throw new Error();
-    }
-}
-
-const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
+const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel, setModelActive, setCurrentMonth, setCurrentYear, setModelInactive, setNextMonth, setPreviousMonth, currentMonth, currentYear, setCurrentDay, passEvent }) => {
     const isPressing = useRef(false);
     const isDragging = useRef(false);
     const direction = useRef(undefined);
     const monthContainerPositions = useRef([-100, 0, 100]);
-    const initialState = (selectedDay) => {
-        if (selectedDay.getDate() > 29)
-            selectedDay.setDate(selectedDay.getDate() - 3);
-        return ({
-            currentDate: selectedDay,
-            monthSelectorToggle: null,
-        })
-    };
 
-    const [state, dispatch] = useReducer(reducer, initialState(selectedDay));
+    const changeDateModelId = useRef(UUID());
 
-    const navigateToDayPage = (day, allDayEvents, timedEvents) => {
-        if (!isDragging.current)
-            setCurrentPage(pageNames.DAY, { selectedDay: day, allDayEvents: allDayEvents, timedEvents: timedEvents });
-        isDragging.current = false; //is placed here because this function is called every time when the calendar is drag + event drag is called before this one.
+    const navigateToDayPage = (date, allDayEvents, timedEvents) => {
+        if (!isDragging.current) {
+            passEvent({});
+            passEventsOfDay(timedEvents, allDayEvents);
+            setCurrentDay(date.getDate())
+            history.push(pageNames.DAY.toLowerCase());
+        }
     }
 
-    const goToNextMonth = () => {
+    const navigateToEventPage = (event) => {
+        if (!isDragging.current) {
+            passEvent(event);
+            history.push(pageNames.EVENT.toLowerCase());
+        }
+    }
+
+    const pushAnimNextMonth = () => {
         if (direction.current === undefined) {
             direction.current = -1;
             AnimCalendar(direction.current, monthContainerPositions);
         }
     }
 
-    const goToPreviousMonth = () => {
+    const pushAnimPreviousMonth = () => {
         if (direction.current === undefined) {
             direction.current = 1;
             AnimCalendar(direction.current, monthContainerPositions);
         }
     }
 
-    const CallbackMonthSelector = (newYear, newMonth) => {
-        dispatch({ type: "newMonth", month: newMonth, year: newYear })
-    }
-
-
     useEffect(() => {
         let mouseX = 0;
         let scrollmovement = 0;
 
         const scroll = (e) => {
-            if (e.deltaY > 0) goToNextMonth();
-            else goToPreviousMonth();
+            if (e.deltaY > 0) pushAnimNextMonth();
+            else pushAnimPreviousMonth();
         }
 
         const animBegin = (e) => {
-            e.preventDefault();
-            isPressing.current = true;
-            mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
+            if (e.button === 0) {
+                e.preventDefault();
+                isPressing.current = true;
+                mouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
+            }
         }
 
         const drag = (e) => {
-            e.preventDefault();
-            if (isPressing.current) {
+            if (isPressing.current && e.button === 0) {
+                e.preventDefault();
                 isDragging.current = true;
                 const newMouseX = mobilecheck() ? e.touches[0].pageX : e.pageX;
                 const monthContainers = document.getElementsByClassName("monthContainer");
@@ -114,8 +93,8 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
         }
 
         const animEnd = (e) => {
-            e.preventDefault();
-            if (isPressing.current && isDragging.current) {
+            if (isPressing.current && isDragging.current && e.button === 0) {
+                e.preventDefault();
                 isPressing.current = false;
                 direction.current = scrollmovement > DEAD_ZONE_SCROLL ? 1 : scrollmovement < -DEAD_ZONE_SCROLL ? -1 : 0;
                 e.toElement.style.cursor = "pointer";
@@ -125,9 +104,10 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
         }
 
         const transitionEnd = (e) => {
+            isDragging.current = false;
             if (e.target.offsetLeft === 0) {
-                if (direction.current === 1) dispatch({ type: "prevMonth" });
-                if (direction.current === -1) dispatch({ type: "nextMonth" });
+                if (direction.current === 1) setPreviousMonth();
+                if (direction.current === -1) setNextMonth();
                 direction.current = undefined;
             }
         }
@@ -142,13 +122,10 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             monthContainer.addEventListener('mouseup', animEnd, false);
             monthContainer.addEventListener('transitionend', transitionEnd, false);
         });
-        calendarNext.addEventListener("click", goToNextMonth, false);
-        calendarNext.addEventListener("touchend", goToNextMonth, false);
-        calendarPrev.addEventListener("click", goToPreviousMonth, false);
-        calendarPrev.addEventListener("touchend", goToPreviousMonth, false);
-        // monthContainer.addEventListener("touchstart", startDrag, false);
-        // monthContainer.addEventListener("touchmove", moveDrag, false);
-        // window.addEventListener("touchend", endDrag, false);
+        calendarNext.addEventListener("click", pushAnimNextMonth, false);
+        calendarNext.addEventListener("touchend", pushAnimNextMonth, false);
+        calendarPrev.addEventListener("click", pushAnimPreviousMonth, false);
+        calendarPrev.addEventListener("touchend", pushAnimPreviousMonth, false);
         return () => {
             Array.from(monthContainers).forEach(monthContainer => {
                 monthContainer.removeEventListener('wheel', scroll, { passive: true });
@@ -157,31 +134,44 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
                 monthContainer.removeEventListener('mouseup', animEnd, false);
                 monthContainer.removeEventListener('transitionend', transitionEnd, false);
             });
-            calendarNext.removeEventListener("click", goToNextMonth, false);
-            calendarNext.removeEventListener("touchend", goToNextMonth, false);
-            calendarPrev.removeEventListener("click", goToPreviousMonth, false);
-            calendarPrev.removeEventListener("touchend", goToPreviousMonth, false);
-            // monthContainer.removeEventListener("touchstart", startDrag, false);
-            // monthContainer.removeEventListener("touchmove", moveDrag, false);
-            // window.removeEventListener("touchend", endDrag, false);
+            calendarNext.removeEventListener("click", pushAnimNextMonth, false);
+            calendarNext.removeEventListener("touchend", pushAnimNextMonth, false);
+            calendarPrev.removeEventListener("click", pushAnimPreviousMonth, false);
+            calendarPrev.removeEventListener("touchend", pushAnimPreviousMonth, false);
         }
-    }, []);
+    }, [setNextMonth, setPreviousMonth]);
 
-    let nextMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() + 1, state.currentDate.getDate());
-    let prevMonth = new Date(state.currentDate.getFullYear(), state.currentDate.getMonth() - 1, state.currentDate.getDate());
+    useEffect(() => {
+        getEventsOfMonth(new Date(currentYear, currentMonth, 1).toLocaleDateString("fr-CA"))
+    }, [currentYear, currentMonth, getEventsOfMonth])
+
+    useEffect(() => {
+        addModel(
+            changeDateModelId.current,
+            <Model
+                key={changeDateModelId.current}
+                id={changeDateModelId.current}
+                title={"selecteer een maand"}
+                content={createContent(MONTH_NAMES, setCurrentMonth, setCurrentYear, () => { setModelInactive(changeDateModelId.current) })}
+            />
+        )
+    }, [setModelInactive, addModel, setCurrentMonth, setCurrentYear])
+
+    let nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
+    let prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
+    let currentMonthDate = new Date(currentYear, currentMonth, 1);
 
     return (
         <Container>
-            <MonthSelector enable={state.monthSelectorToggle} currentMonth={state.currentDate.getMonth()} currentYear={state.currentDate.getFullYear()} callback={CallbackMonthSelector} />
             <TopBarContainer>
                 <FlexContainer>
-                    <ButtonYear onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
-                        <Year>{state.currentDate.getFullYear()}</Year>
+                    <ButtonYear onClick={() => { setModelActive(changeDateModelId.current) }} onTouchEnd={() => { setModelActive(changeDateModelId.current) }}>
+                        <Year>{currentYear}</Year>
                     </ButtonYear>
                 </FlexContainer>
                 <FlexContainer>
-                    <ButtonMonth onClick={() => { dispatch({ type: "openMonthSelector" }) }} onTouchEnd={() => { dispatch({ type: "openMonthSelector" }) }}>
-                        <Month>{MONTH_NAMES[state.currentDate.getMonth()]}</Month>
+                    <ButtonMonth onClick={() => { setModelActive(changeDateModelId.current) }} onTouchEnd={() => { setModelActive(changeDateModelId.current) }}>
+                        <Month>{MONTH_NAMES[currentMonth]}</Month>
                     </ButtonMonth>
                 </FlexContainer>
                 <ButtonContainer>
@@ -198,23 +188,50 @@ const Calendar = ({ storage, setCurrentPage, selectedDay = new Date() }) => {
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[0] === 0 ? state.currentDate : monthContainerPositions.current[0] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(events, monthContainerPositions.current[0] === 0 ? currentMonthDate : monthContainerPositions.current[0] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[1] === 0 ? state.currentDate : monthContainerPositions.current[1] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(events, monthContainerPositions.current[1] === 0 ? currentMonthDate : monthContainerPositions.current[1] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(storage.shared.getEventsOfDay, monthContainerPositions.current[2] === 0 ? state.currentDate : monthContainerPositions.current[2] === 100 ? nextMonth : prevMonth, navigateToDayPage, setCurrentPage)}
+                {createMonth(events, monthContainerPositions.current[2] === 0 ? currentMonthDate : monthContainerPositions.current[2] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { setCurrentPage(pageNames.EVENTEDIT); }} onTouchEnd={() => { setCurrentPage(pageNames.EVENTEDIT); }}>
+            <AddButton onClick={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }} onTouchEnd={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
     )
 }
 
+//content model
+const createContent = (months, setCurrentMonth, setCurrentYear, setModelInactive) => {
+    const years = [];
+    for (let i = new Date().getFullYear() - 50; i < new Date().getFullYear() + 50; i++) {
+        years.push(i);
+    }
+
+    return (
+        <div>
+            <SelectorsContainer>
+                <ItemSelector items={years} defaultItem={new Date().getFullYear()} callback={setCurrentYear} />
+                <Bar />
+                <ItemSelector items={months} defaultItem={months[new Date().getMonth()]} callback={setCurrentMonth} />
+            </SelectorsContainer>
+            <BottomBar>
+                <Button onClick={setModelInactive} onTouchEnd={setModelInactive}>
+                    <ButtonText>
+                        Accepteren
+                        </ButtonText>
+                </Button>
+            </BottomBar>
+        </div>
+    )
+}
+
+
+//this function handles the animation for the drag functionality
 const AnimCalendar = (direction, monthContainerPositions) => {
     const monthContainers = document.getElementsByClassName("monthContainer");
     Array.from(monthContainers).forEach((monthContainer, index) => {
@@ -251,6 +268,7 @@ const AnimCalendar = (direction, monthContainerPositions) => {
     })
 }
 
+//creating the header names
 const getDayNames = () => {
     let names = [];
     for (let i = 0; i < DAY_NAMES.length; i++) {
@@ -259,20 +277,22 @@ const getDayNames = () => {
     return names;
 }
 
-const createMonth = (getEventsOfDay, currentDate, callback, setCurrentPage) => {
+
+//creates day squares in the calendar
+const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
-            <WeekContainer key={UUID()}>
-                {createWeek(getEventsOfDay, firstDayOfMonth, currentDate.getMonth(), callback, setCurrentPage)}
+            <WeekContainer key={firstDayOfMonth.toLocaleDateString("fr-CA") + "_weekContainer"}>
+                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage)}
                 {createWeekDate(firstDayOfMonth)}
             </WeekContainer>
         )
     }
     return (
-        <MonthContainer key={UUID()}>
+        <MonthContainer key={currentDate.toLocaleDateString("fr-CA") + "_monthContainer"}>
             {weeks}
         </MonthContainer>
     )
@@ -290,41 +310,41 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
+const createWeek = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
     return (
-        <DaysContainer>
-            {createDays(getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage)}
+        <DaysContainer key={firstDayOfWeek.toLocaleDateString("fr-CA") + "_container"}>
+            {createDays(events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage)}
         </DaysContainer>
     )
 }
 
-const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentPage) => {
+const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
     const days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
-
     for (let i = 0; i < 7; i++) {
         const date = new Date(firstDayOfWeek);
-        let amountofEvents = 0;
-        //get events
-        const dayEventsObj = getEventsOfDay(firstDayOfWeek.toLocaleDateString("fr-CA"));
+        const dayEventsObj = events[firstDayOfWeek.toLocaleDateString("fr-CA")];
+        let amountofEvents = dayEventsObj === undefined ? 0 : dayEventsObj.offset;
+        let useOffset = true;
+        const navigate = () => { navigateToDayPage(date, getAllDayEvents(date, events, dayEventsObj), dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }
         //make day
         days.push(
             <Day
-                key={UUID()}
-                onClick={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}
-                onTouchEnd={() => { callback(date, dayEventsObj !== undefined ? dayEventsObj.allDayEvents : [], dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }}>
+                key={date.toLocaleDateString("fr-CA")}
+                onClick={navigate}
+                onTouchEnd={navigate}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
-                        if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} /> }
-                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} setCurrentPage={setCurrentPage} date={date} dayEventsObj={dayEventsObj} /> }
+                        if (amountofEvents < 3) { useOffset = false; amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={0} navigateToDayPage={navigate} /> }
                         else return null;
                     }
                     return null;
                 })}
                 {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
-                    if (amountofEvents < 3) { amountofEvents++; return <Event key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} setCurrentPage={setCurrentPage} /> }
-                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={UUID()} offset={index === 0 ? dayEventsObj.offset : 0} setCurrentPage={setCurrentPage} date={date} dayEventsObj={dayEventsObj} /> }
+                    if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={useOffset ? index === 0 ? dayEventsObj.offset : 0 : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA")} offset={0} navigateToDayPage={navigate} /> }
                     else return null;
                 })}
                 <DayNumber
@@ -340,10 +360,93 @@ const createDays = (getEventsOfDay, firstDayOfWeek, month, callback, setCurrentP
     return days;
 }
 
+//can create inv loop when offset is never updated.
+const getAllDayEvents = (dateOfDay, events, dayEventsObj = { allDayEvents: [], offset: 0 }) => {
+    const date = new Date(dateOfDay);
+    let array = dayEventsObj.allDayEvents;
+    let offset = dayEventsObj.offset;
+    while (offset > 0) {
+        date.setDate(date.getDate() - 1);
+        if (events[date.toLocaleDateString("fr-CA")].allDayEvents.length !== 0) {
+            array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
+            offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
+        }
+    }
+    return array;
+}
+
+//end square creation
+
+const mapStateToProps = state => {
+    return { events: state.eventReducer.events, currentMonth: state.eventReducer.currentMonth, currentYear: state.eventReducer.currentYear };
+};
+
+const mapDispatchToProps = {
+    getEventsOfMonth,
+    passEventsOfDay,
+    addModel,
+    setModelActive,
+    setCurrentMonth,
+    setCurrentYear,
+    setModelInactive,
+    setNextMonth,
+    setPreviousMonth,
+    setCurrentDay,
+    passEvent
+}
+
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
+`
+
+const SelectorsContainer = styled.div`
+    height: calc(100% - 120px);
+    width: 100%;
+    display: flex;
+`
+
+const BottomBar = styled.div`
+    width: 100%;
+    height: 50px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+`
+
+const Bar = styled.div`
+    width: 10px;
+`
+const Button = styled.div`
+    margin: auto;
+    width: 80%;
+    height: 40px;
+    margin-top: 10px;
+    box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
+    transition: background-color 0.3s linear;
+    &:hover{
+        background-color: ${colors.DARK_WHITE}
+        cursor: pointer;
+    }
+    &:active{
+        background-color: ${colors.ACTIVE_COLOR};
+    }
+    @media (max-width: 767px) {
+        &:hover{
+            background-color: ${colors.WHITE};
+        }
+        &:active{
+            background-color: ${colors.DARK_WHITE};
+        }
+    }
+`
+
+const ButtonText = styled.p`
+    margin: 0;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+    color: ${colors.DARK_GREEN}
 `
 
 const TopBarContainer = styled.div`
@@ -444,7 +547,7 @@ const DaysContainer = styled.div`
 
 const AddButton = styled.div`
     position: absolute;
-    z-index: 3;
+    z-index: 1;
     bottom: 20px;
     right: 30px;
     border-radius: 100px;
@@ -488,12 +591,9 @@ const AnimationContainer = styled.div`
     left: ${props => props.left};
 `
 
-
 const areEqual = (prevProps, nextProps) => {
-    if (prevProps.selectedDay === undefined) return true;
-    if (prevProps.selectedDay === nextProps.selectedDay) return true;
-    return false;
+    return true;
 }
 
-const MemoCalendar = memo(Calendar, areEqual);
+const MemoCalendar = memo(connect(mapStateToProps, mapDispatchToProps)(Calendar), areEqual)
 export default MemoCalendar;

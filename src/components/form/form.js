@@ -71,13 +71,14 @@ const FormWrapper = ({ name, submitButtonName, elements, onSubmit, props }) => {
             inputs.current[element.props.name] = tmpElements[index];
         });
     }, [name, elements])
-
     return (
         <Form onSubmit={handleSubmit}>
             {elements.map((element, index) => {
                 return cloneElement(element, { key: `${index}${name}`, getValues: getValues, refresh: refresh, classname: name }, null);
             })}
-            <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
+            <FlexContainer>
+                <SubmitButton name={submitButtonName} submitButtonEnable={enableSubmit} />
+            </FlexContainer>
         </Form>
     )
 }
@@ -92,6 +93,10 @@ const CheckIfAllAreValid = (validations) => {
 
 
 const Form = styled.form`
+`
+
+const FlexContainer = styled.div`
+    display: flex;
 `
 
 export default FormWrapper;

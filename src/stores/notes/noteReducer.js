@@ -7,7 +7,7 @@ const fulfilled = "_FULFILLED";
 export default (state = InitState, action) => {
 
     switch (action.type) {
-        case (actions.ADD + fulfilled):
+        case (actions.ADD_NOTE + fulfilled):
             state.notes[action.payload.id] = action.payload;
             return { ...state, notes: [...state.notes] };
         case (actions.GET_NOTE + fulfilled):
@@ -20,7 +20,7 @@ export default (state = InitState, action) => {
             return { ...state, notes: action.payload };
         case (actions.REMOVE_NOTES + fulfilled):
             return { ...state, notes: [] };
-        case (actions.REPLACE + fulfilled):
+        case (actions.REPLACE_NOTE + fulfilled):
             state.notes[action.payload.id] = action.payload;
             return { ...state, notes: [...state.notes] };
         case actions.PASS_NOTE:

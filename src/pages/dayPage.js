@@ -8,13 +8,15 @@ import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
 import { datediff } from '../utils/date';
+import { connect } from "react-redux";
+import { passEvent } from '../stores/events/eventActions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEvents }) => {
+const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => {
     const scroll = useRef(false);
     let currentDragPosition = undefined;
     let dragStartingPosition = undefined;
@@ -24,8 +26,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     const endTime = useRef("00:00");
 
     const goBack = useCallback(() => {
-        setCurrentPage(pageNames.CALENDAR, { selectedDay: selectedDay });
-    }, [setCurrentPage, selectedDay])
+        history.goBack();
+    }, [history])
 
     const setScroll = () => {
         scroll.current = true;
@@ -33,15 +35,17 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
 
     const goToEventEdit = () => {
         if (!scroll.current)
-            setCurrentPage(pageNames.EVENTEDIT, { selectedDay: selectedDay, props: { startTime: startTime.current, endTime: endTime.current } });
+            history.push(pageNames.EVENTEDIT.toLowerCase());
         scroll.current = false;
     }
 
-    const goToEvent = (e, props) => {
+    const goToEvent = (e, event) => {
         e.stopPropagation();
         e.preventDefault();
-        if (!scroll.current)
-            setCurrentPage(pageNames.EVENT, { selectedDay: selectedDay, props: props });
+        if (!scroll.current) {
+            passEvent(event);
+            history.push(pageNames.EVENT.toLowerCase());
+        }
         scroll.current = false;
     }
 
@@ -53,10 +57,12 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }
 
     const startDrag = (e, id) => {
-        e.preventDefault();
-        ispressedDown.current = true;
-        document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
-        startTime.current = id;
+        if (e.button === 0) {
+            e.preventDefault();
+            ispressedDown.current = true;
+            document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
+            startTime.current = id;
+        }
     }
 
     const dragOver = (e, id) => {
@@ -67,8 +73,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }
 
     const drag = (e, id) => {
-        e.preventDefault();
-        if (ispressedDown.current) {
+        if (ispressedDown.current && e.button === 0) {
+            e.preventDefault();
             if (dragStartingPosition === undefined) dragStartingPosition = e.clientY;
             isdragging.current = true;
             document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
@@ -77,8 +83,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }
 
     const endDrag = (e, id) => {
-        e.preventDefault();
-        if (isdragging.current && ispressedDown.current) {
+        if (isdragging.current && ispressedDown.current && e.button === 0) {
+            e.preventDefault();
             isdragging.current = false;
             ispressedDown.current = false;
             endTime.current = id;
@@ -108,7 +114,8 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }
 
     const showAllDayEventsAnim = () => {
-        document.getElementById("allDayContainer").style.maxHeight = `${allDayEvents.length * 40}px`;
+        const amount = allDayEvents.length === 0 ? 1 : allDayEvents.length;
+        document.getElementById("allDayContainer").style.maxHeight = `${amount * 40}px`;
     }
 
     const ToggleShowAllDay = (bool) => {
@@ -117,13 +124,11 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     }
 
     useEffect(() => {
-        const today = new Date();
-        document.getElementById("dayContainer").scrollTop = ((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.screen.height / 4);
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
         }
-    }, [allDayEvents])
+    }, [])
 
     return (
         <Container>
@@ -137,11 +142,12 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
                 </PositionButtonRightContainer>
             </TopBar>
             <AllDayContainer id={"allDayContainer"}>
-                {createAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
+                {placeAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
+                {createDayGrid(click, drag, dragOver, startDrag, endDrag)}
+                {placeTimedEvents(timedEvents, goToEvent)}
                 <CurrentTime />
-                {createDayGrid(click, drag, dragOver, startDrag, endDrag, timedEvents, goToEvent)}
             </DayContainer>
             <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
@@ -150,14 +156,14 @@ const Day = ({ setCurrentPage, selectedDay = new Date(), timedEvents, allDayEven
     )
 }
 
-const createDayGrid = (click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
+const createDayGrid = (click, drag, dragOver, startDrag, endDrag) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
-            <HourContainer key={UUID()}>
+            <HourContainer key={UUID()} offset={i}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag, events, goToEvent)}
+                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -168,63 +174,100 @@ const createDayGrid = (click, drag, dragOver, startDrag, endDrag, events, goToEv
     return array;
 }
 
-const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag, events, goToEvent) => {
+const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
         containers.push(
             <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseOut={(e) => { dragOver(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
-                {createTimedEvents(createTime(hour, i), events, goToEvent)}
             </QuarterContainer>
         )
     }
     return containers;
 }
 
-const createTimedEvents = (quarter, events, goToEvent) => {
+const placeTimedEvents = (events, goToEvent) => {
     let eventComponents = [];
+    events.sort(sortEventsOnTime)
     for (let i = 0; i < events.length; i++) {
-        if (events[i].startTime === quarter) {
-            let offset = getOffset(quarter, events);
-            eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offset={offset} height={diffQuarter(events[i].startTime, events[i].endTime)} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}><EventTitle>{events[i].title}</EventTitle></TimedEvent>)
-        }
+        const placement = caclulatePositionOfEvent(events, events[i]);
+        eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offsetLeft={placement.offsetLeft} offsetTop={placement.offsetTop} width={placement.width} height={placement.height} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}> <EventTitle>{events[i].title}</EventTitle></TimedEvent >)
     }
     return eventComponents;
 }
 
-const createAllDayEvents = (events, goToEvent, selectedDay) => {
+const sortEventsOnTime = (first, second) => {
+    return diffBetweenTime(second.startTime, first.startTime)
+}
+
+const placeAllDayEvents = (events, goToEvent, selectedDay) => {
     let eventComponents = [];
 
     for (let i = 0; i < events.length; i++) {
         eventComponents.push(
-            <AllDayEvent key={UUID()} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
+            <AllDayEvent key={events[i].id} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
                 <ColorBubble color={events[i].color}></ColorBubble>
                 <AllDayEventTitle>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
             </AllDayEvent>
         )
     }
+    if (eventComponents.length === 0) {
+        eventComponents.push(<Text key={UUID()}>geen events gevonden...</Text>)
+    }
 
     return eventComponents;
-}
-
-const getOffset = (quarter, events) => {
-    let offset = 0;
-    for (let i = 0; i < events.length; i++) {
-        if (diffQuarter(events[i].startTime, quarter) < diffQuarter(events[i].startTime, events[i].endTime) && diffQuarter(events[i].startTime, quarter) > 0) {
-            offset += 1;
-        }
-    }
-    return offset;
 }
 
 const createTime = (hour, quarter) => {
     return `${hour < 10 ? "0" + hour : hour}:${quarter * 15 === 0 ? "00" : quarter * 15}`;
 }
 
-const diffQuarter = (startTime, endTime) => {
+const diffBetweenTime = (startTime, endTime) => {
     const start = startTime.split(':');
     const end = endTime.split(':');
-    return ((parseInt(end[0]) * 4) + (parseInt(end[1]) / 15)) - ((parseInt(start[0]) * 4) + (parseInt(start[1]) / 15));
+    return ((parseInt(end[0]) * 60) + (parseInt(end[1]))) - ((parseInt(start[0]) * 60) + (parseInt(start[1])));
 }
+
+const caclulatePositionOfEvent = (events, event) => {
+    let offsetTop = diffBetweenTime("00:00", event.startTime) * 3;
+    let offsetLeft = undefined;
+    let height = diffBetweenTime(event.startTime, event.endTime) * 3;
+    if (height < 25) height = 25;
+    let width = undefined;
+
+    const collisionEvents = events.filter((storedEvent) => {
+        //top half
+        if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.startTime) > 0) return true;
+        //bottom half
+        else if (event.startTime.localeCompare(storedEvent.endTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
+        //inside
+        else if (event.startTime.localeCompare(storedEvent.startTime) > 0 && event.endTime.localeCompare(storedEvent.endTime) < 0) return true;
+        //outside
+        else if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
+        //same
+        else if (event.startTime.localeCompare(storedEvent.startTime) === 0 && event.endTime.localeCompare(storedEvent.endTime) === 0) return true;
+        else return false;
+    }).sort((eventA, eventB) => {
+        return eventA.startTime.localeCompare(eventB.startTime);
+    });
+    width = 100 / collisionEvents.length;
+    collisionEvents.forEach((storedEvent, index) => {
+        if (storedEvent.id === event.id) offsetLeft = width * index;
+    })
+    return { offsetTop, offsetLeft, height, width };
+}
+
+const mapStateToProps = state => {
+    return {
+        allDayEvents: state.eventReducer.passedEventsOfDay.allDayEvents,
+        timedEvents: state.eventReducer.passedEventsOfDay.timedEvents,
+        selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay)
+    };
+};
+
+const mapDispatchToProps = {
+    passEvent,
+}
+
 
 const Container = styled.div`
     width: 100vw;
@@ -237,7 +280,7 @@ const AllDayContainer = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     width: 100vw;
-    box-shadow: 0px 3px 5px 0px ${colors.BLACK};
+    box-shadow: 0px 3px 6px -1px ${colors.BLACK};
     z-index: 1;
     max-height: 0;
     overflow: hidden;
@@ -283,26 +326,27 @@ const ColorBubble = styled.div`
 `
 
 const TimedEvent = styled.div`
-    position: relative;
+    position: absolute;
+    width: calc(${props => props.width}% - 26px);
     text-align: center;
-    flex: 1;
-    height: calc(${props => (props.height * 100) + 100}% + ${props => props.height + 1}px);
+    height: ${props => props.height}px;
     background-color: ${props => props.color};
-    margin-left: ${props => 6 + (props.offset * 6)}px;
-    margin-right: ${props => 6 + (props.offset * 6)}px;
+    margin-top: ${props => props.offsetTop}px;
+    margin-left: calc(${props => props.offsetLeft}% + 3px);
+    margin-right: 3px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
     box-shadow: 0px 1px 2px 0px ${colors.BLACK};
     &:hover{
-        background-color: ${colorChanger(colors.RED, -0.2)}
+        background-color: ${props => colorChanger(props.color, -0.2)}
         cursor: pointer;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.RED};
+            background-color: ${props => colorChanger(props.color, -0.2)};
         }
         &:active{
-            background-color: ${colorChanger(colors.RED, -0.2)}
+            background-color: ${props => colorChanger(props.color, -0.2)}
     }
 `
 
@@ -378,12 +422,23 @@ const HourContainer = styled.div`
     min-height: 180px;
     width: 100%;
     display: flex;
+    position: absolute;
+    top: ${props => props.offset * 180}px;
 `
 
 const Title = styled.p`
     font-size: 25px;
     width: 100%;
     line-height: 50px;
+    text-align:center;
+    margin: 0;
+    color: ${colors.DARK_GREEN};
+`
+
+const Text = styled.p`
+    font-size: 18px;
+    width: 100%;
+    line-height: 40px;
     text-align:center;
     margin: 0;
     color: ${colors.DARK_GREEN};
@@ -398,6 +453,7 @@ const TopBar = styled.div`
 `
 
 const DayContainer = styled.div`
+    position:absolute;
     width: 100vw;
     height: calc(100% - 50px);
     overflow: auto;
@@ -421,4 +477,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-export default memo(Day, areEqual);
+const MemoDay = memo(connect(mapStateToProps, mapDispatchToProps)(Day), areEqual)
+export default MemoDay;

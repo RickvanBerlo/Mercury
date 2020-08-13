@@ -11,7 +11,7 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
+const SideMenu = ({ history, sideMenuButtons = [] }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     let screenHeight = getScreenResolution().height;
@@ -25,7 +25,8 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
     }
 
     const setPositionSideMenu = async (X) => {
-        const transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
+        if (document.getElementById("sideMenu").style.left === "") document.getElementById("sideMenu").style.left = "-300px";
+        let transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
         document.getElementById("label").style.cursor = "pointer";
         document.getElementById("sideMenu").style.transform = "translateX(" + transformOffset + "px)";
         document.getElementById("sideMenu").style.transition = "transform 0.4s linear";
@@ -35,7 +36,7 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
 
     const changeCurrentPage = (name) => {
         if (!scroll.current) {
-            setCurrentPage(name);
+            history.push("/" + name);
             sidemenuX.current = SIDEMENU_MIN;
             setPositionSideMenu(sidemenuX.current);
         }
@@ -137,11 +138,11 @@ const SideMenu = ({ history, setCurrentPage, sideMenuButtons = [] }) => {
 
 const createSideMenuButtons = (buttons, changeCurrentPage) => {
     let array = [];
-    for (let index of buttons.keys()) {
-        const Icon = buttons[index].ICON;
+    for (const key in buttons) {
+        const Icon = buttons[key].ICON;
         array.push(
-            <ContainerLink key={index} onTouchEnd={() => { changeCurrentPage(buttons[index].NAME) }} onClick={() => { changeCurrentPage(buttons[index].NAME) }}>
-                <Text>{buttons[index].NAME}</Text>
+            <ContainerLink key={key} onTouchEnd={() => { changeCurrentPage(key.toLowerCase()) }} onClick={() => { changeCurrentPage(key.toLowerCase()) }}>
+                <Text>{key}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLink>
         )
@@ -163,7 +164,7 @@ const Container = styled.div`
     background-color: ${colors.WHITE};
     height: 100vh;
     width: 300px;
-    box-shadow: 0px 0px 10px 2px;
+    box-shadow: 0px 0px 5px 1px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     text-align:center;
@@ -246,7 +247,7 @@ const Label = styled.div`
     height: 50px;
     cursor: pointer;
     width: 40px;
-    box-shadow: 5px 0px 6px -2px;
+    box-shadow: 4px 0px 3px -2px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     user-select: none;
@@ -276,7 +277,6 @@ const Bar3 = styled.div`
 `
 
 const AreEqual = (prevProps, nextProps) => {
-    if (prevProps.setCurrentPage === nextProps.setCurrentPage) return true;
     return false;
 }
 
