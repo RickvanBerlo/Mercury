@@ -44,7 +44,6 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
             timer.current = undefined;
             changeStateSelectedFiles(file);
         }
-
     }
 
     const changeStateSelectedFiles = (file) => {
@@ -335,12 +334,20 @@ const ButtonContainer = styled.div`
 `
 
 const ItemsContainer = styled.div`
+    position: fixed;
+    top: 50px;
     width: 100%;
+    overflow: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
     height: calc(100% -  50px);
     border: 0px solid ${colors.DARK_GREEN};
     transition: background-color 0.3s linear;
     &:dragging{
         background-color: ${colors.BLACK};
+    }
+    &::-webkit-scrollbar {
+        display: none;
     }
 `
 
@@ -366,13 +373,15 @@ const TitleContainer = styled.div`
 `
 
 const TopBar = styled.div`
-    position: relative;
+    position: fixed;
+    top: 0;
     justify-content: space-between;
     z-index: 1;
     display: flex;
     width: 100vw;
     height: 50px;
     box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${colors.WHITE};
 `
 
 const ItemContainer = styled.div`

@@ -19,6 +19,7 @@ const EventEdit = ({ addEvent, replaceEvent, history, event, selectedDay }) => {
 
     const onSubmit = (e, values) => {
         e.preventDefault();
+        console.log(values);
         if (Object.keys(event).length === 0) addEvent(values);
         else replaceEvent(values);
         history.push(pageNames.CALENDAR.toLowerCase());

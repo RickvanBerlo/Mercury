@@ -22,6 +22,7 @@ const NoteEdit = ({ removeNote, add, replace, history, note }) => {
 
     const onSubmit = (event, values) => {
         event.preventDefault();
+        console.log(values);
         note.id === undefined ? add(values) : replace(values);
         history.push(pageNames.NOTES.toLowerCase());
     }

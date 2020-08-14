@@ -4,7 +4,7 @@ import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 import { datediff, parseDateYMD } from '../../utils/date';
 
-const Event = ({ navigateToEventPage, placedDate, offset, props }) => {
+const Event = ({ navigateToEventPage, index, placedDate, offset, props }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToEvent = (e) => {
@@ -29,7 +29,7 @@ const Event = ({ navigateToEventPage, placedDate, offset, props }) => {
     }, [])
 
     return (
-        <Container onClick={goToEvent} height={height} offset={offset} width={calculateWidth()} color={props.color}><Title height={height}>{props.title}</Title></Container>
+        <Container onClick={goToEvent} height={height} index={index} offset={offset} width={calculateWidth()} color={props.color}><Title height={height}>{props.title}</Title></Container>
     )
 
 }
@@ -45,7 +45,7 @@ const fadein = keyframes`
 
 const Container = styled.div`
     position: relative;
-    margin-top: ${props => ((props.offset * 21)) + 3}px;
+    transform:  translateY(calc(${props => props.offset * 100}% + ${props => props.index * 3}px));
     margin-left: 3px;
     height: 16%;
     width: calc(100% + (${props => props.width} * 100%) - 6px);

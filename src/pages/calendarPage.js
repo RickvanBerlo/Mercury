@@ -21,6 +21,7 @@ import AddIcon from 'react-ionicons/lib/MdAdd';
 const DEAD_ZONE_SCROLL = 150;
 const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
+const AMOUNT_OF_EVENTS_IN_DAY_CONTAINER = 3;
 
 const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel, setModelActive, setCurrentMonth, setCurrentYear, setModelInactive, setNextMonth, setPreviousMonth, currentMonth, currentYear, setCurrentDay, passEvent }) => {
     const isPressing = useRef(false);
@@ -326,7 +327,6 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
         const date = new Date(firstDayOfWeek);
         const dayEventsObj = events[firstDayOfWeek.toLocaleDateString("fr-CA")];
         let amountofEvents = dayEventsObj === undefined ? 0 : dayEventsObj.offset;
-        let useOffset = true;
         const navigate = () => { navigateToDayPage(date, getAllDayEvents(date, events, dayEventsObj), dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }
         //make day
         days.push(
@@ -336,15 +336,15 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
                 onTouchEnd={navigate}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
-                        if (amountofEvents < 3) { useOffset = false; amountofEvents++; return <Event key={event.id} offset={index === 0 ? dayEventsObj.offset : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
-                        else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={0} navigateToDayPage={navigate} /> }
+                        if (amountofEvents < AMOUNT_OF_EVENTS_IN_DAY_CONTAINER) { amountofEvents++; return <Event key={event.id} index={amountofEvents} offset={dayEventsObj.offset} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                        else if (amountofEvents === AMOUNT_OF_EVENTS_IN_DAY_CONTAINER) { amountofEvents++; return <EventPlaceholder index={amountofEvents} key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={dayEventsObj.offset} navigateToDayPage={navigate} /> }
                         else return null;
                     }
                     return null;
                 })}
                 {dayEventsObj !== undefined && dayEventsObj.timedEvents.map((event, index) => {
-                    if (amountofEvents < 3) { amountofEvents++; return <Event key={event.id} offset={useOffset ? index === 0 ? dayEventsObj.offset : 0 : 0} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
-                    else if (amountofEvents === 3) { amountofEvents++; return <EventPlaceholder key={date.toLocaleDateString("fr-CA")} offset={0} navigateToDayPage={navigate} /> }
+                    if (amountofEvents < AMOUNT_OF_EVENTS_IN_DAY_CONTAINER) { amountofEvents++; return <Event key={event.id} index={amountofEvents} offset={dayEventsObj.offset} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
+                    else if (amountofEvents === AMOUNT_OF_EVENTS_IN_DAY_CONTAINER) { amountofEvents++; return <EventPlaceholder index={amountofEvents} key={date.toLocaleDateString("fr-CA")} offset={dayEventsObj.offset} navigateToDayPage={navigate} /> }
                     else return null;
                 })}
                 <DayNumber

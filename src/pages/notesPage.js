@@ -50,8 +50,15 @@ const Notes = ({ notes, getNotes, passNote, history }) => {
     }, [])
     return (
         <Container>
-            <NoItemsIcon show={areThereNotes(notes)} id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>
-            {createNotes(notes, amountOfRows, goToEditNote)}
+            <TopBar>
+                <TitleContainer>
+                    <HeaderTitle>Config</HeaderTitle>
+                </TitleContainer>
+            </TopBar>
+            <Content>
+                <NoItemsIcon show={areThereNotes(notes)} id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>
+                {createNotes(notes, amountOfRows, goToEditNote)}
+            </Content>
             <AddButton onClick={goToEditNote}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
@@ -163,6 +170,42 @@ const fadein_enlarge = keyframes`
   }
 `
 
+const Content = styled.div`
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    overflow: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    height: calc(100% -  50px);
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`
+
+const HeaderTitle = styled.p`
+    font-size: 25px;
+    width: 100vw;
+    margin: auto;
+    line-height: 50px;
+    overflow: hidden;
+    color: ${colors.DARK_GREEN};
+`
+
+const TitleContainer = styled.div`
+    text-align:center;
+`
+
+const TopBar = styled.div`
+    position: fixed;
+    justify-content: space-between;
+    z-index: 1;
+    display: flex;
+    width: 100vw;
+    height: 50px;
+    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+`
+
 const NoteContainer = styled.div`
     width: 95%;
     max-width: 95%;
@@ -176,8 +219,8 @@ const NoteContainer = styled.div`
 `
 
 const ScrollVerticalContainer = styled.div`
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
 `
 

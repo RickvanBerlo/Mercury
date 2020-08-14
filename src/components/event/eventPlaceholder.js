@@ -3,7 +3,7 @@ import styled, { css, keyframes } from 'styled-components';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 
-const EventPlaceholder = ({ navigateToDayPage, offset }) => {
+const EventPlaceholder = ({ navigateToDayPage, index, offset }) => {
     const [height, setHeight] = useState(window.outerHeight < 1000 ? window.outerHeight / 50 : 20);
 
     const goToDay = (e) => {
@@ -23,7 +23,7 @@ const EventPlaceholder = ({ navigateToDayPage, offset }) => {
     }, [])
 
     return (
-        <Container onClick={goToDay} height={height} offset={offset}><Title height={height}>...</Title></Container>
+        <Container onClick={goToDay} height={height} index={index} offset={offset}><Title height={height}>...</Title></Container>
     )
 
 }
@@ -39,7 +39,7 @@ const fadein = keyframes`
 
 const Container = styled.div`
     position: relative;
-    margin-top: ${props => ((props.offset * 23)) + 3}px;
+    transform:  translateY(calc(${props => props.offset * 100}% + ${props => props.index * 3}px));
     margin-left: 3px;
     height: 16%;
     width: calc(100%  - 6px);

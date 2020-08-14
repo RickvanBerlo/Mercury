@@ -129,11 +129,10 @@ const DescriptionContainer = styled.div`
     display: flex;
 `
 
-const Description = styled.p`
+const Description = styled.div`
     margin: 0;
     color: ${colors.DARK_GREEN};
     font-size: 20px;
-    padding-top: 20px;
     padding-left: 53px;
     white-space: pre;
 `
