@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-public class accessConfiguration {
+public class AccessConfiguration {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
