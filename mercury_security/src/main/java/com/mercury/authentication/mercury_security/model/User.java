@@ -2,12 +2,17 @@ package com.mercury.authentication.mercury_security.model;
 
 import lombok.Data;
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "user")
 @Data
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1;
+
     public User() {
     }
 

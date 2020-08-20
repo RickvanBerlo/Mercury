@@ -10,6 +10,8 @@ import java.util.List;
 
 public class UserDetail extends User implements UserDetails {
 
+    private static final long serialVersionUID = 1;
+
     public UserDetail(User user) {
         super(user);
     }
