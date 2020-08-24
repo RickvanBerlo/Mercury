@@ -2,36 +2,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-DemoApplication<security>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "com.mercury.authentication.security.DemoApplication",
-            "projectName": "security",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-App<mercury-authentication>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "com.mercury.authentication.mercuryauthentication.App",
-            "projectName": "mercury-authentication",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-App<mercury-authentication>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "com.mercury.authentication.App",
-            "projectName": "mercury-authentication",
-            "args": ""
-        },
-        {
-            "type": "java",
             "name": "Spring Boot-MavenWrapperDownloader",
             "request": "launch",
             "cwd": "${workspaceFolder}",
