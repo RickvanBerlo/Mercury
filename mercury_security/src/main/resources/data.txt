@@ -10,7 +10,7 @@ INSERT INTO oauth_client_details (
     additional_information) 
     VALUES (
         'mercury', 
-        '{bcrypt}$2y$12$nutRdBv2M8gjCnKVoZNHsuEYQhe4ntY5TcwC./Vfi2qtTlHs23ODG', 
+        '{noop}', 
         'http://localhost:3000/home', 
         'all', 
         '3600', 
