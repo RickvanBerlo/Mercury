@@ -4,6 +4,23 @@
     height: 100%;
 }
 
+.instruction{
+    color: white;
+    text-align: center;
+}
+
+#kc-info-message:last-child{
+    padding-bottom: 1px;
+}
+
+#kc-error-message{
+    padding-bottom: 1px;
+}
+
+#backToApplication{
+    padding-bottom: 1px;
+}
+
 .alert-error {
     background-color: #ff00005c;
     border-color: #cc0000;
