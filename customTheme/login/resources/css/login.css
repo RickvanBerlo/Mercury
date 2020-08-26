@@ -5,9 +5,13 @@
 }
 
 .alert-error {
-    background-color: #ffffff;
+    background-color: #ff00005c;
     border-color: #cc0000;
-    color: #333333;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ff000073;
+    margin-bottom: 10px;
 }
 
 #kc-locale ul {
@@ -98,9 +102,7 @@ div.kc-logo-text span {
 }
 
 #kc-header {
-    color: #ededed;
-    overflow: visible;
-    white-space: nowrap;
+    display: none;
 }
 
 #kc-header-wrapper {
@@ -114,6 +116,8 @@ div.kc-logo-text span {
 
 #kc-content {
     width: 100%;
+    margin-top: 65px;
+    height: fit-content;
 }
 
 #kc-attempted-username{
@@ -131,17 +135,99 @@ div.kc-logo-text span {
     padding-top:8px;
 }
 
+.control-label{
+    color: white;
+    font-size: 12px;
+    padding-left: 6px;
+}
+
+.login-pf-settings{
+    display:flex;
+}
+
+.forgotPassword{
+    margin: 0;
+    height: 20px;
+    margin-top: 8px;
+    float: right;
+    margin-bottom: 10px;
+}
+
+.forgotPassword span a{
+    color: white;
+}
+
+.forgotPassword span a:hover {
+    color: #6ac1dc;
+}
+
+input[type=submit] {
+    background-color: #1ca6a5;
+    width: -webkit-fill-available;
+    height: 45px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    border-color: #2f928e;
+    margin-bottom: 20px;
+}
+
+input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    transform: translateY(2px);
+}
+
+input {
+     background-color : #cdcdcd38; 
+     color: white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px #cdcdcd00 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-internal-autofill-selected {
+    appearance: unset !important;
+    background-color: #cdcdcd38 !important;
+    background-image: none !important;
+    color: transparent !important;
+}
+
+input:focus {
+    outline: transparent;
+}
+
+.form-control{
+    height: 30px;
+    border-radius: 5px;
+    padding: 0px 15px;
+    margin-bottom: 10px;
+    border-color: #e8f0fe24;
+    width: -webkit-fill-available;
+}
+
 /* #kc-content-wrapper {
     overflow-y: hidden;
 } */
 
-#kc-info {
-    padding-bottom: 200px;
-    margin-bottom: -200px;
-}
-
 #kc-info-wrapper {
     font-size: 13px;
+    color: white
+}
+
+#kc-info{
+    padding-bottom: 10px;
 }
 
 #kc-form-options span {
@@ -150,7 +236,11 @@ div.kc-logo-text span {
 
 #kc-form-options .checkbox {
     margin-top: 0;
-    color: #72767b;
+    color: white;
+}
+
+#kc-form-options{
+    flex: 1;
 }
 
 #kc-terms-text {
@@ -158,7 +248,18 @@ div.kc-logo-text span {
 }
 
 #kc-registration {
-    margin-bottom: 15px;
+    padding-bottom: 10px;
+    text-align: end;
+    color: white;
+    font-size: 16px;
+}
+
+#kc-registration span a {
+    color: white;
+}
+
+#kc-registration span a:hover {
+    color: #6ac1dc;
 }
 
 /* TOTP */
@@ -344,8 +445,10 @@ a.zocial  {
 
 @media (max-width: 767px) {
 
-    .login-pf body {
-      background: white;
+    .card-pf{
+        max-width: 100% !important;
+        margin-top: 0 !important;
+        min-height: calc(100vh - 16px);
     }
 
     #kc-header {
@@ -421,6 +524,14 @@ a.zocial  {
         padding-top: 50px;
         top: 20%;
     }
+
+    .login-pf-header{
+        height: 165px  !important;
+    }
+
+    #kc-page-title{
+        top: 165px  !important;
+    }
 }
 
 .card-pf form.form-actions .btn {
@@ -429,8 +540,9 @@ a.zocial  {
 }
 
 #kc-form-buttons {
-  margin-top: 40px;
+  margin-top: 10px;
 }
+
 
 .login-pf-page .login-pf-brand {
   margin-top: 20px;
@@ -439,12 +551,30 @@ a.zocial  {
 }
 
 .card-pf {
-  background: #fff;
-  margin: 0 auto;
+  background: rgba(216, 216, 216, 0.322);
   padding: 0 20px;
-  max-width: 500px;
-  border-top: 0;
-  box-shadow: 0 0 0;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 70px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 29px 1px rgb(83 83 83 / 81%);
+  -moz-box-shadow: 0px 0px 29px 1px rgb(83 83 83 / 81%);
+  box-shadow: 0px 0px 29px 1px rgb(83 83 83 / 81%);
+}
+
+.login-pf-header{
+    background: url(../img/logoWhite.png) no-repeat center center;
+    height: 200px;
+    background-size: 160px;
+}
+
+#kc-page-title{
+    color: white;
+    position: relative;
+    margin: 0;
+    font-size: 28px;
+    top: 200px;
+    text-align: center;
 }
 
 /*tablet*/
