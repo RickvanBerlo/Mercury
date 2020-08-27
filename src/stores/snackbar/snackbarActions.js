@@ -5,6 +5,7 @@ export const actions = {
 }
 
 export const addMessage = (message) => {
+    console.log("hallo")
     return {
         type: actions.ADD_MESSAGE,
         payload: message

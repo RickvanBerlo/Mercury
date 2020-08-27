@@ -1,6 +1,6 @@
-import { actions } from './noteActions'
+import { actions } from './noteActions';
 
-const InitState = { notes: [], passedNote: undefined }
+const InitState = { notes: [], passedNote: undefined}
 
 const fulfilled = "_FULFILLED";
 

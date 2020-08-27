@@ -7,15 +7,19 @@ import storageReducer from './storage/storageReducer';
 import weblinkReducer from './weblinks/weblinkReducer';
 import snackbarReducer from './snackbar/snackbarReducer';
 import modelReducer from './models/modelReducer';
-import eventReducer from './events/eventReducer';
+import eventReducer from './events/eventReducer';   
+import keycloakReducer from './keycloak/keycloakReducer';   
+//import authenticationReducer from './authentication/authenticationReducer';
 
 const allReducers = combineReducers({
     noteReducer,
+    keycloakReducer,
     storageReducer,
     weblinkReducer,
     snackbarReducer,
     modelReducer,
-    eventReducer
+    eventReducer,
+    
 })
 
 export default createStore(allReducers, applyMiddleware(ReduxThunk, Logger, Promise));

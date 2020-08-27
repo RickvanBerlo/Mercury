@@ -12,7 +12,7 @@ const DashboardRoutes = ({ history }) => {
         for (const key in pageNames) {
             const Page = pages[pageNames[key]].PAGE;
             privateRoutes.push(
-                <PrivateRoute key={key} path={"/" + pageNames[key]} render={(routeProps) => {
+                <PrivateRoute key={key} path={"/dashboard/" + pageNames[key]} render={(routeProps) => {
                     return <Page history={history} {...routeProps} />
                 }} />
             )

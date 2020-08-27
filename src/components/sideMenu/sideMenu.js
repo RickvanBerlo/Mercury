@@ -1,8 +1,10 @@
 import React, { memo, useEffect, useRef } from "react";
 import styled from 'styled-components';
+import { connect } from "react-redux";
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
 import { mobilecheck } from '../../utils/deviceCheck';
+import { logout } from '../../stores/keycloak/keycloakActions';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 
 const INIT_LABEL_Y = 75;
@@ -11,7 +13,7 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, sideMenuButtons = [] }) => {
+const SideMenu = ({ history, logout, sideMenuButtons = [] }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     let screenHeight = getScreenResolution().height;
@@ -36,7 +38,7 @@ const SideMenu = ({ history, sideMenuButtons = [] }) => {
 
     const changeCurrentPage = (name) => {
         if (!scroll.current) {
-            history.push("/" + name);
+            history.push("/dashboard/" + name);
             sidemenuX.current = SIDEMENU_MIN;
             setPositionSideMenu(sidemenuX.current);
         }
@@ -128,7 +130,7 @@ const SideMenu = ({ history, sideMenuButtons = [] }) => {
             <ContainerButtons>
                 {createSideMenuButtons(sideMenuButtons, changeCurrentPage)}
             </ContainerButtons>
-            <ContainerLogoOut onTouchStart={() => { alert("WIP") }} onClick={() => { alert("WIP") }}>
+            <ContainerLogoOut onTouchStart={() => { logout() }} onClick={() => { logout() }}>
                 <Text>Log out</Text>
                 <LogOut style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
             </ContainerLogoOut>
@@ -154,6 +156,10 @@ const toggleAnimationLabel = (toggle) => {
     document.getElementById("bar1").style.transform = toggle ? "rotate(-45deg) translate(-9px, 6px)" : "rotate(0deg) translate(0px, 0px)";
     document.getElementById("bar2").style.opacity = toggle ? 0 : 1;
     document.getElementById("bar3").style.transform = toggle ? "rotate(45deg) translate(-9px, -7px)" : "rotate(0deg) translate(0px, 0px)";
+}
+
+const mapDispatchToProps = {
+    logout
 }
 
 const Container = styled.div`
@@ -280,5 +286,5 @@ const AreEqual = (prevProps, nextProps) => {
     return false;
 }
 
-const MemoSideMenu = memo(SideMenu, AreEqual);
+const MemoSideMenu = memo(connect(undefined, mapDispatchToProps)(SideMenu), AreEqual);
 export default MemoSideMenu;
