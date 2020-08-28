@@ -42,7 +42,7 @@ header{
 }
 
 .navbar-collapse-1{
-    width: 100px;
+    width: 210px;
 }
 
 .navbar-title {
@@ -60,6 +60,7 @@ header{
 }
 
 .navbar-pf .navbar-utility {
+    display: flex;
     right: 20px;
     padding-right: 10px;
     top: -34px;
@@ -68,6 +69,7 @@ header{
 
 .navbar-utility li{
     list-style-type: none;
+    padding-right: 10px;
 }
 
 .navbar-utility li a{
