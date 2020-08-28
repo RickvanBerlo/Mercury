@@ -1,23 +1,5 @@
 {
     "configurations": [
-        {
-            "type": "java",
-            "name": "Spring Boot-MavenWrapperDownloader",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "MavenWrapperDownloader",
-            "args": ""
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-Application<mercury_security>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "mainClass": "com.mercury.authentication.mercury_security.Application",
-            "projectName": "mercury_security",
-            "args": ""
-        }
+        
     ]
 }
