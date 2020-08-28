@@ -1,19 +1,26 @@
-# Mercury_Authentication
-This repository contains the authentication server for all Mercury repositories.
+This server will authenticate all other (code_name)mercury application.
 
-This project is writen in Spring boot with the following dependencies:
+This server uses Keycloak as its authentication server.
 
-* spring-boot-starter-data-jpa
-* spring-boot-starter-web
-* spring-cloud-starter-oauth2
-* spring-boot-starter-thymeleaf
-* spring-cloud-starter-security
-* lombok
-* mysql-connector-java
+In the map CustomTheme is a new theme written for all mercury applications.
 
-This oauth2 server accepts the following grant-types:
+# execute
 
-* authorization_code
-* password
-* refresh_token
-* implicit
+To execute this server you will need to install the following dependecies
+
+* docker
+* docker-compose
+
+in the root folder of this project use the command: docker-compose up -d
+
+This will start the services Keycloak and postgres DB.
+
+
+# edit custom theme
+if you want to added the custom theme, you will need to disable chaching in keycloak. To disable this you can you the dockerfile in the root folder.
+
+build a new image from the dockerfile with the following commando: docker build --tag disableChacheInKeycloak:latest
+
+Next edit the docker-compose file on line:18 and change it to disableChacheInKeycloak:latest
+
+now use the execute steps to run the docker-compose file.
