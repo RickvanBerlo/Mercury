@@ -9,7 +9,6 @@ import snackbarReducer from './snackbar/snackbarReducer';
 import modelReducer from './models/modelReducer';
 import eventReducer from './events/eventReducer';   
 import keycloakReducer from './keycloak/keycloakReducer';   
-//import authenticationReducer from './authentication/authenticationReducer';
 
 const allReducers = combineReducers({
     noteReducer,

@@ -1,4 +1,4 @@
-import { actions } from './weblinkActions'
+import actions from './weblinkNames';
 
 const InitState = { weblinks: {} }
 

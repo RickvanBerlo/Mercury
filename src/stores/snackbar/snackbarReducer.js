@@ -1,8 +1,8 @@
 import { actions } from './snackbarActions';
-import * as events from '../events/eventActions';
-import * as storage from '../storage/storageActions';
-import * as weblinks from '../weblinks/weblinkActions';
-import * as notes from '../notes/noteActions';
+import weblinks from '../weblinks/weblinkNames';
+import notes from '../notes/noteNames';
+import storage from '../storage/storageNames';
+import events from '../events/eventNames';
 
 
 const InitState = { messages: ["Goedemorgen Rick"], timeInSeconds: 3 }
@@ -20,10 +20,10 @@ export default (state = InitState, action) => {
             return { ...state, messages: [...state.messages] };
         case (actions.SET_TIME):
             return { ...state, timeInSeconds: action.payload };
-        case (events.actions.GET_EVENTS_OF_MONTH + rejected):
-        case (storage.actions.PEEK_FOLDER + rejected):
-        case (weblinks.actions.GET_WEBLINKS + rejected):
-        case (notes.actions.GET_NOTES + rejected):
+        case (events.GET_EVENTS_OF_MONTH + rejected):
+        case (storage.PEEK_FOLDER + rejected):
+        case (weblinks.GET_WEBLINKS + rejected):
+        case (notes.GET_NOTES + rejected):
             state.messages.push("Het ophalen van je data is mislukt");
             return { ...state, messages: [...state.messages] };
         default:

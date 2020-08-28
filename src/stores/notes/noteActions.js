@@ -1,16 +1,7 @@
 import * as database from '../../databases/notes';
+import actions from './noteNames';
 
 const init_Note = { id: undefined, title: undefined, description: undefined };
-
-export const actions = {
-    ADD_NOTE: "ADD_NOTE",
-    REMOVE_NOTE: "REMOVE_NOTE",
-    REMOVE_NOTES: "REMOVE_NOTES",
-    REPLACE_NOTE: "REPLACE_NOTE",
-    GET_NOTES: "GET_NOTES",
-    GET_NOTE: "GET_NOTE",
-    PASS_NOTE: "PASS_NOTE",
-}
 
 export const passNote = (note = init_Note) => {
     return {

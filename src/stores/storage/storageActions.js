@@ -1,18 +1,5 @@
 import * as database from '../../databases/storage';
-
-export const actions = {
-    ADD_FILE: "ADD_FILE",
-    ADD_FILES: "ADD_FILES",
-    DELETE_DIR: "DELETE_DIR",
-    ADD_DIR: "ADD_DIR",
-    PEEK_FOLDER: "PEEK_FOLDER",
-    DELETE_FILE: "DELETE_FILE",
-    DELETE_FILES: "DELETE_FILES",
-    ADD_SELECTEDFILE: "ADD_SELECTEDFILE",
-    DELETE_SELECTEDFILES: "DELETE_SELECTEDFILES",
-    DELETE_SELECTEDFILE: "DELETE_SELECTEDFILE",
-    DOWNLOAD_FILE: "DOWNLOAD_FILE",
-}
+import actions from './storageNames';
 
 export const addFile = (file, path) => {
     return {

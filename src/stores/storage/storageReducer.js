@@ -1,4 +1,4 @@
-import { actions } from './storageActions';
+import actions from './storageNames';
 
 const InitState = { storage: { "/": [] }, currentPath: "/", selectedFiles: {} }
 

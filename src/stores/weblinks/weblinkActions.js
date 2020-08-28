@@ -1,13 +1,5 @@
 import * as database from '../../databases/weblinks';
-
-export const actions = {
-    ADD_WEBLINK: "ADD_WEBLINK",
-    DELETE_WEBLINK: "DELETE_WEBLINK",
-    DELETE_WEBLINKS: "DELETE_WEBLINKS",
-    REPLACE_WEBLINK: "REPLACE_WEBLINK",
-    GET_WEBLINKS: "GET_WEBLINKS",
-    GET_WEBLINK: "GET_WEBLINK",
-}
+import actions from './weblinkNames';
 
 export const add = (weblink) => {
     return {

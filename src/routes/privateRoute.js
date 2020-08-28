@@ -10,13 +10,13 @@ const PrivateRoute = ({ component, login, keycloak, authenticated, ...rest }) =>
         if(!authenticated){
             const keycloak = Keycloak(props);
             keycloak.updateToken(props.refreshTokenTime);
-            keycloak.init().success(function (authenticated) {
+            keycloak.init().then(function (authenticated) {
                 if(!authenticated)
                     keycloak.login();
                 else{
                     login(keycloak);
                 }
-            }).error(function () {
+            }).catch(function () {
                 alert('failed to initialize');
             });
         }

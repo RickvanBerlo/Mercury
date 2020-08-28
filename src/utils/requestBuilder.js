@@ -1,11 +1,16 @@
+import store from '../stores/store';
+
 class RequestBuilder {
     #url
     #properties
     #promise
 
     constructor(url, repository) {
+        const state = store.getState();
+        const accessToken = state.keycloakReducer.keycloak.token;
+
         this.#url = url + repository;
-        this.#properties = {};
+        this.#properties = { headers: { Authorization: "Bearer " + accessToken}};
     }
 
     addURLExtendion(path) {
@@ -36,7 +41,7 @@ class RequestBuilder {
     }
 
     addHeaders(header) {
-        this.#properties.headers = header;
+        this.#properties.headers = {...this.#properties.headers, ...header};
         return this;
     }
 

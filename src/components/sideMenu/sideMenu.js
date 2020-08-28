@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState} from "react";
 import styled from 'styled-components';
 import { connect } from "react-redux";
 import colors from '../../constants/colors';
@@ -13,11 +13,12 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, logout, sideMenuButtons = [] }) => {
+const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [] }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
+    const [usersName, setUsersName] = useState("Mercury");
     let screenHeight = getScreenResolution().height;
-
+    
     const AnimEndEvent = (e) => {
         if (e.target.id === "sideMenu") {
             document.getElementById("sideMenu").style.transition = "none";
@@ -48,6 +49,16 @@ const SideMenu = ({ history, logout, sideMenuButtons = [] }) => {
     const touchMove = () => {
         scroll.current = true;
     }
+
+    const account = () => {
+        window.location.href = keycloak.createAccountUrl();
+    }
+
+    useEffect(() => {
+        keycloak.loadUserInfo().then(userInfo => {
+            setUsersName(userInfo.name);
+        })
+    }, [keycloak])
 
     useEffect(() => {
         let drag = false;
@@ -124,8 +135,8 @@ const SideMenu = ({ history, logout, sideMenuButtons = [] }) => {
                 <Bar2 id="bar2" />
                 <Bar3 id="bar3" />
             </Label>
-            <ContainerTitle>
-                <Title>Mercury</Title>
+            <ContainerTitle onTouchStart={() => { account() }} onClick={() => { account() }}>
+                <Title>{usersName}</Title>
             </ContainerTitle>
             <ContainerButtons>
                 {createSideMenuButtons(sideMenuButtons, changeCurrentPage)}
@@ -157,6 +168,12 @@ const toggleAnimationLabel = (toggle) => {
     document.getElementById("bar2").style.opacity = toggle ? 0 : 1;
     document.getElementById("bar3").style.transform = toggle ? "rotate(45deg) translate(-9px, -7px)" : "rotate(0deg) translate(0px, 0px)";
 }
+
+const mapStateToProps = state => {
+    return {
+        keycloak: state.keycloakReducer.keycloak
+    };
+};
 
 const mapDispatchToProps = {
     logout
@@ -239,8 +256,13 @@ const ContainerTitle = styled.div`
     z-index: 11;
     height: 70px;
     box-shadow: 0px 3px 10px -1px ${colors.BLACK};
-    background-color: ${colors.DARK_WHITE};
+    background-color: ${colors.WHITE};
     border-top-right-radius: 10px;
+    transition: background-color 0.2s linear;
+    &:hover{
+        background-color: ${colors.DARK_WHITE};
+        cursor: pointer;
+    }
 `
 
 const Label = styled.div`
@@ -286,5 +308,5 @@ const AreEqual = (prevProps, nextProps) => {
     return false;
 }
 
-const MemoSideMenu = memo(connect(undefined, mapDispatchToProps)(SideMenu), AreEqual);
+const MemoSideMenu = memo(connect(mapStateToProps, mapDispatchToProps)(SideMenu), AreEqual);
 export default MemoSideMenu;

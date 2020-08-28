@@ -1,4 +1,4 @@
-import { actions } from './eventActions'
+import actions from './eventNames';
 import languageSelector from '../../utils/languageSelector';
 import { datediff, parseDateYMD } from '../../utils/date'
 

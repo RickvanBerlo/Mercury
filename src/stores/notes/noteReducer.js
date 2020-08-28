@@ -1,4 +1,4 @@
-import { actions } from './noteActions';
+import actions from './noteNames';
 
 const InitState = { notes: [], passedNote: undefined}
 
