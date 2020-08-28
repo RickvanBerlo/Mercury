@@ -10,7 +10,7 @@ Every endpoint in the Api will be tested with a intergration test
 
 Go to http://localhost:8393/api/docs to see with endpoints this api supports.
 
-# java dependencie
+# java dependencies
 
 this project is using jdk 11 because of a deprecated dependencie of keycloak-spring-boot-starter. This will be fixed in version 12.
 
