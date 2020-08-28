@@ -10,6 +10,12 @@ Every endpoint in the Api will be tested with a intergration test
 
 Go to http://localhost:8393/api/docs to see with endpoints this api supports.
 
-## author
-Rick van Berlo <br/>
-https://rickvanberlo.nl/
+# java dependencie
+
+this project is using jdk 11 because of a deprecated dependencie of keycloak-spring-boot-starter. This will be fixed in version 12.
+
+# authentication
+
+This server is secured with keycloak. 
+
+Go to https://github.com/RickvanBerlo/Mercury_Authentication for more information.
