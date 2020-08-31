@@ -108,7 +108,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
     return (
         <Container>
             <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
-            <Clock />
+            <Clock analog={true}/>
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 <WebsiteLinksContainer>

@@ -14,6 +14,46 @@
 *   "redux-thunk": "^2.3.0",
 *   "styled-components": "^4.4.1"
 
+## structure
+
+this application is seperated in differend folder.
+
+### assets
+
+this folder stores all static content like images and documents
+
+### components
+
+this folder contains all the components of this applications. pages can use these components to add extra features.
+
+### constants
+
+constants contains all variable for colors pages and a lot more.
+
+### css
+
+contains all css file where styled components could not be used.
+
+### database
+
+all request to the api. all request are build by a custom requestbuilder in the utils folder.
+
+### pages
+
+these are all the views a user can see.
+
+### routes
+
+here are all the routes defined that the application has used
+
+### stores
+
+here reduc stores are stored. this will store all data of the application.
+
+### utils
+
+contains all helper classes this application uses.
+
 ## Creating pages
 For creating a page you will need to execute the following intructions.
 
@@ -23,7 +63,7 @@ For creating a page you will need to execute the following intructions.
     * edit routes/routes.js //private
 
 ### `Template.js File`
-Down below you can see a template for creating a page. Copy and past this template in you new .js file and change the names "template" to your custom name.
+Down below you can see a template for creating a page. Copy and past this template in your new .js file and change the names "template" to your custom name.
 
 ```
 import React, { memo } from "react";
@@ -90,34 +130,19 @@ Add the following line to the switch in de component Routes
 }} />
 ```
 
+## database
 
-## Available Scripts
+This application gets his resources from the api Mercury. You can find more about this api at https://github.com/RickvanBerlo/Mercury_Api.
 
-In the project directory, you can run:
+To create a new request to the api. you will need to use the custom requestbuilder in the utils folder.
 
-### `npm start`
+request are bundled in file in the folder databases.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To add a new resource, create a new file in databases and create your new request as a function.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+in the actions of redux these functions can be used to make a call to the api.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
---------------------------------------------------------------------------------------------------------------------------
-Default scrumboard:
+## scrumboard
 https://quire.io/w/rickvanberlo?view=stats
