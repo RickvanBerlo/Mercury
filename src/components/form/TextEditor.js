@@ -47,9 +47,12 @@ const TextEditorWrapper = ({ type, name, getValues, refresh, classname, props })
 
 const modules = {
     toolbar: [
+        [{ 'font': [] }],
         [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+        [{ 'color': [] }, { 'background': [] }], 
         [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+        [{ 'script': 'sub' }, { 'script': 'super' }],
         ['link', 'image', 'video'],
         ['clean']
     ],
@@ -57,9 +60,9 @@ const modules = {
 
 const formats = [
     'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block',
     'list', 'bullet', 'indent',
-    'link', 'image', 'video'
+    'link', 'image', 'video', 'color', 'font', 'background', 'script'
 ]
 
 const Container = styled.div`

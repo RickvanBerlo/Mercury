@@ -644,6 +644,9 @@
     color: #f8f8f2;
     overflow: visible;
   }
+  .ql-syntax{
+    overflow: hidden;
+  }
   .ql-snow .ql-editor img {
     max-width: 100%;
   }
