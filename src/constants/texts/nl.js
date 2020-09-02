@@ -36,6 +36,13 @@ const NL = {
             CATEGORY: "Werk",
             SECTIONS: [
                 {
+                    TITLE: "First8",
+                    SUBTITLE: "Junior software Developer",
+                    DATE: "Juli 2020 / Heden",
+                    DESCRIPTION:
+                        `Dit is mijn eerste voltijd baan. Hier ben ik bezig met het programmeren van verschillende applicaties in de programeertaal Java.`,
+                },
+                {
                     TITLE: "Student aan Huis",
                     SUBTITLE: "Thuis service medewerker",
                     DATE: "Mei 2016 / Juni 2019",
@@ -100,9 +107,8 @@ const NL = {
                     TITLE: "Mercury",
                     SUBTITLE: "React",
                     DESCRIPTION:
-                        `De code die voor deze website geschreven is, is terug te vinden in dit project. In de toekomst zal ik meerdere functionaliteiten toevoegen aan dit project. Enkele voorbeelden zijn:
-                    * Data opslag
-                    * Agenda
+                        `Mercury bevat een office omgeving waar de gebruiker een agenda kan beheren, notities in aan kan maken, bestanden in kan opslaan en todo taken kan aanmaken voor zichzelf.
+                        Deze omgeving is beveiligd door een Oauth2 implementatie.
                     `,
                     LINKS:
                         [
