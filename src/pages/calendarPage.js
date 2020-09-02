@@ -140,7 +140,7 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
             calendarPrev.removeEventListener("click", pushAnimPreviousMonth, false);
             calendarPrev.removeEventListener("touchend", pushAnimPreviousMonth, false);
         }
-    }, [setNextMonth, setPreviousMonth]);
+    }, [setNextMonth, setPreviousMonth, getEventsOfMonth]);
 
     useEffect(() => {
         getEventsOfMonth(new Date(currentYear, currentMonth, 1).toLocaleDateString("fr-CA"))

@@ -124,6 +124,10 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => 
     }
 
     useEffect(() => {
+        const today = new Date();
+        let scroll = (((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.innerHeight/2));
+        if(scroll < 0) scroll = 0;
+        document.getElementById("dayContainer").scrollTop = scroll;
         window.addEventListener("touchmove", setScroll, false);
         return () => {
             window.removeEventListener("touchmove", setScroll, false);
