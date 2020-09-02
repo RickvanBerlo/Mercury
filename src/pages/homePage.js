@@ -12,6 +12,7 @@ import Clock from '../components/clock/clock';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
 import { deleteWeblink, getWeblinks, add } from '../stores/weblinks/weblinkActions';
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
+import TodoList from '../components/todoList/todoList';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
@@ -109,6 +110,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
         <Container>
             <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
             <Clock analog={true}/>
+            <TodoList/>
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 <WebsiteLinksContainer>

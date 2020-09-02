@@ -188,7 +188,8 @@ const AnalogPosition = styled.div`
     width: 250px;
     height: 250px;
     margin: auto;
-     border-radius: 100%;
+    border-radius: 100%;
+    backdrop-filter: blur(4px);
     background-color: ${colors.TRANSPARENT};
     -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.90);
     -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.90);

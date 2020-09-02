@@ -9,6 +9,7 @@ import snackbarReducer from './snackbar/snackbarReducer';
 import modelReducer from './models/modelReducer';
 import eventReducer from './events/eventReducer';   
 import keycloakReducer from './keycloak/keycloakReducer';   
+import taskReducer from './tasks/taskReducer';   
 
 const allReducers = combineReducers({
     noteReducer,
@@ -18,6 +19,7 @@ const allReducers = combineReducers({
     snackbarReducer,
     modelReducer,
     eventReducer,
+    taskReducer,
     
 })
 

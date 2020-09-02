@@ -5,6 +5,7 @@ const repositories = {
     STORAGE_DIR: "storage/dir",
     WEBLINKS: "weblinks",
     EVENTS: "events",
+    TASKS: "tasks",
 }
 
 export default repositories;
