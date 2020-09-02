@@ -4,7 +4,6 @@ import Form from '../components/form/form';
 import Input from '../components/form/Input';
 import TextArea from '../components/form/textArea';
 import Checkbox from '../components/form/checkbox';
-import TimePicker from '../components/form/timePicker';
 import ColorPicker from '../components/form/colorPicker';
 import TextEditor from '../components/form/TextEditor';
 
@@ -47,7 +46,7 @@ class FormBuilder {
 
     addTimeInput(name, props = {}) {
         props.validation = this._getValidation(props);
-        this.elements.push(<TimePicker index={this.elements.length} name={name} props={props}></TimePicker>)
+        this.elements.push(<Input index={this.elements.length} type="time" name={name} props={props}></Input>)
     }
 
     addColorInput(name, props = {}) {

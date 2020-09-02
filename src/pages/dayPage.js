@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, memo } from "react";
+import React, { useEffect, useCallback, memo } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
@@ -8,95 +8,38 @@ import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
 import { datediff } from '../utils/date';
+import { ParseTimeToString } from '../utils/time';
 import { connect } from "react-redux";
-import { passEvent } from '../stores/events/eventActions';
+import { passEvent, setSelectedTime } from '../stores/events/eventActions';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => {
-    const scroll = useRef(false);
-    let currentDragPosition = undefined;
-    let dragStartingPosition = undefined;
-    const ispressedDown = useRef(false);
-    const isdragging = useRef(false);
-    const startTime = useRef("00:00");
-    const endTime = useRef("00:00");
+const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay, passEvent }) => {
 
     const goBack = useCallback(() => {
         history.goBack();
     }, [history])
 
-    const setScroll = () => {
-        scroll.current = true;
-    }
-
-    const goToEventEdit = () => {
-        if (!scroll.current)
-            history.push(pageNames.EVENTEDIT.toLowerCase());
-        scroll.current = false;
+    const goToEventEdit = (time) => {
+        if(time !== undefined)
+        setSelectedTime(time);
+        history.push(pageNames.EVENTEDIT.toLowerCase());
     }
 
     const goToEvent = (e, event) => {
         e.stopPropagation();
         e.preventDefault();
-        if (!scroll.current) {
-            passEvent(event);
-            history.push(pageNames.EVENT.toLowerCase());
-        }
-        scroll.current = false;
+        passEvent(event);
+        history.push(pageNames.EVENT.toLowerCase());
     }
 
     const click = (e, id) => {
+        console.log(id);
         e.preventDefault();
-        startTime.current = id;
-        endTime.current = id;
-        goToEventEdit();
-    }
-
-    const startDrag = (e, id) => {
-        if (e.button === 0) {
-            e.preventDefault();
-            ispressedDown.current = true;
-            document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
-            startTime.current = id;
-        }
-    }
-
-    const dragOver = (e, id) => {
-        if (ispressedDown.current) {
-            if (e.clientY > dragStartingPosition && e.clientY < currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
-            if (e.clientY < dragStartingPosition && e.clientY > currentDragPosition) document.getElementById(id).style.backgroundColor = colors.WHITE;
-        }
-    }
-
-    const drag = (e, id) => {
-        if (ispressedDown.current && e.button === 0) {
-            e.preventDefault();
-            if (dragStartingPosition === undefined) dragStartingPosition = e.clientY;
-            isdragging.current = true;
-            document.getElementById(id).style.backgroundColor = colors.LIGHT_GRAY;
-        }
-        currentDragPosition = e.clientY;
-    }
-
-    const endDrag = (e, id) => {
-        if (isdragging.current && ispressedDown.current && e.button === 0) {
-            e.preventDefault();
-            isdragging.current = false;
-            ispressedDown.current = false;
-            endTime.current = id;
-            if (parseInt(id.slice(0, 2) + id.slice(3)) > parseInt(startTime.current.slice(0, 2) + startTime.current.slice(3))) {
-                endTime.current = id;
-            } else {
-                endTime.current = startTime.current;
-                startTime.current = id;
-            }
-
-            goToEventEdit();
-        }
+        goToEventEdit(id);
     }
 
     useEffect(() => {
@@ -128,10 +71,6 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => 
         let scroll = (((today.getHours() * 180) + (today.getMinutes() * (180 / 60))) - (window.innerHeight/2));
         if(scroll < 0) scroll = 0;
         document.getElementById("dayContainer").scrollTop = scroll;
-        window.addEventListener("touchmove", setScroll, false);
-        return () => {
-            window.removeEventListener("touchmove", setScroll, false);
-        }
     }, [])
 
     return (
@@ -149,25 +88,25 @@ const Day = ({ history, allDayEvents, timedEvents, selectedDay, passEvent }) => 
                 {placeAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
-                {createDayGrid(click, drag, dragOver, startDrag, endDrag)}
+                {createDayGrid(click)}
                 {placeTimedEvents(timedEvents, goToEvent)}
                 <CurrentTime />
             </DayContainer>
-            <AddButton onClick={goToEventEdit} onTouchEnd={goToEventEdit}>
+            <AddButton onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
     )
 }
 
-const createDayGrid = (click, drag, dragOver, startDrag, endDrag) => {
+const createDayGrid = (click) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
             <HourContainer key={UUID()} offset={i}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click, drag, dragOver, startDrag, endDrag)}
+                    {createQuarterContainers(i, click)}
                 </HourSectionsContainer>
                 <HourNameContainer>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
@@ -178,11 +117,11 @@ const createDayGrid = (click, drag, dragOver, startDrag, endDrag) => {
     return array;
 }
 
-const createQuarterContainers = (hour, click, drag, dragOver, startDrag, endDrag) => {
+const createQuarterContainers = (hour, click) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
         containers.push(
-            <QuarterContainer key={createTime(hour, i)} id={createTime(hour, i)} onClick={(e) => { click(e, createTime(hour, i)) }} onTouchEnd={(e) => { click(e, createTime(hour, i)) }} onMouseMove={(e) => { drag(e, createTime(hour, i)) }} onMouseOut={(e) => { dragOver(e, createTime(hour, i)) }} onMouseDown={(e) => { startDrag(e, createTime(hour, i)) }} onMouseUp={(e) => { endDrag(e, createTime(hour, i)) }}>
+            <QuarterContainer key={ParseTimeToString(hour, i)} id={ParseTimeToString(hour, i)} onClick={(e) => { click(e, ParseTimeToString(hour, i)) }} onTouchEnd={(e) => { click(e, ParseTimeToString(hour, i)) }}>
             </QuarterContainer>
         )
     }
@@ -219,10 +158,6 @@ const placeAllDayEvents = (events, goToEvent, selectedDay) => {
     }
 
     return eventComponents;
-}
-
-const createTime = (hour, quarter) => {
-    return `${hour < 10 ? "0" + hour : hour}:${quarter * 15 === 0 ? "00" : quarter * 15}`;
 }
 
 const diffBetweenTime = (startTime, endTime) => {
@@ -270,6 +205,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     passEvent,
+    setSelectedTime
 }
 
 
@@ -408,6 +344,9 @@ const QuarterContainer = styled.div`
     border-bottom: 1px solid ${colors.GRAY};
     transition: background-color 0.3s linear;
     display: flex;
+    &:hover{
+        background-color: ${colors.LIGHT_GRAY}
+    }
 
 `
 

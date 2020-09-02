@@ -5,23 +5,23 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import FormBuilder from '../utils/formBuilder';
 import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
 import { connect } from "react-redux";
-import { addEvent, replaceEvent } from '../stores/events/eventActions';
+import { addEvent, replaceEvent, setSelectedTime } from '../stores/events/eventActions';
 import { pageNames } from '../constants/pages';
+import { ChangeTimeByHour } from '../utils/time';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
-const EventEdit = ({ addEvent, replaceEvent, history, event, selectedDay }) => {
+const EventEdit = ({ addEvent, replaceEvent, setSelectedTime, selectedTime, history, event, selectedDay }) => {
 
     const goBack = useCallback(() => {
-
         history.goBack();
     }, [history])
 
     const onSubmit = (e, values) => {
         e.preventDefault();
-        console.log(values);
         if (Object.keys(event).length === 0) addEvent(values);
         else replaceEvent(values);
+        setSelectedTime("00:00");
         history.push(pageNames.CALENDAR.toLowerCase());
     }
 
@@ -44,22 +44,23 @@ const EventEdit = ({ addEvent, replaceEvent, history, event, selectedDay }) => {
                 </PositionButtonContainer>
             </TopBar>
             <EventContainer>
-                {buildForm(onSubmit, selectedDay === undefined ? new Date() : selectedDay, event)}
+                {buildForm(onSubmit, selectedDay === undefined ? new Date() : selectedDay, selectedTime, event)}
             </EventContainer>
         </Container>
     )
 }
 
-const buildForm = (onSubmit, selectedDay, event) => {
+const buildForm = (onSubmit, selectedDay, selectedTime, event) => {
     const value = selectedDay.toLocaleDateString('en-CA');
+    console.log(ChangeTimeByHour(selectedTime, 1));
     const builder = new FormBuilder();
     builder.addHiddenInput("id", { value: event.id, required: false });
     builder.addTextInput("title", { value: event.title, required: true, placeholder: "Title", label: "Titel" });
     builder.addDateInput("startDate", { required: true, value: event.startDate === undefined ? value : event.startDate, label: "Start datum", dependencies: [{ valueOf: "endDate", functions: [dependencieFunctions.dateInput.largerThen, disableToggleTime] }] });
     builder.addDateInput("endDate", { required: true, value: event.endDate === undefined ? value : event.endDate, label: "Eind datum", dependencies: [{ valueOf: "startDate", functions: [dependencieFunctions.dateInput.smallerThen, disableToggleTime] }] });
     builder.addCheckboxInput("hasTime", { label: "Tijdsindeling", value: true, dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }, { valueOf: "endTime", functions: [dependencieFunctions.timePicker.toggleVisibility] }] });
-    builder.addTimeInput("startTime", { value: event.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
-    builder.addTimeInput("endTime", { value: event.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
+    builder.addTimeInput("startTime", { value: event.startTime === undefined ? selectedTime : event.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
+    builder.addTimeInput("endTime", { value: event.endTime === undefined ? ChangeTimeByHour(selectedTime,1) : event.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
     builder.addColorInput("color", { value: event.color, label: "Kleur", });
     builder.addTextEditorInput("description", { value: event.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("eventForm", "Verzenden", onSubmit);
@@ -72,12 +73,17 @@ const disableToggleTime = (dependencyValue, objectValue, object, changeValidatio
 }
 
 const mapStateToProps = state => {
-    return { event: state.eventReducer.passedEvent, selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay) };
+    return { 
+        event: state.eventReducer.passedEvent, 
+        selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay),
+        selectedTime: state.eventReducer.selectedTime,
+    };
 };
 
 const mapDispatchToProps = {
     addEvent,
-    replaceEvent
+    replaceEvent,
+    setSelectedTime
 }
 
 

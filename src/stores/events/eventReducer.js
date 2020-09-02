@@ -2,7 +2,7 @@ import actions from './eventNames';
 import languageSelector from '../../utils/languageSelector';
 import { datediff, parseDateYMD } from '../../utils/date'
 
-const InitState = { events: {}, passedEvent: {}, passedEventsOfDay: { timedEvents: [], allDayEvents: [] }, currentMonth: new Date().getMonth(), currentYear: new Date().getFullYear(), currentDay: new Date().getDate() }
+const InitState = { events: {}, passedEvent: {}, passedEventsOfDay: { timedEvents: [], allDayEvents: [] }, currentMonth: new Date().getMonth(), currentYear: new Date().getFullYear(), currentDay: new Date().getDate(), selectedTime: "00:00" }
 
 const fulfilled = "_FULFILLED";
 
@@ -42,6 +42,8 @@ export default (state = InitState, action) => {
         case actions.SET_PREVIOUS_MONTH:
             yearChange = state.currentMonth === 0;
             return { ...state, currentMonth: state.currentMonth === 0 ? 11 : state.currentMonth - 1, currentYear: yearChange ? state.currentYear - 1 : state.currentYear };
+        case actions.SET_SELECTED_TIME:
+            return { ...state, selectedTime: action.payload }
         default:
             return state;
     }

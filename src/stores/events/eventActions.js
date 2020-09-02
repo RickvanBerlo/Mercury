@@ -83,3 +83,10 @@ export const setPreviousMonth = () => {
         type: actions.SET_PREVIOUS_MONTH,
     }
 }
+
+export const setSelectedTime = (time) => {
+    return {
+        type: actions.SET_SELECTED_TIME,
+        payload: time
+    }
+}
