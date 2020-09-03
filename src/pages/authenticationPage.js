@@ -8,7 +8,7 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
-import background from '../assets/background.jpg';
+import background from '../assets/background.webp';
 import Snackbar from '../components/notification/snackbar';
 
 const Authentication = ({ history, ToggleLogin = true }) => {

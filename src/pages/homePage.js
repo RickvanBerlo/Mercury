@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import styled, { keyframes } from 'styled-components';
-import backgroundImage from '../assets/background.jpg';
-import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
+import backgroundImage from '../assets/background.webp';
+import mobileBackgroundImage from '../assets/backgroundmobile.webp';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';

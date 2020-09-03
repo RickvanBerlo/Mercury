@@ -8,7 +8,8 @@ const TopNavbar = ({ buttons }) => {
     const [opacity, setOpacity] = useState(1);
     const [activeButton, setActiveButton] = useState(0);
 
-    const listenScrollEvent = () => {
+    const listenScrollEvent = (e) => {
+        e.preventDefault();
         var activeButton = 0;
         buttons.forEach((button, index) => {
             if (button.PRIVATE_NAME) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import styled from 'styled-components';
 import IconButton from '../buttons/cv/iconButton';
 import colors from '../../constants/colors';
@@ -81,6 +81,7 @@ const ParallaxImage = styled.div`
     width: 100vw;
     height: 100vh;
     position: absolute;
+    will-change: transform;
     top: 0;
     right: 0;
     bottom: -1px;
@@ -143,4 +144,10 @@ const CenterContainer = styled.div`
         top: 15vh;
     }
 `
-export default Header;
+
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+const MemoHeader = memo(Header, areEqual)
+export default MemoHeader;

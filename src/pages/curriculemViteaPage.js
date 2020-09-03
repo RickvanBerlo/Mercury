@@ -8,13 +8,13 @@ import TopNavbar from '../components/navbars/topNavbar';
 import CurriculemVitaeSection from '../components/personalPageSections/curriculemVitaeSection';
 import { ParallaxProvider } from 'react-scroll-parallax';
 
-import background from '../assets/background.jpg';
-import backgroundMobile from '../assets/backgroundmobile.jpg';
-import LayerOne from '../assets/LayerOne.png';
-import LayerTwo from '../assets/LayerTwo.png';
-import LayerThree from '../assets/LayerThree.png';
-import LayerFour from '../assets/LayerFour.png';
-import LayerFive from '../assets/LayerFive.png';
+import background from '../assets/background.webp';
+import backgroundMobile from '../assets/backgroundmobile.webp';
+import LayerOne from '../assets/LayerOne.webp';
+import LayerTwo from '../assets/LayerTwo.webp';
+import LayerThree from '../assets/LayerThree.webp';
+import LayerFour from '../assets/LayerFour.webp';
+import LayerFive from '../assets/LayerFive.webp';
 
 const CurriculemVitae = () => {
   const strings = languageSelector();

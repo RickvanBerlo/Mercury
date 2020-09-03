@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import image from '../../assets/profilepic.png';
+import image from '../../assets/profilepic.webp';
 import colors from '../../constants/colors';
 import LinkButton from '../../components/buttons/cv/linkButton';
 
@@ -8,7 +8,8 @@ const AboutMeSection = ({ name, content, infoTitle, infoContent }) => {
     const [opacity, setopacity] = useState(0);
     const [transform, setTransfrom] = useState("30px");
 
-    const listenScrollEvent = () => {
+    const listenScrollEvent = (e) => {
+        e.preventDefault();
         if (opacity !== 0) return;
         if (document.getElementById(name).getBoundingClientRect().y < 600) {
             setopacity(1);

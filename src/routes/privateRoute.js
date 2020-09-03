@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import colors from '../constants/colors';
 import { login } from '../stores/keycloak/keycloakActions';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
-import backgroundImage from '../assets/background.jpg';
-import mobileBackgroundImage from '../assets/backgroundmobile.jpg';
+import backgroundImage from '../assets/background.webp';
+import mobileBackgroundImage from '../assets/backgroundmobile.webp';
 import Keycloak from 'keycloak-js';
 import props from '../constants/keycloak';
 
