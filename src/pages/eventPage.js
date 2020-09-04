@@ -2,9 +2,10 @@ import React, { useEffect, memo, useCallback } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
-import { pageNames } from '../constants/pages';
 import { connect } from "react-redux";
-import { deleteEvent } from '../stores/events/eventActions';
+import { deleteEvent, passEvent } from '../stores/events/eventActions';
+import { useHistory, useParams } from "react-router-dom";
+import objectIsEmpty from '../utils/objectIsEmpty';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
@@ -14,20 +15,30 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ event, deleteEvent, history }) => {
+const Event = ({ events, deleteEvent, passEvent }) => {
+    const { date, id } = useParams();
+    const history = useHistory();
+
+    let event;
+    if (!objectIsEmpty(events)) {
+    event = events[date].allDayEvents.find(event => event.id === id);
+    if (event === undefined) event = events[date].timedEvents.find(event => event.id === id);
+    }
+    if (event === undefined) event = {};
 
     const goBack = useCallback(() => {
         history.goBack();
     }, [history])
 
     const goRemove = useCallback(() => {
+        passEvent(event);
         deleteEvent(event.id);
-        history.push(pageNames.CALENDAR.toLowerCase());
-    }, [history, deleteEvent, event])
+        history.goBack();
+    }, [history, deleteEvent, event, passEvent])
 
     const goEdit = useCallback(() => {
-        history.push(pageNames.EVENTEDIT.toLowerCase());
-    }, [history])
+        history.push(`${id}/eventedit`);
+    }, [history, id])
 
     useEffect(() => {
 
@@ -91,12 +102,13 @@ const Event = ({ event, deleteEvent, history }) => {
 
 const mapStateToProps = state => {
     return {
-        event: state.eventReducer.passedEvent
+        events: state.eventReducer.events
     };
 };
 
 const mapDispatchToProps = {
-    deleteEvent
+    deleteEvent,
+    passEvent
 }
 
 const Container = styled.div`

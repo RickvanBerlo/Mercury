@@ -16,7 +16,7 @@ const InputWrapper = ({ type, name, getValues, refresh, classname, props }) => {
     }, [value, getValues, name, props])
 
     useEffect(() => {
-        const callback = (value, props) => {
+        const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
                     setValue(props.value === undefined ? "" : props.value);

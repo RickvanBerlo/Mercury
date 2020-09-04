@@ -1,30 +1,37 @@
 import React, { useCallback, useEffect } from "react";
 import { connect } from "react-redux";
-import { removeNote, replace, add } from '../stores/notes/noteActions';
+import { removeNote, replace, add, passNote } from '../stores/notes/noteActions';
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
-import { pageNames } from '../constants/pages';
 import FormBuilder from '../utils/formBuilder';
+import { useParams, useHistory } from 'react-router-dom';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 
-const NoteEdit = ({ removeNote, add, replace, history, note }) => {
+const NoteEdit = ({ removeNote, add, replace, notes, passNote }) => {
+    const history = useHistory();
+    const { id } = useParams();
+
+    let note = id === undefined ? {} :  notes[id]; 
+    if(note === undefined) note = {};
+
     const goBack = useCallback(() => {
-        history.push(pageNames.NOTES.toLowerCase());
+        history.goBack();
     }, [history])
 
     const goRemove = useCallback(() => {
+        passNote(note);
         removeNote(note.id);
         goBack();
-    }, [goBack, note, removeNote])
+    }, [goBack, note, removeNote, passNote])
 
     const onSubmit = (event, values) => {
         event.preventDefault();
         console.log(values);
         note.id === undefined ? add(values) : replace(values);
-        history.push(pageNames.NOTES.toLowerCase());
+        goBack();
     }
 
     useEffect(() => {
@@ -69,13 +76,14 @@ const buildForm = (onSubmit, note) => {
 }
 
 const mapStateToProps = state => {
-    return { note: state.noteReducer.passedNote };
+    return { notes: state.noteReducer.notes };
 };
 
 const mapDispatchToProps = {
     removeNote,
     replace,
-    add
+    add,
+    passNote
 }
 
 const Container = styled.div`

@@ -1,9 +1,7 @@
 import * as database from '../../databases/notes';
 import actions from './noteNames';
 
-const init_Note = { id: undefined, title: undefined, description: undefined };
-
-export const passNote = (note = init_Note) => {
+export const passNote = (note) => {
     return {
         type: actions.PASS_NOTE,
         payload: note

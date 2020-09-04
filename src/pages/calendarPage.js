@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, memo } from "react";
+import React, { useEffect, useRef, memo, useState, useCallback } from "react";
 import styled from 'styled-components';
 import colors from '../constants/colors';
 import { connect } from "react-redux";
-import { getEventsOfMonth, passEventsOfDay, setCurrentMonth, setCurrentYear, setNextMonth, setPreviousMonth, setCurrentDay, passEvent } from '../stores/events/eventActions';
+import { getEventsOfMonth } from '../stores/events/eventActions';
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 import { mobilecheck } from '../utils/deviceCheck';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
-import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
 import EventPlaceholder from '../components/event/eventPlaceholder';
 import Model from '../components/model/model';
 import ItemSelector from '../components/itemSelector/itemSelector';
+import { useHistory } from "react-router-dom";
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -23,27 +23,33 @@ const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
 const AMOUNT_OF_EVENTS_IN_DAY_CONTAINER = 3;
 
-const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel, setModelActive, setCurrentMonth, setCurrentYear, setModelInactive, setNextMonth, setPreviousMonth, currentMonth, currentYear, setCurrentDay, passEvent }) => {
+const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModelInactive }) => {
+    const history = useHistory();
     const isPressing = useRef(false);
     const isDragging = useRef(false);
     const direction = useRef(undefined);
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const monthContainerPositions = useRef([-100, 0, 100]);
-
     const changeDateModelId = useRef(UUID());
 
-    const navigateToDayPage = (date, allDayEvents, timedEvents) => {
+    const setMonth = (month) => {
+        setCurrentMonth(languageSelector().MONTHS.findIndex((name) => name === month));
+    }
+
+    const navigateToDayPage = (date) => {
         if (!isDragging.current) {
-            passEvent({});
-            passEventsOfDay(timedEvents, allDayEvents);
-            setCurrentDay(date.getDate())
-            history.push(pageNames.DAY.toLowerCase());
+            //passEvent({});
+            //passEventsOfDay(timedEvents, allDayEvents); // bad design
+            //setCurrentDay(date.getDate())
+            history.push(`calendar/${date.toLocaleDateString("fr-CA")}`);
         }
     }
 
     const navigateToEventPage = (event) => {
         if (!isDragging.current) {
-            passEvent(event);
-            history.push(pageNames.EVENT.toLowerCase());
+            //passEvent(event);
+            history.push(`calendar/${event.startDate}/events/${event.id}`);
         }
     }
 
@@ -60,6 +66,16 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
             AnimCalendar(direction.current, monthContainerPositions);
         }
     }
+
+    const setNextMonth = useCallback(() => {
+        if (currentMonth === 11) setCurrentYear(currentYear + 1);
+        setCurrentMonth(currentMonth === 11 ? 0 : currentMonth + 1);
+    },[setCurrentMonth, currentMonth, setCurrentYear, currentYear]);
+
+    const setPreviousMonth = useCallback(() => {
+        if (currentMonth === 0) setCurrentYear(currentYear - 1);
+        setCurrentMonth(currentMonth === 0 ? 11 : currentMonth - 1);
+    }, [setCurrentMonth, currentMonth, setCurrentYear, currentYear]);
 
     useEffect(() => {
         let mouseX = 0;
@@ -153,7 +169,7 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
                 key={changeDateModelId.current}
                 id={changeDateModelId.current}
                 title={"selecteer een maand"}
-                content={createContent(MONTH_NAMES, setCurrentMonth, setCurrentYear, () => { setModelInactive(changeDateModelId.current) })}
+                content={createContent(MONTH_NAMES, setCurrentYear, setMonth, () => { setModelInactive(changeDateModelId.current) })}
             />
         )
     }, [setModelInactive, addModel, setCurrentMonth, setCurrentYear])
@@ -161,7 +177,6 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
     let nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
     let prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
     let currentMonthDate = new Date(currentYear, currentMonth, 1);
-
     return (
         <Container>
             <TopBarContainer>
@@ -199,7 +214,7 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }} onTouchEnd={() => { passEvent({}); history.push(pageNames.EVENTEDIT.toLowerCase()); }}>
+            <AddButton onClick={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }} onTouchEnd={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
@@ -207,7 +222,7 @@ const Calendar = ({ history, getEventsOfMonth, passEventsOfDay, events, addModel
 }
 
 //content model
-const createContent = (months, setCurrentMonth, setCurrentYear, setModelInactive) => {
+const createContent = (months, setYear, setMonth, setModelInactive) => {
     const years = [];
     for (let i = new Date().getFullYear() - 50; i < new Date().getFullYear() + 50; i++) {
         years.push(i);
@@ -216,9 +231,9 @@ const createContent = (months, setCurrentMonth, setCurrentYear, setModelInactive
     return (
         <div>
             <SelectorsContainer>
-                <ItemSelector items={years} defaultItem={new Date().getFullYear()} callback={setCurrentYear} />
+                <ItemSelector items={years} defaultItem={new Date().getFullYear()} callback={setYear} />
                 <Bar />
-                <ItemSelector items={months} defaultItem={months[new Date().getMonth()]} callback={setCurrentMonth} />
+                <ItemSelector items={months} defaultItem={months[new Date().getMonth()]} callback={setMonth} />
             </SelectorsContainer>
             <BottomBar>
                 <Button onClick={setModelInactive} onTouchEnd={setModelInactive}>
@@ -327,13 +342,13 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
         const date = new Date(firstDayOfWeek);
         const dayEventsObj = events[firstDayOfWeek.toLocaleDateString("fr-CA")];
         let amountofEvents = dayEventsObj === undefined ? 0 : dayEventsObj.offset;
-        const navigate = () => { navigateToDayPage(date, getAllDayEvents(date, events, dayEventsObj), dayEventsObj !== undefined ? dayEventsObj.timedEvents : []) }
+        const navigate = () => { navigateToDayPage(date) }
         //make day
         days.push(
             <Day
                 key={date.toLocaleDateString("fr-CA")}
-                onClick={navigate}
-                onTouchEnd={navigate}>
+                onClick={() => { navigateToDayPage(date) }}
+                onTouchEnd={() => { navigateToDayPage(date) }}>
                 {dayEventsObj !== undefined && dayEventsObj.allDayEvents.map((event, index) => {
                     if (event.startDate === firstDayOfWeek.toLocaleDateString("fr-CA") || date.getDay() === 0) {
                         if (amountofEvents < AMOUNT_OF_EVENTS_IN_DAY_CONTAINER) { amountofEvents++; return <Event key={event.id} index={amountofEvents} offset={dayEventsObj.offset} placedDate={firstDayOfWeek.toLocaleDateString("fr-CA")} props={event} navigateToEventPage={() => { navigateToEventPage(event) }} /> }
@@ -360,39 +375,17 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
     return days;
 }
 
-//can create inv loop when offset is never updated.
-const getAllDayEvents = (dateOfDay, events, dayEventsObj = { allDayEvents: [], offset: 0 }) => {
-    const date = new Date(dateOfDay);
-    let array = dayEventsObj.allDayEvents;
-    let offset = dayEventsObj.offset;
-    while (offset > 0) {
-        date.setDate(date.getDate() - 1);
-        if (events[date.toLocaleDateString("fr-CA")].allDayEvents.length !== 0) {
-            array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
-            offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
-        }
-    }
-    return array;
-}
-
 //end square creation
 
 const mapStateToProps = state => {
-    return { events: state.eventReducer.events, currentMonth: state.eventReducer.currentMonth, currentYear: state.eventReducer.currentYear };
+    return { events: state.eventReducer.events };
 };
 
 const mapDispatchToProps = {
     getEventsOfMonth,
-    passEventsOfDay,
     addModel,
     setModelActive,
-    setCurrentMonth,
-    setCurrentYear,
     setModelInactive,
-    setNextMonth,
-    setPreviousMonth,
-    setCurrentDay,
-    passEvent
 }
 
 const Container = styled.div`

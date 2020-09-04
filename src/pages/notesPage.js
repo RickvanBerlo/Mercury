@@ -1,17 +1,18 @@
 import React, { useState, useEffect, memo } from "react";
 import { connect } from "react-redux";
-import { getNotes, passNote } from '../stores/notes/noteActions';
+import { getNotes } from '../stores/notes/noteActions';
 import styled, { keyframes, css } from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
-import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
+import { useHistory } from "react-router-dom";
 import '../css/notesPage.css';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 import ListIcon from 'react-ionicons/lib/MdList';
 
-const Notes = ({ notes, getNotes, passNote, history }) => {
+const Notes = ({ notes, getNotes }) => {
+    const history = useHistory();
     const [amountOfRows, setAmountOfRows] = useState(window.innerWidth > 1300 ? 4 : window.innerWidth > 900 ? 3 : 2);
 
     useEffect(() => {
@@ -32,9 +33,11 @@ const Notes = ({ notes, getNotes, passNote, history }) => {
             cursor:pointer;
         }
     `
-    const goToEditNote = (note = undefined) => {
-        passNote(note);
-        history.push(pageNames.NOTEEDIT.toLowerCase());
+    const goToEditNote = (e, note = undefined) => {
+        let url = "";
+        if(note === undefined) url = "notes/createnote";
+        else url = "notes/noteedit/" + note.id;
+        history.push(url);
     }
 
     const onResize = (e) => {
@@ -98,7 +101,7 @@ const createNotes = (notes, amountOfRows, goToEditNote) => {
 const createNote = (note, goToEditNote, delay) => {
     return (
         <NoteContainer key={UUID()} delay={delay}>
-            <Title onClick={(e) => { goToEditNote(note) }}>{note.title}</Title>
+            <Title onClick={(e) => { goToEditNote(e, note) }}>{note.title}</Title>
             <Description className="description" dangerouslySetInnerHTML={{ __html: note.description }} />
         </NoteContainer >
     )
@@ -110,7 +113,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     getNotes,
-    passNote
 }
 
 const Container = styled.div`
@@ -210,6 +212,7 @@ const NoteContainer = styled.div`
     width: 95%;
     max-width: 95%;
     margin-left: 10px;
+    overflow: hidden;
     opacity: 0;
     margin-top: 10px;
     border: 1px solid ${colors.GRAY};

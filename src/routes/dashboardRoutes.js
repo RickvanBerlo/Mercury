@@ -2,17 +2,17 @@ import React from "react";
 import styled from 'styled-components';
 import { Switch } from "react-router-dom";
 import PrivateRoute from './privateRoute';
-import { pageNames, pages } from '../constants/pages';
+import { pages } from '../constants/pages';
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import '../css/dashboardTransition.css';
 
 const DashboardRoutes = ({ history }) => {
     const createPrivateRoutes = () => {
         const privateRoutes = [];
-        for (const key in pageNames) {
-            const Page = pages[pageNames[key]].PAGE;
+        for (const key in pages) {
+            const Page = pages[key].PAGE;
             privateRoutes.push(
-                <PrivateRoute key={key} path={"/dashboard/" + pageNames[key]} render={(routeProps) => {
+                <PrivateRoute exact key={key} path={"/dashboard/" + key} render={(routeProps) => {
                     return <Page history={history} {...routeProps} />
                 }} />
             )

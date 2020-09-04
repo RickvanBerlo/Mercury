@@ -3,21 +3,24 @@ import styled from 'styled-components';
 import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import ToggleIconButton from '../components/buttons/dasboard/toggleIconButton';
-import { pageNames } from '../constants/pages';
 import UUID from '../utils/GenerateUUID';
 import colorChanger from '../utils/colorChanger';
 import CurrentTime from '../components/currentTime/currentTime';
 import { datediff } from '../utils/date';
 import { ParseTimeToString } from '../utils/time';
 import { connect } from "react-redux";
-import { passEvent, setSelectedTime } from '../stores/events/eventActions';
+import { useHistory, useParams } from "react-router-dom";
+import objectIsEmpty from '../utils/objectIsEmpty';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay, passEvent }) => {
+const Day = ({ events }) => {
+    const history = useHistory();
+    const { date } = useParams();
+    const allDayEvents = getAllDayEvents(date, events);
 
     const goBack = useCallback(() => {
         history.goBack();
@@ -25,15 +28,13 @@ const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay,
 
     const goToEventEdit = (time) => {
         if(time !== undefined)
-        setSelectedTime(time);
-        history.push(pageNames.EVENTEDIT.toLowerCase());
+        history.push(`${date}/createevent/${time}`);
     }
 
     const goToEvent = (e, event) => {
         e.stopPropagation();
         e.preventDefault();
-        passEvent(event);
-        history.push(pageNames.EVENT.toLowerCase());
+        history.push(`${event.startDate}/events/${event.id}`);
     }
 
     const click = (e, id) => {
@@ -76,7 +77,7 @@ const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay,
     return (
         <Container>
             <TopBar>
-                <Title>{selectedDay.toLocaleDateString("fr-CA")}</Title>
+                <Title>{date}</Title>
                 <PositionButtonLeftContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonLeftContainer>
@@ -85,11 +86,11 @@ const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay,
                 </PositionButtonRightContainer>
             </TopBar>
             <AllDayContainer id={"allDayContainer"}>
-                {placeAllDayEvents(allDayEvents, goToEvent, selectedDay.toLocaleDateString("fr-CA"))}
+                {placeAllDayEvents(allDayEvents, goToEvent, date)}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
                 {createDayGrid(click)}
-                {placeTimedEvents(timedEvents, goToEvent)}
+                {placeTimedEvents(objectIsEmpty(events) ? [] : events[date].timedEvents, goToEvent)}
                 <CurrentTime />
             </DayContainer>
             <AddButton onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
@@ -97,6 +98,21 @@ const Day = ({ history, allDayEvents, setSelectedTime, timedEvents, selectedDay,
             </AddButton>
         </Container>
     )
+}
+
+const getAllDayEvents = (dateOfDay, events) => {
+    if (objectIsEmpty(events)) return [];
+    const date = new Date(dateOfDay);
+    let array = events[dateOfDay].allDayEvents;
+    let offset = events[dateOfDay].offset;
+    while (offset > 0) {
+        date.setDate(date.getDate() - 1);
+        if (events[date.toLocaleDateString("fr-CA")].offset === (offset -1)) {
+            array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
+            offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
+        }
+    }
+    return array;
 }
 
 const createDayGrid = (click) => {
@@ -197,15 +213,11 @@ const caclulatePositionOfEvent = (events, event) => {
 
 const mapStateToProps = state => {
     return {
-        allDayEvents: state.eventReducer.passedEventsOfDay.allDayEvents,
-        timedEvents: state.eventReducer.passedEventsOfDay.timedEvents,
-        selectedDay: new Date(state.eventReducer.currentYear, state.eventReducer.currentMonth, state.eventReducer.currentDay)
+        events: state.eventReducer.events,
     };
 };
 
 const mapDispatchToProps = {
-    passEvent,
-    setSelectedTime
 }
 
 

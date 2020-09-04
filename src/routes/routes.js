@@ -1,13 +1,12 @@
 import React, {Suspense, lazy} from "react";
 import styled from 'styled-components';
-import { Switch } from "react-router-dom";
+import { Switch, Redirect } from "react-router-dom";
 import PrivateRoute from './privateRoute';
 import PublicRoute from './publicRoute';
 import background from '../assets/background.webp';
 import colors from '../constants/colors';
 
 //pages
-const Authentication = lazy(() => import('../pages/authenticationPage'));
 const Dashboard = lazy(() => import('../pages/dashboardPage'));
 const CurriculemVitae = lazy(() => import('../pages/curriculemViteaPage'));
 
@@ -17,12 +16,9 @@ const Routes = () => {
         <Switch>
             <PublicRoute exact path="/" component={CurriculemVitae} />
             <PublicRoute path="/login" render={(routeProps) => {
-                return <Authentication ToggleLogin={true} {...routeProps} />
+                return <Redirect to={"/dashboard/home"} />
             }} />
-            <PublicRoute path="/register" render={(routeProps) => {
-                return <Authentication ToggleLogin={false} {...routeProps} />
-            }} />
-            <PrivateRoute path={"/*"} render={(routeProps) => {
+            <PrivateRoute path={"/dashboard/*"} render={(routeProps) => {
                 return <Dashboard {...routeProps} />
             }} />
         </Switch>
