@@ -4,7 +4,7 @@ import { mobilecheck } from '../../utils/deviceCheck';
 import colors from '../../constants/colors';
 import colorChanger from '../../utils/colorChanger';
 
-const Clock = ({ analog }) => {
+const Clock = ({ digital }) => {
     let timeout = useRef(null);
     const [time, setTime] = useState(getTime());
 
@@ -20,7 +20,7 @@ const Clock = ({ analog }) => {
     }, [timeout, setTime]);
     
     useEffect(()=>{
-        if(analog){
+        if (!digital){
             const splitTime = time.split(":");
         
             const secondDegrees = (parseInt(splitTime[2]) * 6) - 180; 
@@ -31,19 +31,21 @@ const Clock = ({ analog }) => {
             document.getElementById("minute").style.transform = `translateY(2.5px) rotate(${minuteDegrees}deg)`;
             document.getElementById("second").style.transform = `translateY(1.5px) rotate(${secondDegrees}deg)`;
         }
-    }, [time, analog])
+    }, [time, digital])
 
     useEffect(() => {
-        if(analog){
+        if (!digital){
             const dialLines = document.getElementsByClassName("daillines");
             for (var i = 0; i < 60; i++) {
                 dialLines[i].style.transform = "translate(-0px, -120px) rotate(" + 6 * i + "deg)";
             }
         }
-    }, [analog])
+    }, [digital])
 
     return (
-        analog ?
+        digital ?
+            <Container>{time}</Container>
+            :
         <AnalogContainer>
                 <AnalogPosition>
                     <AnalogClock id={"analogClock"}>
@@ -55,8 +57,6 @@ const Clock = ({ analog }) => {
                     </AnalogClock>
                 </AnalogPosition>
         </AnalogContainer>
-        :
-        <Container>{time}</Container>
     )
 }
 

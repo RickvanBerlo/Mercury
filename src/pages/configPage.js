@@ -2,6 +2,8 @@ import React, { memo } from "react";
 import { connect } from "react-redux";
 import colors from '../constants/colors';
 import styled from 'styled-components';
+import GeneralConfig from '../components/configurations/generalConfig';
+import HomeConfig from '../components/configurations/homeConfig';
 
 const Config = () => {
     return (
@@ -12,7 +14,8 @@ const Config = () => {
                 </TitleContainer>
             </TopBar>
             <Content>
-
+                <GeneralConfig/>
+                <HomeConfig/>
             </Content>
         </Container>
     )

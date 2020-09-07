@@ -26,7 +26,7 @@ const StyledIcon = styled(AddIcon)`
         padding-top: 12px;
     `
 
-const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive }) => {
+const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock }) => {
     const scroll = useRef(false);
     const searchText = useRef("");
     const [selectedWeblink, setSelectedWeblink] = useState({});
@@ -109,7 +109,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
     return (
         <Container>
             <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
-            <Clock analog={true}/>
+            <Clock digital={clock}/>
             <TodoList/>
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
@@ -165,7 +165,10 @@ const makeWebsiteLinks = (weblinks, setModelActive, selectedWeblink, mouseDown, 
 }
 
 const mapStateToProps = state => {
-    return { weblinks: state.weblinkReducer.weblinks };
+    return { 
+        weblinks: state.weblinkReducer.weblinks,
+        clock: state.preferencesReducer.clock
+    };
 };
 
 const mapDispatchToProps = {
