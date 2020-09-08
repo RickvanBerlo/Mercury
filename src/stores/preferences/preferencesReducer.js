@@ -2,7 +2,7 @@ import actions from './preferencesNames';
 
 const InitState = { clock: false, darkmode: false }
 
-const fulfilled = "_FULFILLED";
+//const fulfilled = "_FULFILLED";
 
 export default (state = InitState, action) => {
 

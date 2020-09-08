@@ -38,7 +38,6 @@ const Day = ({ events }) => {
     }
 
     const click = (e, id) => {
-        console.log(id);
         e.preventDefault();
         goToEventEdit(id);
     }

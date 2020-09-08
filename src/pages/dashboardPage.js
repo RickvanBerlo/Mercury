@@ -7,21 +7,28 @@ import SnackBar from '../components/notification/snackbar';
 import { getAllSideMenuButtonPages } from '../utils/pageSelector';
 import { removeAllModels } from '../stores/models/modelActions'
 
-const Dashboard = ({ history, removeAllModels }) => {
+const Dashboard = ({ history, removeAllModels, keycloak, init }) => {
     removeAllModels();
     return (
         <div>
             <DashboardRoutes history={history} />
-            <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />
+            {keycloak.authenticated && <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />}
             <SnackBar />
             <ModelsContainer />
         </div>
     )
 }
 
+const mapStateToProps = state => {
+    return {
+        keycloak: state.keycloakReducer.keycloak,
+        init: state.keycloakReducer.init,
+    };
+};
+
 const mapDispatchToProps = {
     removeAllModels,
 }
 
 
-export default connect(null, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

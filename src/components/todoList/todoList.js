@@ -1,7 +1,7 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import colors from '../../constants/colors';
-import styled , { css }from 'styled-components';
+import styled , { css, keyframes }from 'styled-components';
 import { add,getTasksOfToday, replaceTask } from '../../stores/tasks/taskActions';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
@@ -12,7 +12,6 @@ const StyledIcon = styled(AddIcon)`
 
 const TodoList = ({ tasks, add, replaceTask, getTasksOfToday}) => {
     const [edit, setEdit] = useState(false);
-    console.log(tasks);
     const changeToEdit = () => {
         setEdit(true);
     }
@@ -93,6 +92,15 @@ const createTasks = (tasks, changeTask, executed) => {
     return array
 }
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+
 const Container = styled.div`
     position: absolute;
     right: 0;
@@ -105,6 +113,7 @@ const Container = styled.div`
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     border: 1px solid #7f7f7f40;
+    animation ${fadein} 0.2s linear forwards;
 `
 
 const TextInput = styled.input`
@@ -195,10 +204,6 @@ const StyledCheckbox = styled.div`
     }
 `
 
-const areEqual = (prevProps, nextProps) => {
-    return true;
-}
-
 const mapStateToProps = state => {
     return { tasks: state.taskReducer.tasks};
 };
@@ -209,5 +214,4 @@ const mapDispatchToProps = {
     replaceTask
 }
 
-const MemoTodoList = memo(connect(mapStateToProps, mapDispatchToProps)(TodoList), areEqual)
-export default MemoTodoList;
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList);

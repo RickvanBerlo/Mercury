@@ -12,28 +12,34 @@ import Clock from '../components/clock/clock';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
 import { deleteWeblink, getWeblinks, add } from '../stores/weblinks/weblinkActions';
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
+import { login } from '../stores/keycloak/keycloakActions';
 import TodoList from '../components/todoList/todoList';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
+import PersonIcon from 'react-ionicons/lib/MdPerson';
 
 const LONG_PRESS_TIME = 500;
 
-const StyledIcon = styled(AddIcon)`
+const AddStyledIcon = styled(AddIcon)`
         transition: background-color 0.2s linear;
         border-radius: 100px;
         box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
         -webkit-tap-highlight-color: transparent;
         padding-top: 12px;
     `
+const LoginStyledIcon = styled(PersonIcon)`
+    margin: 5px;
+`
 
-const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock }) => {
+
+const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock, init, keycloak, login }) => {
     const scroll = useRef(false);
     const searchText = useRef("");
     const [selectedWeblink, setSelectedWeblink] = useState({});
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const addWeblinkModelId = useRef(UUID());
-
+    console.log(weblinks);
     const navigateToLink = (link, newTab) => {
         if (!scroll.current) {
             let win = window.open(link, newTab ? '_blank' : '_self');
@@ -74,9 +80,14 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
         }
     }
 
+    const onClickLogin = (e) => {
+        login()
+    }
+
     useEffect(() => {
-        getWeblinks();
-    }, [getWeblinks])
+        if (keycloak.authenticated)
+            getWeblinks();
+    }, [getWeblinks, keycloak, init])
 
     useEffect(() => {
         const onSubmit = (event, value) => {
@@ -106,17 +117,23 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
         }
     }, [add, setModelInactive, addModel])
 
-    return (
+    return ( 
         <Container>
             <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
             <Clock digital={clock}/>
-            <TodoList/>
+            {keycloak.authenticated && <TodoList key={UUID()}/>}
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
-                <WebsiteLinksContainer>
+                {keycloak.authenticated && <WebsiteLinksContainer>
                     {makeWebsiteLinks(weblinks, () => { setModelActive(addWeblinkModelId.current) }, selectedWeblink, mouseDown, mouseUp)}
-                </WebsiteLinksContainer>
+                </WebsiteLinksContainer>}
             </CenterContainer>
+            {!keycloak.authenticated && 
+                <LoginButton onClick={onClickLogin}>
+                    <LoginText>Login</LoginText>
+                    <LoginStyledIcon fontSize="30px" color={colors.WHITE} />   
+                </LoginButton>
+            }
         </Container>
     )
 }
@@ -156,7 +173,7 @@ const makeWebsiteLinks = (weblinks, setModelActive, selectedWeblink, mouseDown, 
                 onClick={(event) => { setModelActive() }}
                 onTouchEnd={(event) => { setModelActive() }}
             >
-                <StyledIcon fontSize="35" />
+                <AddStyledIcon fontSize="35" />
             </WebsiteLink>
             <WebsiteName>Add</WebsiteName>
         </WebsiteLinkContainer >
@@ -167,7 +184,9 @@ const makeWebsiteLinks = (weblinks, setModelActive, selectedWeblink, mouseDown, 
 const mapStateToProps = state => {
     return { 
         weblinks: state.weblinkReducer.weblinks,
-        clock: state.preferencesReducer.clock
+        clock: state.preferencesReducer.clock,
+        init: state.keycloakReducer.init,
+        keycloak: state.keycloakReducer.keycloak,
     };
 };
 
@@ -178,6 +197,7 @@ const mapDispatchToProps = {
     addModel,
     setModelActive,
     setModelInactive,
+    login
 }
 
 const fadein = keyframes`
@@ -209,6 +229,31 @@ const SearchBar = styled.input`
     outline: none;
     margin-bottom: 50px;
 
+`
+
+const LoginText = styled.p`
+  color: ${colors.WHITE}
+  font-size: 18px;
+  line-height: 40px;
+  flex: 1;
+  margin: 0;
+
+`
+
+const LoginButton = styled.div`
+    position: absolute;
+    height: 40px;
+    width: 100px;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    background-color: ${colors.TRANSPARENT_20_WHITE};
+    border-radius: 5px;
+    transition: all 0.2s linear;
+    &:hover{
+        cursor: pointer;
+        background-color: ${colors.TRANSPARENT_80};
+    }
 `
 
 const CenterContainer = styled.div`

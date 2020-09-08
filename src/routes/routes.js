@@ -1,7 +1,6 @@
 import React, {Suspense, lazy} from "react";
 import styled from 'styled-components';
 import { Switch, Redirect } from "react-router-dom";
-import PrivateRoute from './privateRoute';
 import PublicRoute from './publicRoute';
 import background from '../assets/background.webp';
 import colors from '../constants/colors';
@@ -15,10 +14,11 @@ const Routes = () => {
         <Suspense fallback={<Container background={background}></Container>}>
         <Switch>
             <PublicRoute exact path="/" component={CurriculemVitae} />
+            <PublicRoute exact path="/silent-check-sso.html" component={CurriculemVitae} />
             <PublicRoute path="/login" render={(routeProps) => {
                 return <Redirect to={"/dashboard/home"} />
             }} />
-            <PrivateRoute path={"/dashboard/*"} render={(routeProps) => {
+                <PublicRoute path={"/dashboard/*"} render={(routeProps) => {
                 return <Dashboard {...routeProps} />
             }} />
         </Switch>

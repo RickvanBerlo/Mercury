@@ -1,5 +1,5 @@
 import React, { useEffect} from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 import styled from 'styled-components';
 import colors from '../constants/colors';
@@ -7,38 +7,22 @@ import { login } from '../stores/keycloak/keycloakActions';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
 import backgroundImage from '../assets/background.webp';
 import mobileBackgroundImage from '../assets/backgroundmobile.webp';
-import Keycloak from 'keycloak-js';
-import props from '../constants/keycloak';
 
-const PrivateRoute = ({ component, login, keycloak, authenticated, ...rest }) => {
+const PrivateRoute = ({ component, login, keycloak, init, authenticated, ...rest }) => {
     useEffect(() => {
-        if(!authenticated){
-            const keycloak = Keycloak(props);
-            keycloak.updateToken(props.refreshTokenTime);
-            keycloak.init().then(function (authenticated) {
-                if(!authenticated)
-                    keycloak.login();
-                else{
-                    login(keycloak);
-                }
-            }).catch(function () {
-                alert('failed to initialize');
-            });
+        if (init && !keycloak.authenticated){
+            login();
         }
-    }, [login, authenticated])
+    }, [login, init, keycloak])
 
     return (
-        keycloak === null ?
-            <Container><BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage></Container>
-        :
-            authenticated ?
+        keycloak.authenticated ?
             <Route
                 {...rest}
                 component={component}
-            /> :
-            <Redirect
-                to='/'
-            />
+            /> 
+        :
+            <Container><BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage></Container>
     )
 }
 
@@ -51,7 +35,7 @@ const Container = styled.div`
 
 const mapStateToProps = state => {
     return { 
-        authenticated: state.keycloakReducer.authenticated,
+        init: state.keycloakReducer.init,
         keycloak: state.keycloakReducer.keycloak,
     };
 };

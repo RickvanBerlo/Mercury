@@ -29,7 +29,6 @@ const NoteEdit = ({ removeNote, add, replace, notes, passNote }) => {
 
     const onSubmit = (event, values) => {
         event.preventDefault();
-        console.log(values);
         note.id === undefined ? add(values) : replace(values);
         goBack();
     }

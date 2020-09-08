@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState} from "react";
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 import { connect } from "react-redux";
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
@@ -179,6 +179,15 @@ const mapDispatchToProps = {
     logout
 }
 
+const fadein = keyframes`
+  from { 
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+`
+
 const Container = styled.div`
     position: fixed;
     z-index: 10;
@@ -192,6 +201,7 @@ const Container = styled.div`
     border-bottom-right-radius: 10px;
     text-align:center;
     transition: left 0.4s linear;
+    animation ${fadein} 0.2s linear forwards;
 `
 
 const ContainerLink = styled.div`

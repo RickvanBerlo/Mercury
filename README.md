@@ -1,4 +1,4 @@
-## dependencies
+# dependencies
 *   "react": "16.12.0",
 *   "react-dom": "16.12.0",
 *   "react-ionicons": "^3.1.4",
@@ -14,7 +14,7 @@
 *   "redux-thunk": "^2.3.0",
 *   "styled-components": "^4.4.1"
 
-## structure
+# structure
 
 this application is seperated in differend folder.
 
@@ -54,7 +54,7 @@ here reduc stores are stored. this will store all data of the application.
 
 contains all helper classes this application uses.
 
-## Creating pages
+# Creating pages
 For creating a page you will need to execute the following intructions.
 
 1. Create .js file
@@ -130,7 +130,7 @@ Add the following line to the switch in de component Routes
 }} />
 ```
 
-## database
+# database
 
 This application gets his resources from the api Mercury. You can find more about this api at https://github.com/RickvanBerlo/Mercury_Api.
 
@@ -142,7 +142,11 @@ To add a new resource, create a new file in databases and create your new reques
 
 in the actions of redux these functions can be used to make a call to the api.
 
+# warnings
 
+this application is using a Silent check-sso. see more information about this topic on this page: https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/javascript-adapter.adoc#_modern_browsers
 
-## scrumboard
+It could be that this feature will be deprecated in the future.
+
+# scrumboard
 https://quire.io/w/rickvanberlo?view=stats

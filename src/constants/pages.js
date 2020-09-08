@@ -16,7 +16,7 @@ import NoteEditPage from '../pages/noteEditPage';
 export const pages = {
     "notes/noteedit/:id": { PAGE: NoteEditPage },
     "notes/createnote": { PAGE: NoteEditPage },
-    "home": { PAGE: HomePage, ICON: HomeIcon },
+    "home": { PAGE: HomePage, ICON: HomeIcon, PUBLIC: true },
     "calendar": { PAGE: CalendarPage, ICON: CalanderIcon },
     "notes": { PAGE: NotesPage, ICON: NotesIcon },
     "storage": { PAGE: StoragePage, ICON: StorageIcon },

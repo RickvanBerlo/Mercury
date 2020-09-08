@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import { connect } from "react-redux";
-import colors from '../../constants/colors';
 import styled from 'styled-components';
 import BaseConfig from './baseConfig';
 import SliderButton from '../buttons/dasboard/sliderButton';

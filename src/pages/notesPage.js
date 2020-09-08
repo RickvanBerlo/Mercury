@@ -55,7 +55,7 @@ const Notes = ({ notes, getNotes }) => {
         <Container>
             <TopBar>
                 <TitleContainer>
-                    <HeaderTitle>Config</HeaderTitle>
+                    <HeaderTitle>Notes</HeaderTitle>
                 </TitleContainer>
             </TopBar>
             <Content>
