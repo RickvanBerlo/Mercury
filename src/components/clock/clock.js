@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import { mobilecheck } from '../../utils/deviceCheck';
 import colors from '../../constants/colors';
@@ -208,9 +208,4 @@ const AnalogClock = styled.div`
 
 `
 
-const areEqual = (prevProps, nextProps) => {
-    return true;
-}
-
-const MemoClock = memo(Clock, areEqual)
-export default MemoClock;
+export default Clock;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { connect } from "react-redux";
 import colors from '../../constants/colors';
 import styled , { css, keyframes }from 'styled-components';
@@ -214,4 +214,8 @@ const mapDispatchToProps = {
     replaceTask
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
+const areEqual = (prevProps, nextProps) => {
+    return true;
+}
+
+export default memo(connect(mapStateToProps, mapDispatchToProps)(TodoList), areEqual);

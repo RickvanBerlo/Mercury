@@ -12,7 +12,7 @@ export const addTask = (props) => {
         .send();
 }
 
-export const getTasksOfToday = (props) => {
+export const getTasks = (props) => {
     return new requestBuilder(config.MERCURY_API.PATH, repositories.TASKS)
         .addMethod(method.GET)
         .send();

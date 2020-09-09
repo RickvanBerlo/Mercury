@@ -5,6 +5,8 @@ import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
 import { mobilecheck } from '../../utils/deviceCheck';
 import { logout } from '../../stores/keycloak/keycloakActions';
+import { getPreferences } from '../../stores/preferences/preferencesActions';
+import { pages } from '../../constants/pages';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 
 const INIT_LABEL_Y = 75;
@@ -13,7 +15,7 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init }) => {
+const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPreferences }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     const [usersName, setUsersName] = useState("Mercury");
@@ -55,10 +57,13 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init }) => 
     }
 
     useEffect(() => {
-        keycloak.loadUserInfo().then(userInfo => {
-            setUsersName(userInfo.name);
-        })
-    }, [keycloak])
+        if (init && keycloak.authenticated){
+            keycloak.loadUserInfo().then(userInfo => {
+                setUsersName(userInfo.name);
+            })
+            getPreferences();
+        }
+    }, [init, keycloak, getPreferences])
 
     useEffect(() => {
         let drag = false;
@@ -66,6 +71,12 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init }) => 
         let mouseY = null;
         let mouseX = null;
         let pressed = false;
+
+        const preloadPages = () => {
+            for(const key in pages){
+                pages[key].PAGE.preload();
+            }
+        }
 
         const setOffset = (event) => {
             if (pressed) {
@@ -95,6 +106,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init }) => 
             mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
             mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
             pressed = true;
+            preloadPages();
         }
 
         const endDrag = (event) => {
@@ -177,7 +189,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    logout
+    logout,
+    getPreferences
 }
 
 const fadein = keyframes`

@@ -11,7 +11,7 @@ export const add = (task) => {
 export const getTasksOfToday = () => {
     return {
         type: actions.GET_TASKS_OF_TODAY,
-        payload: database.getTasksOfToday().then(response => response.json())
+        payload: database.getTasks().then(response => response.json())
     }
 }
 

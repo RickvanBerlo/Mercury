@@ -85,7 +85,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
     }
 
     useEffect(() => {
-        if (keycloak.authenticated)
+        if (init && keycloak.authenticated)
             getWeblinks();
     }, [getWeblinks, keycloak, init])
 

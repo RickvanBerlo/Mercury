@@ -1,11 +1,24 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import colors from '../constants/colors';
 import styled from 'styled-components';
 import GeneralConfig from '../components/configurations/generalConfig';
 import HomeConfig from '../components/configurations/homeConfig';
+import { savePreferences } from '../stores/preferences/preferencesActions';
 
-const Config = () => {
+const Config = ({ state, savePreferences }) => {
+    const currentState = useRef(state);
+
+    useEffect(() => {
+        currentState.current = state;
+    }, [state])
+
+    useEffect(() => {
+        return () => {
+            savePreferences(currentState.current)
+        }
+    }, [savePreferences])
+    
     return (
         <Container>
             <TopBar>
@@ -67,10 +80,11 @@ const areEqual = (prevProps, nextProps) => {
 }
 
 const mapStateToProps = state => {
-    return {};
+    return { state: state.preferencesReducer};
 };
 
 const mapDispatchToProps = {
+    savePreferences
 }
 
 const MemoConfig = memo(connect(mapStateToProps, mapDispatchToProps)(Config), areEqual)

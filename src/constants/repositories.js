@@ -6,6 +6,7 @@ const repositories = {
     WEBLINKS: "weblinks",
     EVENTS: "events",
     TASKS: "tasks",
+    PREFERENCES: "preferences",
 }
 
 export default repositories;
