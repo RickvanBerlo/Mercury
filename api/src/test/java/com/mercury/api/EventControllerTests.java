@@ -55,17 +55,6 @@ public class EventControllerTests {
         }
 
         @Test
-        public void deleteEvents() {
-                String title = "test";
-                eventsController.createEvent(new Event(title, "testing", false, LocalDate.now(), LocalDate.now(),
-                                "#ffffff", LocalTime.now(), LocalTime.now()));
-                eventsController.createEvent(new Event(title, "testing", false, LocalDate.now(), LocalDate.now(),
-                                "#ffffff", LocalTime.now(), LocalTime.now()));
-                HttpStatus statuscode = eventsController.deleteEvents().getStatusCode();
-                Assertions.assertEquals(statuscode.value(), 204);
-        }
-
-        @Test
         public void replaceEvent() {
                 String title = "test";
                 String id = eventsController.createEvent(new Event("old", "testing", false, LocalDate.now(),

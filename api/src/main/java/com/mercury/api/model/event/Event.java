@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,10 +18,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "events")
+@JsonInclude(Include.NON_NULL)
 public class Event {
 
     @Id
     public String id;
+    public String userId;
 
     private String title;
     private String description;

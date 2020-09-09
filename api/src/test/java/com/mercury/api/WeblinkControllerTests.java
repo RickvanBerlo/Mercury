@@ -6,25 +6,30 @@ import com.mercury.api.controller.WeblinksController;
 import com.mercury.api.model.weblink.Weblink;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest
+@TestMethodOrder(OrderAnnotation.class)
 class WeblinksControllerTests {
 
     @Autowired
     private WeblinksController weblinkController;
 
     @Test
+    @Order(1)
     public void getEmptyWeblinks() {
-        weblinkController.deleteWeblinks();
         List<Weblink> weblinks = weblinkController.getWeblinks().getBody();
         Assertions.assertTrue(weblinks.isEmpty());
     }
 
     @Test
+    @Order(2)
     public void addWeblink() {
         String title = "google";
         Weblink notes = weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"))
@@ -33,6 +38,7 @@ class WeblinksControllerTests {
     }
 
     @Test
+    @Order(3)
     public void getWeblinks() {
         String title = "google";
         weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"));
@@ -42,6 +48,7 @@ class WeblinksControllerTests {
     }
 
     @Test
+    @Order(4)
     public void getWeblink() {
         String title = "google";
         Weblink weblink = weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"))
@@ -51,6 +58,7 @@ class WeblinksControllerTests {
     }
 
     @Test
+    @Order(5)
     public void deleteWeblink() {
         String title = "google";
         Weblink weblink = weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"))
@@ -60,15 +68,7 @@ class WeblinksControllerTests {
     }
 
     @Test
-    public void deleteWeblinks() {
-        String title = "google";
-        weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"));
-        weblinkController.createWeblink(new Weblink(title, "https://www.google.nl/", "#ffffff"));
-        HttpStatus statuscode = weblinkController.deleteWeblinks().getStatusCode();
-        Assertions.assertEquals(statuscode.value(), 204);
-    }
-
-    @Test
+    @Order(6)
     public void replaceWeblink() {
         String title = "google";
         String replacedTitle = "giggidy";

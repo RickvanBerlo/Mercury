@@ -77,14 +77,4 @@ public class WeblinksController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @RequestMapping(value = "/weblinks", method = RequestMethod.DELETE)
-    public ResponseEntity<Weblink> deleteWeblinks() {
-        try {
-            service.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

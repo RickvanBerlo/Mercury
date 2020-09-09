@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mercury.api.model.note.Note;
-import com.mercury.api.service.note.NoteServiceImpl;
+import com.mercury.api.service.note.NoteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotesController {
 
     @Autowired
-    private NoteServiceImpl service;
+    private NoteService service;
 
     @RequestMapping(value = "/notes", method = RequestMethod.POST)
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
@@ -71,16 +71,6 @@ public class NotesController {
     public ResponseEntity<Note> deleteNote(@PathVariable("id") String id) {
         try {
             service.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @RequestMapping(value = "/notes", method = RequestMethod.DELETE)
-    public ResponseEntity<Note> deleteNotes() {
-        try {
-            service.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

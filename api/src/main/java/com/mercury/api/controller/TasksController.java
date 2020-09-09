@@ -3,6 +3,8 @@ package com.mercury.api.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.mercury.api.model.task.Task;
 import com.mercury.api.service.task.TaskService;
@@ -33,10 +35,10 @@ public class TasksController {
     }
 
     @RequestMapping(value = "/tasks", method = RequestMethod.GET)
-    public ResponseEntity<List<Task>> getTasks() {
+    public ResponseEntity<List<Task>> getTasksOfToday() {
         List<Task> tasks = new ArrayList<>();
         try {
-            tasks = service.findAll();
+            tasks = Stream.concat(service.getClosedTasksofToday().stream(), service.getOpenTasksofTodayAndEarlier().stream()).collect(Collectors.toList());
             return new ResponseEntity<>(tasks, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -71,16 +73,6 @@ public class TasksController {
     public ResponseEntity<Task> deleteTask(@PathVariable("id") String id) {
         try {
             service.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @RequestMapping(value = "/tasks", method = RequestMethod.DELETE)
-    public ResponseEntity<Task> deleteTasks() {
-        try {
-            service.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

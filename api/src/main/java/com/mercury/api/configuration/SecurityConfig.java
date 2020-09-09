@@ -46,7 +46,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.anonymous().and().authorizeRequests().antMatchers("/docs", "/actuator/**", "/v2/api-docs/**",
+        http.csrf().disable().anonymous().and().authorizeRequests().antMatchers("/docs", "/actuator/**", "/v2/api-docs/**",
                 "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll().and().authorizeRequests()
                 .anyRequest().fullyAuthenticated();
     }

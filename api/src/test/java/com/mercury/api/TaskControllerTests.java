@@ -19,8 +19,7 @@ class TaskControllerTests {
 
     @Test
     public void getEmptyTasks() {
-        tasksController.deleteTasks();
-        List<Task> tasks = tasksController.getTasks().getBody();
+        List<Task> tasks = tasksController.getTasksOfToday().getBody();
         Assertions.assertTrue(tasks.isEmpty());
     }
 
@@ -35,7 +34,7 @@ class TaskControllerTests {
     public void getTasks() {
         String title = "test";
         tasksController.createTask(new Task(title, false));
-        List<Task> tasks = tasksController.getTasks().getBody();
+        List<Task> tasks = tasksController.getTasksOfToday().getBody();
         Assertions.assertFalse(tasks.isEmpty());
         Assertions.assertEquals(tasks.get(0).getTitle(), title);
     }
@@ -53,15 +52,6 @@ class TaskControllerTests {
         String title = "test";
         Task task = tasksController.createTask(new Task(title, false)).getBody();
         HttpStatus statuscode = tasksController.deleteTask(task.getId()).getStatusCode();
-        Assertions.assertEquals(statuscode.value(), 204);
-    }
-
-    @Test
-    public void deleteTasks() {
-        String title = "test";
-        tasksController.createTask(new Task(title, false));
-        tasksController.createTask(new Task(title, false));
-        HttpStatus statuscode = tasksController.deleteTasks().getStatusCode();
         Assertions.assertEquals(statuscode.value(), 204);
     }
 

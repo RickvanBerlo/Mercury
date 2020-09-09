@@ -2,6 +2,7 @@ package com.mercury.api.service.fileStorage;
 
 import com.mercury.api.exception.FileStorageException;
 import com.mercury.api.model.fileStorage.FileStorage;
+import com.mercury.api.service.BaseService;
 import com.mercury.api.exception.FileNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
-public class FileStorageService {
+public class FileStorageService extends BaseService {
     private final Path fileStorageLocation;
 
     @Autowired
@@ -36,8 +37,22 @@ public class FileStorageService {
         }
     }
 
+    private Path GetPath(String path){
+        return Paths.get(GetRootPath() + path);
+    }
+
+    private Path GetRootPath() {
+        try {
+            if (!Files.exists(Paths.get(this.fileStorageLocation + "/" + this.getUserId())))
+                Files.createDirectories(Paths.get(this.fileStorageLocation + "/" + this.getUserId()));
+            return Paths.get(this.fileStorageLocation + "/" + this.getUserId());
+        } catch (Exception ex) {
+            throw new FileStorageException("Could not create the directory for this specific user", ex);
+        }
+    }
+
     public Stream<Path> getContent(String path) {
-        Path storedPath = Paths.get(this.fileStorageLocation + path);
+        Path storedPath = GetPath(path);
         try {
             return Files.walk(storedPath, 1).skip(1);
         } catch (IOException ex) {
@@ -46,7 +61,7 @@ public class FileStorageService {
     }
 
     public Path createDir(String path) {
-        Path savedPath = Paths.get(this.fileStorageLocation + path);
+        Path savedPath = GetPath(path);
         try {
             Files.createDirectories(savedPath);
             return savedPath;
@@ -64,7 +79,7 @@ public class FileStorageService {
             if (fileName.contains("..")) {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
-            Path targetLocation = this.fileStorageLocation;
+            Path targetLocation = GetRootPath();
             for (String subDirectory : path.split("/")) {
                 targetLocation = targetLocation.resolve(subDirectory);
             }
@@ -80,7 +95,7 @@ public class FileStorageService {
 
     public Resource loadFileAsResource(String path) {
         try {
-            Path filePath = this.fileStorageLocation.resolve(path).normalize();
+            Path filePath = GetRootPath().resolve(path).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()) {
                 return resource;
@@ -93,7 +108,7 @@ public class FileStorageService {
     }
 
     public boolean deleteDirectory(String path) {
-        File directory = new File(this.fileStorageLocation + path);
+        File directory = new File(GetPath(path).toString());
         File[] allContents = directory.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
@@ -108,7 +123,7 @@ public class FileStorageService {
 
     public boolean deleteFile(String path) {
         try {
-            return new File(this.fileStorageLocation + path).delete();
+            return new File(GetPath(path).toString()).delete();
         } catch (SecurityException e) {
             throw new FileStorageException("could not remove file: " + path, e);
         }
@@ -123,7 +138,7 @@ public class FileStorageService {
     }
 
     public String createRelativePath(Path path) {
-        return '/' + this.fileStorageLocation.relativize(path).toString().replace('\\', '/');
+        return '/' + GetRootPath().relativize(path).toString().replace('\\', '/');
     }
 
 }

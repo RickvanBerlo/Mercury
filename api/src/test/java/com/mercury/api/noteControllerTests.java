@@ -19,7 +19,6 @@ class NoteControllerTests {
 
 	@Test
 	public void getEmptyNotes() {
-		noteController.deleteNotes();
 		List<Note> notes = noteController.getNotes().getBody();
 		Assertions.assertTrue(notes.isEmpty());
 	}
@@ -53,15 +52,6 @@ class NoteControllerTests {
 		String title = "test";
 		Note note = noteController.createNote(new Note(title, "testing")).getBody();
 		HttpStatus statuscode = noteController.deleteNote(note.getId()).getStatusCode();
-		Assertions.assertEquals(statuscode.value(), 204);
-	}
-
-	@Test
-	public void deleteNotes() {
-		String title = "test";
-		noteController.createNote(new Note(title, "testing"));
-		noteController.createNote(new Note(title, "testing"));
-		HttpStatus statuscode = noteController.deleteNotes().getStatusCode();
 		Assertions.assertEquals(statuscode.value(), 204);
 	}
 
