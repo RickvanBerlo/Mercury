@@ -1,4 +1,4 @@
-import { actions } from './modelActions'
+import actions from './modelNames';
 
 const InitState = { models: {}, activeModels: [] }
 

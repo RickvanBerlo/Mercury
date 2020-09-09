@@ -14,7 +14,7 @@ const Routes = () => {
         <Suspense fallback={<Container background={background}></Container>}>
         <Switch>
             <PublicRoute exact path="/" component={CurriculemVitae} />
-            <PublicRoute exact path="/silent-check-sso.html" component={CurriculemVitae} />
+            <PublicRoute exact path="/silent-check-sso.html"/>
             <PublicRoute path="/login" render={(routeProps) => {
                 return <Redirect to={"/dashboard/home"} />
             }} />

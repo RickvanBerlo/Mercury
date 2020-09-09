@@ -1,9 +1,4 @@
-export const actions = {
-    ADD_MODEL: "ADD_MODEL",
-    REMOVE_ALL_MODELS: "REMOVE_ALL_MODELS",
-    SET_MODEL_ACTIVE: "SET_MODEL_ACTIVE",
-    SET_MODEL_INACTIVE: "SET_MODEL_INACTIVE",
-}
+import actions from './modelNames';
 
 export const addModel = (id, model) => {
     return {

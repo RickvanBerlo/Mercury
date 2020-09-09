@@ -114,7 +114,7 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
     useEffect(() => {
         const dropFile = (e) => {
             e.preventDefault();
-            addFiles(e.dataTransfer.files);
+            addFiles(e.dataTransfer.files, storedCurrentPath.current);
             document.getElementById("dropzone").classList.remove("dragging");
         }
 
@@ -241,6 +241,7 @@ const getCorrectIcon = (fileName) => {
     switch (fileName.split('.')[1].toLowerCase()) {
         case "png":
         case "jpg":
+        case "webp":
         case "svg": return <ImageIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
         case "exe": return <DesktopIcon fontSize={"40px"} color={colors.DARK_GREEN} />;
         case "docx":
@@ -341,8 +342,7 @@ const ItemsContainer = styled.div`
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     height: calc(100% -  50px);
-    border: 0px solid ${colors.DARK_GREEN};
-    transition: background-color 0.3s linear;
+    transition: background-color 0.3s linear, box-shadow 0.3s linear;
     &:dragging{
         background-color: ${colors.BLACK};
     }

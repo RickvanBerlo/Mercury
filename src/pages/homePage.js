@@ -39,7 +39,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const addWeblinkModelId = useRef(UUID());
-    console.log(weblinks);
+    
     const navigateToLink = (link, newTab) => {
         if (!scroll.current) {
             let win = window.open(link, newTab ? '_blank' : '_self');

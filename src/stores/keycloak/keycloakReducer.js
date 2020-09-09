@@ -4,20 +4,6 @@ import props from '../../constants/keycloak';
 
 const InitState = { keycloak: Keycloak(props), init: false };
 
-// useEffect(() => {
-//     if (!authenticated) {
-//         keycloak.init().then(function (authenticated) {
-//             if (!authenticated)
-//                 keycloak.login();
-//             else {
-//                 login(keycloak);
-//             }
-//         }).catch(function () {
-//             alert('failed to initialize');
-//         });
-//     }
-// }, [login, authenticated])
-
 const fulfilled = "_FULFILLED";
 
 export default (state = InitState, action) => {
@@ -29,7 +15,6 @@ export default (state = InitState, action) => {
             state.keycloak.logout({ redirectUri: "http://localhost:3000"});
             return { ...state, authenticated: false };
         case actions.INIT + fulfilled:
-            console.log(action.payload)
             return { ...state, init: true}
         default:
             return state;

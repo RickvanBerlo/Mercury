@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState} from "react";
-import styled, {keyframes} from 'styled-components';
+import styled, {keyframes, css} from 'styled-components';
 import { connect } from "react-redux";
 import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
@@ -13,7 +13,7 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [] }) => {
+const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     const [usersName, setUsersName] = useState("Mercury");
@@ -126,10 +126,10 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [] }) => {
             window.removeEventListener("touchmove", touchMove, false);
             sideMenu.removeEventListener("transitionend", AnimEndEvent, false);
         }
-    }, [screenHeight])
+    }, [screenHeight, keycloak])
 
     return (
-        <Container id="sideMenu" offsetX={SIDEMENU_MIN}>
+        <Container id="sideMenu" offsetX={SIDEMENU_MIN} show={init}>
             <Label id="label" top={INIT_LABEL_Y}>
                 <Bar1 id="bar1" />
                 <Bar2 id="bar2" />
@@ -171,7 +171,8 @@ const toggleAnimationLabel = (toggle) => {
 
 const mapStateToProps = state => {
     return {
-        keycloak: state.keycloakReducer.keycloak
+        keycloak: state.keycloakReducer.keycloak,
+        init: state.keycloakReducer.init
     };
 };
 
@@ -190,6 +191,7 @@ const fadein = keyframes`
 
 const Container = styled.div`
     position: fixed;
+    opacity: 0;
     z-index: 10;
     top: 0;
     left: ${props => props.offsetX}px;
@@ -201,7 +203,7 @@ const Container = styled.div`
     border-bottom-right-radius: 10px;
     text-align:center;
     transition: left 0.4s linear;
-    animation ${fadein} 0.2s linear forwards;
+    animation ${props => props.show ? css`${fadein} 0.2s linear forwards` : "none"};
 `
 
 const ContainerLink = styled.div`
