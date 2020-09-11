@@ -1,7 +1,5 @@
 package com.mercury.api.service;
 
-import java.util.List;
-
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.representations.AccessToken;
 import org.springframework.security.core.context.SecurityContextHolder;
