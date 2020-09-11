@@ -38,4 +38,14 @@ public class Task {
         this.title = title;
         this.executed = executed;
     }
+
+    public Task CreateResponseInstant() {
+        Task tmp = new Task();
+        tmp.setId(this.id);
+        tmp.setTitle(this.title);
+        tmp.setExecuted(this.executed);
+        tmp.setLastModifiedDate(this.lastModifiedDate);
+        tmp.setCreatedDate(this.createdDate);
+        return tmp;
+    }
 }

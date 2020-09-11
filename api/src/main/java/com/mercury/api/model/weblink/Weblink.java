@@ -39,4 +39,15 @@ public class Weblink {
         this.url = url;
         this.color = color;
     }
+
+    public Weblink CreateResponseInstant() {
+        Weblink tmp = new Weblink();
+        tmp.setId(this.id);
+        tmp.setTitle(this.title);
+        tmp.setUrl(this.url);
+        tmp.setColor(this.color);
+        tmp.setLastModifiedDate(this.lastModifiedDate);
+        tmp.setCreatedDate(this.createdDate);
+        return tmp;
+    }
 }

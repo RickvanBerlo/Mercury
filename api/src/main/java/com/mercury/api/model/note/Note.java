@@ -37,4 +37,14 @@ public class Note {
         this.title = title;
         this.description = description;
     }
+
+    public Note CreateResponseInstant() {
+        Note tmp = new Note();
+        tmp.setId(this.id);
+        tmp.setTitle(this.title);
+        tmp.setDescription(this.description);
+        tmp.setLastModifiedDate(this.lastModifiedDate);
+        tmp.setCreatedDate(this.createdDate);
+        return tmp;
+    }
 }

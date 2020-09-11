@@ -25,7 +25,7 @@ public class PreferencesController {
                 Preferences savedPreferences = service.save(new Preferences(false, false));
                 return new ResponseEntity<>(savedPreferences, HttpStatus.OK);
             }
-            return new ResponseEntity<>(pref.get(), HttpStatus.OK);
+            return new ResponseEntity<>(pref.get().CreateResponseInstant(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -35,7 +35,7 @@ public class PreferencesController {
     public ResponseEntity<Preferences> savePreferences(@RequestBody Preferences preferences) {
         try {
             Preferences savedPreferences = service.save(preferences);
-            return new ResponseEntity<>(savedPreferences, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedPreferences.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

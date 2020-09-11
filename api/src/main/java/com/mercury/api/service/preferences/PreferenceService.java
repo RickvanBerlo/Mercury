@@ -15,7 +15,7 @@ public class PreferenceService extends BaseService {
     private PreferencesRepository preferencesRepository;
 
     public Preferences save(Preferences preferences) {
-        preferences.setId(this.getUserId());
+        preferences.setUserId(this.getUserId());
         return preferencesRepository.save(preferences);
     }
 

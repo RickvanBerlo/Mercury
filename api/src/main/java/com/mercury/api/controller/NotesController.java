@@ -3,6 +3,7 @@ package com.mercury.api.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.mercury.api.model.note.Note;
 import com.mercury.api.service.note.NoteService;
@@ -26,7 +27,7 @@ public class NotesController {
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         try {
             Note savedNote = service.save(new Note(note.getTitle(), note.getDescription()));
-            return new ResponseEntity<>(savedNote, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedNote.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,7 +37,8 @@ public class NotesController {
     public ResponseEntity<List<Note>> getNotes() {
         List<Note> notes = new ArrayList<>();
         try {
-            notes = service.findAll();
+            notes = service.findAll().stream().map(object -> object.CreateResponseInstant())
+                    .collect(Collectors.toList());;
             return new ResponseEntity<>(notes, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,7 +49,7 @@ public class NotesController {
     public ResponseEntity<Note> getNote(@PathVariable("id") String id) {
         try {
             Optional<Note> note = service.findById(id);
-            return new ResponseEntity<>(note.get(), HttpStatus.OK);
+            return new ResponseEntity<>(note.get().CreateResponseInstant(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -61,7 +63,7 @@ public class NotesController {
             Note _note = retrived_note.get();
             _note.setTitle(note.getTitle());
             _note.setDescription(note.getDescription());
-            return new ResponseEntity<>(service.save(_note), HttpStatus.OK);
+            return new ResponseEntity<>(service.save(_note).CreateResponseInstant(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

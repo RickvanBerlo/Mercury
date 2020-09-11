@@ -19,7 +19,7 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class Preferences {
     @Id
-    public String id;
+    private String userId;
 
     private boolean darkmode;
     private boolean clock;
@@ -34,5 +34,14 @@ public class Preferences {
     public Preferences(boolean darkmode, boolean clock) {
         this.darkmode = darkmode;
         this.clock = clock;
+    }
+
+    public Preferences CreateResponseInstant() {
+        Preferences tmp = new Preferences();
+        tmp.setClock(this.clock);
+        tmp.setDarkmode(this.darkmode);
+        tmp.setCreatedDate(this.createdDate);
+        tmp.setLastModifiedDate(this.lastModifiedDate);
+        return tmp;
     }
 }

@@ -53,4 +53,20 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    public Event CreateResponseInstant(){
+        Event tmp = new Event();
+        tmp.setId(this.id);
+        tmp.setTitle(this.title);
+        tmp.setDescription(this.description);
+        tmp.setHasTime(this.hasTime);
+        tmp.setStartDate(this.startDate);
+        tmp.setEndDate(this.endDate);
+        tmp.setColor(this.color);
+        tmp.setStartTime(this.startTime);
+        tmp.setEndTime(this.endTime);
+        tmp.setLastModifiedDate(this.lastModifiedDate);
+        tmp.setCreatedDate(this.createdDate);
+        return tmp;
+    }
 }

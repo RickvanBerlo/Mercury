@@ -3,6 +3,7 @@ package com.mercury.api.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.mercury.api.model.weblink.Weblink;
 import com.mercury.api.service.weblink.WeblinkService;
@@ -26,7 +27,7 @@ public class WeblinksController {
     public ResponseEntity<Weblink> createWeblink(@RequestBody Weblink weblink) {
         try {
             Weblink savedWeblink = service.save(new Weblink(weblink.getTitle(), weblink.getUrl(), weblink.getColor()));
-            return new ResponseEntity<>(savedWeblink, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedWeblink.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,7 +37,8 @@ public class WeblinksController {
     public ResponseEntity<List<Weblink>> getWeblinks() {
         List<Weblink> weblinks = new ArrayList<>();
         try {
-            weblinks = service.findAll();
+            weblinks = service.findAll().stream().map(object -> object.CreateResponseInstant())
+                    .collect(Collectors.toList());;
             return new ResponseEntity<>(weblinks, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,7 +49,7 @@ public class WeblinksController {
     public ResponseEntity<Weblink> getWeblink(@PathVariable("id") String id) {
         try {
             Optional<Weblink> weblink = service.findById(id);
-            return new ResponseEntity<>(weblink.get(), HttpStatus.OK);
+            return new ResponseEntity<>(weblink.get().CreateResponseInstant(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -62,7 +64,7 @@ public class WeblinksController {
             _weblink.setTitle(weblink.getTitle());
             _weblink.setUrl(weblink.getUrl());
             _weblink.setColor(weblink.getColor());
-            return new ResponseEntity<>(service.save(_weblink), HttpStatus.OK);
+            return new ResponseEntity<>(service.save(_weblink).CreateResponseInstant(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

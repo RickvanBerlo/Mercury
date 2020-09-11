@@ -28,7 +28,7 @@ public class TasksController {
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         try {
             Task savedTask = service.save(new Task(task.getTitle(), task.getExecuted()));
-            return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedTask.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -38,7 +38,13 @@ public class TasksController {
     public ResponseEntity<List<Task>> getTasksOfToday() {
         List<Task> tasks = new ArrayList<>();
         try {
-            tasks = Stream.concat(service.getClosedTasksofToday().stream(), service.getOpenTasksofTodayAndEarlier().stream()).collect(Collectors.toList());
+            tasks = Stream.concat(
+                        service.getClosedTasksofToday().stream(), 
+                        service.getOpenTasksofTodayAndEarlier().stream()
+                    ).collect(Collectors.toList())
+                    .stream().map(
+                        object -> object.CreateResponseInstant()
+                    ).collect(Collectors.toList());
             return new ResponseEntity<>(tasks, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,7 +55,7 @@ public class TasksController {
     public ResponseEntity<Task> getTask(@PathVariable("id") String id) {
         try {
             Optional<Task> task = service.findById(id);
-            return new ResponseEntity<>(task.get(), HttpStatus.OK);
+            return new ResponseEntity<>(task.get().CreateResponseInstant(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -63,7 +69,7 @@ public class TasksController {
             Task _task = retrived_task.get();
             _task.setTitle(task.getTitle());
             _task.setExecuted(task.getExecuted());
-            return new ResponseEntity<>(service.save(_task), HttpStatus.OK);
+            return new ResponseEntity<>(service.save(_task).CreateResponseInstant(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

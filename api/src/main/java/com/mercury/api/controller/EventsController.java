@@ -1,5 +1,6 @@
 package com.mercury.api.controller;
 
+import java.util.stream.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class EventsController {
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
             Event savedEvent = service.save(event);
-            return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedEvent.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -37,7 +38,7 @@ public class EventsController {
     public ResponseEntity<List<Event>> getEventOfMonth(@RequestParam String month) {
         try {
             LocalDate date = LocalDate.parse(month);
-            List<Event> events = service.getAllEventsOfMonth(date);
+            List<Event> events = service.getAllEventsOfMonth(date).stream().map(object -> object.CreateResponseInstant()).collect(Collectors.toList());
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -48,7 +49,7 @@ public class EventsController {
     public ResponseEntity<Event> getEvent(@PathVariable("id") String id) {
         try {
             Optional<Event> event = service.findById(id);
-            return new ResponseEntity<>(event.get(), HttpStatus.OK);
+            return new ResponseEntity<>(event.get().CreateResponseInstant(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -68,7 +69,7 @@ public class EventsController {
             _event.setEndDate(event.getEndDate());
             _event.setHasTime(event.isHasTime());
             _event.setDescription(event.getDescription());
-            return new ResponseEntity<>(service.save(_event), HttpStatus.OK);
+            return new ResponseEntity<>(service.save(_event).CreateResponseInstant(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
