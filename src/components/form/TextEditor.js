@@ -2,10 +2,21 @@ import React, { memo, useState, useEffect, useRef } from "react";
 import styled from 'styled-components';
 import colors from '../../constants/colors';
 import generateUUID from '../../utils/GenerateUUID';
+import { connect } from "react-redux";
+import colorChanger from "../../utils/colorChanger";
 import ReactQuill from 'react-quill';
 import '../../css/quill.css';
 
-const TextEditorWrapper = ({ type, name, getValues, refresh, classname, props }) => {
+const StyledReactQuill = styled(ReactQuill)`
+    border: 1px solid ${props => colorChanger(props.colors.SECONDARY, -0.3)};
+    background-color: ${props => props.colors.SECONDARY};
+    border-radius: 5px;
+    color: ${props => props.colors.TEXT} !important;
+    stroke: ${props => props.colors.TEXT} !important;
+    
+`
+
+const TextEditorWrapper = ({ type, name, getValues, refresh, classname, colors, props }) => {
     const [value, setValue] = useState(props.value === undefined ? "" : props.value);
     const UUID = useRef(generateUUID());
 
@@ -34,7 +45,8 @@ const TextEditorWrapper = ({ type, name, getValues, refresh, classname, props })
     return (
         <Container id={UUID.current} className={classname}>
             {props.label !== undefined ? <Label>{props.label}</Label> : null}
-            <ReactQuill
+            <StyledReactQuill
+                colors={colors}
                 theme="snow"
                 value={value}
                 onChange={onChange}
@@ -44,6 +56,12 @@ const TextEditorWrapper = ({ type, name, getValues, refresh, classname, props })
         </Container >
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
 
 const modules = {
     toolbar: [
@@ -80,5 +98,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoEditorAreaWrapper = memo(TextEditorWrapper, areEqual)
+const MemoEditorAreaWrapper = memo(connect(mapStateToProps, undefined)(TextEditorWrapper), areEqual)
 export default MemoEditorAreaWrapper;

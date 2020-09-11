@@ -2,16 +2,16 @@ import React, { useState, useEffect, memo } from "react";
 import { connect } from "react-redux";
 import { getNotes } from '../stores/notes/noteActions';
 import styled, { keyframes, css } from 'styled-components';
-import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import UUID from '../utils/GenerateUUID';
 import { useHistory } from "react-router-dom";
+import colorChanger from "../utils/colorChanger";
 import '../css/notesPage.css';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 import ListIcon from 'react-ionicons/lib/MdList';
 
-const Notes = ({ notes, getNotes }) => {
+const Notes = ({ notes, getNotes, colors }) => {
     const history = useHistory();
     const [amountOfRows, setAmountOfRows] = useState(window.innerWidth > 1300 ? 4 : window.innerWidth > 900 ? 3 : 2);
 
@@ -53,16 +53,16 @@ const Notes = ({ notes, getNotes }) => {
     }, [])
     return (
         <Container>
-            <TopBar>
+            <TopBar colors={colors}>
                 <TitleContainer>
-                    <HeaderTitle>Notes</HeaderTitle>
+                    <HeaderTitle color={colors.MAIN}>Notes</HeaderTitle>
                 </TitleContainer>
             </TopBar>
-            <Content>
-                <NoItemsIcon show={areThereNotes(notes)} id={"noItemIcon"} fontSize={"150px"} color={colors.LIGHT_GRAY} onClick={goToEditNote}></NoItemsIcon>
-                {createNotes(notes, amountOfRows, goToEditNote)}
+            <Content colors={colors}>
+                <NoItemsIcon show={areThereNotes(notes)} id={"noItemIcon"} fontSize={"150px"} color={colorChanger(colors.SECONDARY, -0.05)} onClick={goToEditNote}></NoItemsIcon>
+                {createNotes(notes, amountOfRows, goToEditNote, colors)}
             </Content>
-            <AddButton onClick={goToEditNote}>
+            <AddButton colors={colors} onClick={goToEditNote}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
@@ -76,13 +76,13 @@ const areThereNotes = (notes) => {
     return false;
 }
 
-const createNotes = (notes, amountOfRows, goToEditNote) => {
+const createNotes = (notes, amountOfRows, goToEditNote, colors) => {
     const notesComponents = [[], [], [], []];
     let divider = 0;
     let i = 0;
 
     for (const key in notes) {
-        notesComponents[divider].push(createNote(notes[key], goToEditNote, i));
+        notesComponents[divider].push(createNote(notes[key], goToEditNote, i, colors));
         divider++;
         i++;
         if (divider === amountOfRows) divider = 0;
@@ -98,17 +98,20 @@ const createNotes = (notes, amountOfRows, goToEditNote) => {
     )
 }
 
-const createNote = (note, goToEditNote, delay) => {
+const createNote = (note, goToEditNote, delay, colors) => {
     return (
-        <NoteContainer key={UUID()} delay={delay}>
-            <Title onClick={(e) => { goToEditNote(e, note) }}>{note.title}</Title>
-            <Description className="description" dangerouslySetInnerHTML={{ __html: note.description }} />
+        <NoteContainer key={UUID()} delay={delay} colors={colors}>
+            <Title colors={colors} onClick={(e) => { goToEditNote(e, note) }}>{note.title}</Title>
+            <Description color={colors.TEXT} className="description" dangerouslySetInnerHTML={{ __html: note.description }} />
         </NoteContainer >
     )
 }
 
 const mapStateToProps = state => {
-    return { notes: state.noteReducer.notes };
+    return { 
+        notes: state.noteReducer.notes,
+        colors: state.preferencesReducer.colors   
+    };
 };
 
 const mapDispatchToProps = {
@@ -129,7 +132,8 @@ const Title = styled.p`
     margin-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid ${colors.BLACK};
+    color: ${props => props.colors.TEXT}
+    border-bottom: 1px solid gray;
     &:hover {
         cursor: pointer;
     }
@@ -139,6 +143,7 @@ const Description = styled.div`
     margin-left: 20px;
     margin-right: 20px;
     text-align: left;
+    color: ${props => props.color}
     font: 18px 'Open Sans Bold',sans-serif;
 `
 
@@ -177,6 +182,7 @@ const Content = styled.div`
     top: 50px;
     width: 100%;
     overflow: scroll;
+    background-color: ${props => props.colors.PRIMARY}
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     height: calc(100% -  50px);
@@ -191,7 +197,7 @@ const HeaderTitle = styled.p`
     margin: auto;
     line-height: 50px;
     overflow: hidden;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TitleContainer = styled.div`
@@ -201,11 +207,12 @@ const TitleContainer = styled.div`
 const TopBar = styled.div`
     position: fixed;
     justify-content: space-between;
+    background-color: ${props => props.colors.SECONDARY}
     z-index: 1;
     display: flex;
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    box-shadow: 0px 2px 5px 0px black;
 `
 
 const NoteContainer = styled.div`
@@ -215,8 +222,9 @@ const NoteContainer = styled.div`
     overflow: hidden;
     opacity: 0;
     margin-top: 10px;
-    border: 1px solid ${colors.GRAY};
-    box-shadow: 0px 1.5px 3px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    border: 1px solid ${props => colorChanger(props.colors.SECONDARY, -0.1)};
+    box-shadow: 0px 1.5px 3px 0px ${props => props.colors.SHADOW};
     border-radius: 10px;
     animation: ${props => css`${fadein_enlarge} 0.4s linear ${props.delay * 0.1}s forwards`};
 `
@@ -237,8 +245,8 @@ const AddButton = styled.div`
     bottom: 20px;
     right: 30px;
     border-radius: 100px;
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 10px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 10px 0px black;
 `
 
 const areEqual = (prevProps, nextProps) => {

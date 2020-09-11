@@ -34,7 +34,7 @@ const Checkbox = styled.input`
 
 const SliderRound = styled.span`
     border-radius: ${props => props.size}px;
-    background-color: ${props => props.color};
+    background-color: ${props => props.bool ? props.color : "#8c8c8c"};
     position: absolute;
     cursor: pointer;
     top: 0;

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, memo } from "react";
 import styled from 'styled-components';
-import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import FormBuilder from '../utils/formBuilder';
 import dependencieFunctions from '../components/form/dependencies/dependencieFunctions';
@@ -12,7 +11,7 @@ import objectIsEmpty from '../utils/objectIsEmpty';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 
-const EventEdit = ({ events, addEvent, replaceEvent, passEvent }) => {
+const EventEdit = ({ events, addEvent, replaceEvent, passEvent, colors }) => {
     const { date, id, time } = useParams();
     const history = useHistory();
     let event;
@@ -45,9 +44,9 @@ const EventEdit = ({ events, addEvent, replaceEvent, passEvent }) => {
     }, [goBack]);
 
     return (
-        <Container>
-            <TopBar>
-                <Title>{event.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
+        <Container colors={colors}>
+            <TopBar colors={colors}>
+                <Title color={colors.MAIN}>{event.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
@@ -82,6 +81,7 @@ const disableToggleTime = (dependencyValue, objectValue, object, changeValidatio
 const mapStateToProps = state => {
     return { 
         events: state.eventReducer.events,
+        colors: state.preferencesReducer.colors
     };
 };
 
@@ -94,7 +94,8 @@ const mapDispatchToProps = {
 
 const Container = styled.div`
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    background-color: ${props => props.colors.PRIMARY}
 `
 
 const PositionButtonContainer = styled.div`
@@ -109,13 +110,14 @@ const Title = styled.p`
     line-height: 50px;
     text-align:center;
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TopBar = styled.div`
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY}
+    box-shadow: 0px 2px 5px 0px black;
 `
 
 const EventContainer = styled.div`

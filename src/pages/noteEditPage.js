@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from "react";
 import { connect } from "react-redux";
 import { removeNote, replace, add, passNote } from '../stores/notes/noteActions';
 import styled from 'styled-components';
-import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import FormBuilder from '../utils/formBuilder';
 import { useParams, useHistory } from 'react-router-dom';
@@ -10,7 +9,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import TrashIcon from 'react-ionicons/lib/MdTrash';
 
-const NoteEdit = ({ removeNote, add, replace, notes, passNote }) => {
+const NoteEdit = ({ removeNote, add, replace, notes, passNote, colors }) => {
     const history = useHistory();
     const { id } = useParams();
 
@@ -49,9 +48,9 @@ const NoteEdit = ({ removeNote, add, replace, notes, passNote }) => {
     }, [goBack, goRemove, note]);
 
     return (
-        <Container>
-            <TopBar>
-                <Title>{note.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
+        <Container colors={colors}>
+            <TopBar colors={colors}>
+                <Title color={colors.MAIN}>{note.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
@@ -75,7 +74,10 @@ const buildForm = (onSubmit, note) => {
 }
 
 const mapStateToProps = state => {
-    return { notes: state.noteReducer.notes };
+    return { 
+        notes: state.noteReducer.notes,
+        colors: state.preferencesReducer.colors    
+    };
 };
 
 const mapDispatchToProps = {
@@ -88,6 +90,7 @@ const mapDispatchToProps = {
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
+    background-color: ${props => props.colors.PRIMARY}
 `
 
 const PositionButtonContainer = styled.div`
@@ -108,7 +111,7 @@ const Title = styled.p`
     line-height: 50px;
     text-align:center;
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TopBar = styled.div`
@@ -116,7 +119,8 @@ const TopBar = styled.div`
     z-index: 2;
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY}
+    box-shadow: 0px 2px 5px 0px black;
 `
 
 const EventContainer = styled.div`

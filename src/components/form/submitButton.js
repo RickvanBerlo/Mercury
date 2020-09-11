@@ -1,11 +1,12 @@
 import React from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
+import { connect } from "react-redux";
 
-const SubmitButtonWrapper = ({ name, submitButtonEnable, props }) => {
+const SubmitButtonWrapper = ({ name, submitButtonEnable, colors, props }) => {
     return (
         <SubmitButton
             type="submit"
+            colors={colors}
             disabled={submitButtonEnable ? "" : "disabled"}
             value={name}
             {...props}
@@ -14,8 +15,15 @@ const SubmitButtonWrapper = ({ name, submitButtonEnable, props }) => {
     )
 }
 
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
+
+
 const SubmitButton = styled.input`
-    background-color: ${colors.WHITE};
+    background-color: ${props => props.colors.MAIN};
     opacity: ${props => props.disabled ? 0.3 : 1}
     min-height: 40px;
     border-radius: 10px;
@@ -24,7 +32,7 @@ const SubmitButton = styled.input`
     min-width: 150px;
     max-width: 150px;
     flex: 1;
-    color: ${colors.BLACK}
+    color: ${props => props.colors.TEXT};
     outline: none;
     font: 18px 'Open Sans Bold',sans-serif;
     transition: opacity 0.2s linear;
@@ -33,4 +41,4 @@ const SubmitButton = styled.input`
     }
 `
 
-export default SubmitButtonWrapper;
+export default connect(mapStateToProps, undefined)(SubmitButtonWrapper);

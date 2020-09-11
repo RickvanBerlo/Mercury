@@ -1,14 +1,14 @@
 import React, { memo, useState, useEffect, useRef, useCallback } from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
 import Model from '../model/model';
 import ColorSelector from '../itemSelector/colorSelector';
 import generateUUID from '../../utils/GenerateUUID';
+import colorChanger from "../../utils/colorChanger";
 import { connect } from "react-redux";
 import { addModel, setModelActive, setModelInactive } from '../../stores/models/modelActions';
 
-const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, setModelActive, setModelInactive, props }) => {
-    const [value, setValue] = useState(props.value === undefined ? colors.RED : props.value);
+const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, setModelActive, setModelInactive, colors, props }) => {
+    const [value, setValue] = useState(props.value === undefined ? '#CC0000' : props.value);
     const storedValue = useRef(value);
     const UUID = useRef(generateUUID());
     const colorPickerModelId = useRef(generateUUID());
@@ -19,7 +19,7 @@ const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, set
 
     useEffect(() => {
         if (refresh)
-            setValue(colors.RED);
+            setValue('#CC0000');
     }, [refresh]);
 
     const actionSetModelActive = useCallback(() => {
@@ -34,7 +34,7 @@ const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, set
         const callback = (value) => {
             switch (value) {
                 case "toggleVisibility":
-                    setValue(colors.RED);
+                    setValue('#CC0000');
                     break;
                 default: console.error("no case was found for " + value + " in the Callback function in ColorPicker!");
             }
@@ -78,10 +78,10 @@ const ColorPickerWrapper = ({ name, getValues, refresh, classname, addModel, set
                 onChange={(event) => { setValue(event.target.value) }}
             >
             </HiddenInput >
-            <StyledColorPicker id={name} className="input" title={`Selecteer een kleur.`}>
+            <StyledColorPicker colors={colors} id={name} className="input" title={`Selecteer een kleur.`}>
                 <Color color={value} />
             </StyledColorPicker>
-            <Label>: {props.label}</Label>
+            <Label color={colors.TEXT}>: {props.label}</Label>
         </Container >
     )
 }
@@ -96,16 +96,22 @@ const createContent = (value, modelOnsubmit) => {
 
 const createItems = () => {
     let array = [];
-    array.push(colors.RED);
-    array.push(colors.BLUE);
-    array.push(colors.GREEN);
-    array.push(colors.YELLOW);
-    array.push(colors.PURPLE);
-    array.push(colors.ORANGE);
-    array.push(colors.AQUA);
-    array.push(colors.PINK);
+    array.push('#CC0000');
+    array.push('#0676F6');
+    array.push('#7ac142');
+    array.push('#ecf70c');
+    array.push('#f70cd8');
+    array.push('#f08f07');
+    array.push('#02f6fa');
+    array.push('#ff08de');
     return array;
 }
+
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
 
 const mapDispatchToProps = {
     addModel,
@@ -123,6 +129,7 @@ const Label = styled.div`
     line-height: 35px;
     margin: 0;
     margin-left: 5px;
+    color: ${props => props.color}
 `
 
 const HiddenInput = styled.input.attrs({ type: 'text' })`
@@ -140,8 +147,9 @@ const HiddenInput = styled.input.attrs({ type: 'text' })`
 
 const StyledColorPicker = styled.div`
     font: 18px 'Open Sans Bold',sans-serif;
-    border: 1px solid gray;
+    border: 1px solid ${props => colorChanger(props.colors.SECONDARY, -0.3)};
     border-radius: 5px;
+    background-color: ${props => props.colors.SECONDARY}
     padding: 8px;
     width: 20px;
     outline: none;
@@ -162,5 +170,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoColorPickerWrapper = memo(connect(null, mapDispatchToProps)(ColorPickerWrapper), areEqual)
+const MemoColorPickerWrapper = memo(connect(mapStateToProps, mapDispatchToProps)(ColorPickerWrapper), areEqual)
 export default MemoColorPickerWrapper;

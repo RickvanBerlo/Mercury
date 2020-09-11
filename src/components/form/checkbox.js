@@ -1,9 +1,9 @@
 import React, { useState, memo, useEffect, useRef } from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
+import { connect } from "react-redux";
 import generateUUID from '../../utils/GenerateUUID';
 
-const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
+const CheckboxWrapper = ({ name, getValues, refresh, classname, colors, props }) => {
     const [check, setCheck] = useState(props.value !== undefined ? props.value : false);
     const UUID = useRef(generateUUID());
 
@@ -39,18 +39,23 @@ const CheckboxWrapper = ({ name, getValues, refresh, classname, props }) => {
                             setCheck(event.target.checked)
                         }}
                     />
-                    <StyledCheckbox checked={check} className="input" title={`Toggle het vlak aan of uit.`}>
+                    <StyledCheckbox color={colors.MAIN} checked={check} className="input" title={`Toggle het vlak aan of uit.`}>
                         <Icon viewBox="0 0 24 24">
                             <polyline points="20 6 9 17 4 12" />
                         </Icon>
                     </StyledCheckbox>
                 </CheckboxContainer>
-                <Name title={`Toggle de knop "${props.label}" aan of uit`}>: {props.label === undefined ? "no Label" : props.label}</Name>
+                <Name color={colors.TEXT} title={`Toggle de knop "${props.label}" aan of uit`}>: {props.label === undefined ? "no Label" : props.label}</Name>
             </Label>
         </Container >
     )
 }
 
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
 
 const Icon = styled.svg`
     fill: none;
@@ -76,7 +81,7 @@ const StyledCheckbox = styled.div`
     width: 25px;
     margin-right: 10px;
     height: 25px;
-    background: ${props => props.checked ? colors.DARK_GREEN : colors.LIGHT_GRAY};
+    background: ${props => props.checked ? props.color : "gray"};
     border-radius: 5px;
     transition: all 0.3s;
     ${Icon} {
@@ -104,6 +109,7 @@ const Name = styled.p`
     font: 18px 'Open Sans Bold',sans-serif;  
     line-height: 25px;
     margin: 0;
+    color: ${props => props.color};
 `
 
 const areEqual = (prevProps, nextProps) => {
@@ -111,5 +117,5 @@ const areEqual = (prevProps, nextProps) => {
     return true;
 }
 
-const MemoCheckboxWrapper = memo(CheckboxWrapper, areEqual)
+const MemoCheckboxWrapper = memo(connect(mapStateToProps, undefined)(CheckboxWrapper), areEqual)
 export default MemoCheckboxWrapper;

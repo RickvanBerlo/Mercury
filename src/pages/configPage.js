@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import colors from '../constants/colors';
 import styled from 'styled-components';
 import GeneralConfig from '../components/configurations/generalConfig';
 import HomeConfig from '../components/configurations/homeConfig';
