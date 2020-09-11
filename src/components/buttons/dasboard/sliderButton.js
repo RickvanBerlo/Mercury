@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import colors from '../../../constants/colors';
+import { connect } from "react-redux";
 import styled from 'styled-components';
 
-const SliderButton = ({size = 40, checked = false, onChange = () => {console.log("no function provided")}}) => {
+const SliderButton = ({colors, size = 40, checked = false, onChange = () => {console.log("no function provided")}}) => {
     const [bool, setBool] = useState(checked);
 
     const change = (e) => {
@@ -13,7 +13,7 @@ const SliderButton = ({size = 40, checked = false, onChange = () => {console.log
     return (
         <Switch size={size}>
             <Checkbox type="checkbox" onClick={change}/>
-            <SliderRound bool={bool} size={size}></SliderRound>
+            <SliderRound color={colors.MAIN} bool={bool} size={size}></SliderRound>
         </Switch>
     )
 }
@@ -34,7 +34,7 @@ const Checkbox = styled.input`
 
 const SliderRound = styled.span`
     border-radius: ${props => props.size}px;
-    background-color: ${props => props.bool ? colors.DARK_GREEN : "#ccc"};
+    background-color: ${props => props.color};
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -56,4 +56,10 @@ const SliderRound = styled.span`
     }
 `
 
-export default SliderButton;
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
+
+export default connect(mapStateToProps, undefined)(SliderButton);

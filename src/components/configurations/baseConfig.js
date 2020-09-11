@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import colors from '../../constants/colors';
+import { connect } from "react-redux";
 import styled from 'styled-components';
 
 import ArrowDownIcon from 'react-ionicons/lib/MdArrowDropdown';
@@ -17,7 +17,7 @@ const StyledIcon = styled(ArrowDownIcon)`
     }
 `
 
-const BaseConfig = ({ title, content, maxHeight}) => {
+const BaseConfig = ({ title, content, maxHeight, colors }) => {
     const [open, setOpen] = useState(false);
 
     const onHeaderClick = (e) => {
@@ -27,10 +27,10 @@ const BaseConfig = ({ title, content, maxHeight}) => {
     return (
         <Container>
             <Header onClick={onHeaderClick}>
-                <Title>{title}</Title>
-                <StyledIcon bool={open} fontSize="30px" color={colors.DARK_GREEN} />
+                <Title color={colors.MAIN}>{title}</Title>
+                <StyledIcon bool={open} fontSize="30px" color={colors.MAIN} />
             </Header>
-            <ContentContainer bool={open} maxHeight={maxHeight}>
+            <ContentContainer shadow={colors.SHADOW} bool={open} maxHeight={maxHeight}>
                 {content}
             </ContentContainer>
         </Container>
@@ -46,15 +46,15 @@ const Title = styled.h3`
     line-height: 45px;
     margin: 0;
     font-size: 20px;
-    color: ${colors.DARK_GREEN}
+    color: ${props => props.color}
 `
 
 const ContentContainer = styled.div`
     width: 100vw;
     max-height: ${props => props.bool ? props.maxHeight : "0px"};
-    box-shadow: inset 0px 0px 6px #888, inset 0px 0px 6px #888;
+    box-shadow: inset 0px 0px 4px ${props => props.shadow}, inset 0px 0px 4px ${props => props.shadow};
     overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
+    transition: max-height 0.3s ease-in-out, box-shadow 0.3s linear;
 `
 
 const Header = styled.div`
@@ -65,6 +65,10 @@ const Header = styled.div`
         cursor: pointer;
     }
 `
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors
+    };
+};
 
-
-export default BaseConfig;
+export default connect(mapStateToProps, undefined)(BaseConfig);

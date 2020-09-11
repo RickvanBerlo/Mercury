@@ -26,4 +26,18 @@ const colors = {
     HEADER_BACKGROUND_COLOR: '#caf2f2',
 }
 
+export const darkBackground = {
+    PRIMARY: "#323232",
+    SECONDARY: "#404040",
+    TEXT: "#ffffff",
+    SHADOW: "#000000",
+}
+
+export const lightBackground = {
+    PRIMARY: "#ffffff",
+    SECONDARY: "#fdfdfd",
+    TEXT: "#000000",
+    SHADOW: "#888",
+}
+
 export default colors;

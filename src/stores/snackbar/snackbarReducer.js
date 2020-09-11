@@ -5,7 +5,7 @@ import storage from '../storage/storageNames';
 import events from '../events/eventNames';
 
 
-const InitState = { messages: ["Goedemorgen Rick"], timeInSeconds: 3 }
+const InitState = { messages: [], timeInSeconds: 3 }
 
 const rejected = "_REJECTED";
 

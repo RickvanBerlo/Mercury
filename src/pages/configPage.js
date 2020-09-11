@@ -18,15 +18,14 @@ const Config = ({ state, savePreferences }) => {
             savePreferences(currentState.current)
         }
     }, [savePreferences])
-    
     return (
-        <Container>
-            <TopBar>
+        <Container colors={state.colors}>
+            <TopBar colors={state.colors}>
                 <TitleContainer>
-                    <Title>Config</Title>
+                    <Title color={state.colors.MAIN}>Config</Title>
                 </TitleContainer>
             </TopBar>
-            <Content>
+            <Content colors={state.colors}>
                 <GeneralConfig/>
                 <HomeConfig/>
             </Content>
@@ -38,12 +37,16 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
+    background-color: ${props => props.colors.PRIMARY};
+    transition: background-color 0.3s linear;
 `
 const Content = styled.div`
     position: fixed;
     top: 50px;
     width: 100%;
     overflow: scroll;
+    background-color: ${props => props.colors.PRIMARY};
+    transition: background-color 0.3s linear;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
     height: calc(100% -  50px);
@@ -58,7 +61,7 @@ const Title = styled.p`
     margin: auto;
     line-height: 50px;
     overflow: hidden;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TitleContainer = styled.div`
@@ -72,7 +75,9 @@ const TopBar = styled.div`
     display: flex;
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    transition: background-color 0.3s linear;
+    box-shadow: 0px 2px 5px 0px black;
 `
 
 const areEqual = (prevProps, nextProps) => {

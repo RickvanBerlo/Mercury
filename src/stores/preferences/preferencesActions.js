@@ -23,6 +23,7 @@ export const getPreferences = () => {
 }
 
 export const savePreferences = (preferences) => {
+    window.localStorage.setItem(window.location.origin, JSON.stringify(preferences));
     return {
         type: actions.SAVE_PREFERENCES,
         payload: database.savePreferences(preferences)

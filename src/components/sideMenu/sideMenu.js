@@ -141,7 +141,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
     }, [screenHeight, keycloak])
 
     return (
-        <Container id="sideMenu" offsetX={SIDEMENU_MIN} show={init}>
+        <Container id="sideMenu" offsetX={SIDEMENU_MIN} show={keycloak.authenticated}>
             <Label id="label" top={INIT_LABEL_Y}>
                 <Bar1 id="bar1" />
                 <Bar2 id="bar2" />

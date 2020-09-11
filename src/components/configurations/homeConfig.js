@@ -5,7 +5,7 @@ import BaseConfig from './baseConfig';
 import SliderButton from '../buttons/dasboard/sliderButton';
 import { changeClock } from '../../stores/preferences/preferencesActions';
 
-const HomeConfig = ({ changeClock, clock }) => {
+const HomeConfig = ({ changeClock, clock, colors }) => {
     const onChangeClock = (bool) => {
         changeClock(bool);
     }
@@ -14,9 +14,9 @@ const HomeConfig = ({ changeClock, clock }) => {
         return (
             <Container>
                 <ItemContainer>
-                    <Description position="left">Analog Clock</Description>
+                    <Description color={colors.TEXT} position="left">Analog Clock</Description>
                     <SliderButton onChange={onChangeClock} checked={clock}/>
-                    <Description position="right">Digital Clock</Description>
+                    <Description color={colors.TEXT} position="right">Digital Clock</Description>
                 </ItemContainer>
             </Container>
         )
@@ -49,6 +49,8 @@ const Description = styled.p`
     flex: 1;
     margin: 0;
     text-align: ${props => props.position};
+    color: ${props => props.color};
+    transition: color 0.3s linear; 
 `
 
 
@@ -57,7 +59,10 @@ const areEqual = (prevProps, nextProps) => {
 }
 
 const mapStateToProps = state => {
-    return { clock: state.preferencesReducer.clock  };
+    return { 
+        clock: state.preferencesReducer.clock,
+        colors: state.preferencesReducer.colors  
+    };
 };
 
 const mapDispatchToProps = {
