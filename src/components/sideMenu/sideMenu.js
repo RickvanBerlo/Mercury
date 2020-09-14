@@ -1,13 +1,13 @@
 import React, { memo, useEffect, useRef, useState} from "react";
 import styled, {keyframes, css} from 'styled-components';
 import { connect } from "react-redux";
-import colors from '../../constants/colors';
 import getScreenResolution from '../../utils/screenResolution';
 import { mobilecheck } from '../../utils/deviceCheck';
 import { logout } from '../../stores/keycloak/keycloakActions';
 import { getPreferences } from '../../stores/preferences/preferencesActions';
 import { pages } from '../../constants/pages';
 import LogOut from 'react-ionicons/lib/MdLogOut';
+import colorChanger from '../../utils/colorChanger';
 
 const INIT_LABEL_Y = 75;
 
@@ -15,7 +15,7 @@ const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
 //this component wil only be rendered once.
-const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPreferences }) => {
+const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPreferences, colors }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     const [usersName, setUsersName] = useState("Mercury");
@@ -23,7 +23,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
     
     const AnimEndEvent = (e) => {
         if (e.target.id === "sideMenu") {
-            document.getElementById("sideMenu").style.transition = "none";
+            document.getElementById("sideMenu").style.transition = "background-color 0.3s linear";
             document.getElementById("sideMenu").style.left = sidemenuX.current + "px";
             document.getElementById("sideMenu").style.transform = "translateX(0px)";
         }
@@ -34,7 +34,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
         let transformOffset = (X - parseInt(document.getElementById("sideMenu").style.left));
         document.getElementById("label").style.cursor = "pointer";
         document.getElementById("sideMenu").style.transform = "translateX(" + transformOffset + "px)";
-        document.getElementById("sideMenu").style.transition = "transform 0.4s linear";
+        document.getElementById("sideMenu").style.transition = "background-color 0.3s linear, transform 0.4s linear";
         document.getElementById("sideMenu").style.willChange = "transform";
         toggleAnimationLabel(X === 0 ? true : false);
     }
@@ -96,7 +96,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
                 document.getElementById("label").style.cursor = "grab";
                 document.getElementById("label").style.top = labelY < INIT_LABEL_Y ? INIT_LABEL_Y : labelY > screenHeight - 135 ? screenHeight - 135 : labelY + "px";
                 document.getElementById("sideMenu").style.left = sidemenuX.current > SIDEMENU_MAX ? SIDEMENU_MAX : sidemenuX.current < SIDEMENU_MIN ? SIDEMENU_MIN : sidemenuX.current + "px";
-                document.getElementById("sideMenu").style.transition = "none";
+                document.getElementById("sideMenu").style.transition = "background-color 0.3 linear";
                 toggleAnimationLabel(sidemenuX.current > SIDEMENU_MAX ? true : false);
             }
         }
@@ -141,34 +141,34 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
     }, [screenHeight, keycloak])
 
     return (
-        <Container id="sideMenu" offsetX={SIDEMENU_MIN} show={keycloak.authenticated}>
-            <Label id="label" top={INIT_LABEL_Y}>
-                <Bar1 id="bar1" />
-                <Bar2 id="bar2" />
-                <Bar3 id="bar3" />
+        <Container colors={colors} id="sideMenu" offsetX={SIDEMENU_MIN} show={keycloak.authenticated}>
+            <Label colors={colors} id="label" top={INIT_LABEL_Y}>
+                <Bar1 color={colors.TEXT} id="bar1" />
+                <Bar2 color={colors.TEXT} id="bar2" />
+                <Bar3 color={colors.TEXT} id="bar3" />
             </Label>
-            <ContainerTitle onTouchStart={() => { account() }} onClick={() => { account() }}>
-                <Title>{usersName}</Title>
+            <ContainerTitle colors={colors} onTouchStart={() => { account() }} onClick={() => { account() }}>
+                <Title color={colors.MAIN}>{usersName}</Title>
             </ContainerTitle>
             <ContainerButtons>
-                {createSideMenuButtons(sideMenuButtons, changeCurrentPage)}
+                {createSideMenuButtons(sideMenuButtons, changeCurrentPage, colors)}
             </ContainerButtons>
-            <ContainerLogoOut onTouchStart={() => { logout() }} onClick={() => { logout() }}>
-                <Text>Log out</Text>
-                <LogOut style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
+            <ContainerLogoOut colors={colors} onTouchStart={() => { logout() }} onClick={() => { logout() }}>
+                <Text color={colors.TEXT}>Log out</Text>
+                <LogOut style={{ position: "absolute", top: 20, right: 20, transition: "fill 0.3s linear" }} fontSize="30px" color={colors.TEXT} />
             </ContainerLogoOut>
         </Container>
     )
 }
 
-const createSideMenuButtons = (buttons, changeCurrentPage) => {
+const createSideMenuButtons = (buttons, changeCurrentPage, colors) => {
     let array = [];
     for (const key in buttons) {
         const Icon = buttons[key].ICON;
         array.push(
-            <ContainerLink key={key} onTouchEnd={() => { changeCurrentPage(key.toLowerCase()) }} onClick={() => { changeCurrentPage(key.toLowerCase()) }}>
-                <Text>{key}</Text>
-                <Icon style={{ position: "absolute", top: 20, right: 20 }} fontSize="30px" color={colors.BLACK} />
+            <ContainerLink colors={colors} key={key} onTouchEnd={() => { changeCurrentPage(key.toLowerCase()) }} onClick={() => { changeCurrentPage(key.toLowerCase()) }}>
+                <Text color={colors.TEXT}>{key}</Text>
+                <Icon style={{ position: "absolute", top: 20, right: 20, transition: "fill 0.3s linear" }} fontSize="30px" color={colors.TEXT} />
             </ContainerLink>
         )
     }
@@ -184,7 +184,8 @@ const toggleAnimationLabel = (toggle) => {
 const mapStateToProps = state => {
     return {
         keycloak: state.keycloakReducer.keycloak,
-        init: state.keycloakReducer.init
+        init: state.keycloakReducer.init,
+        colors: state.preferencesReducer.colors,   
     };
 };
 
@@ -208,14 +209,14 @@ const Container = styled.div`
     z-index: 10;
     top: 0;
     left: ${props => props.offsetX}px;
-    background-color: ${colors.WHITE};
+    background-color: ${props => props.colors.PRIMARY};
     height: 100vh;
     width: 300px;
     box-shadow: 0px 0px 5px 1px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     text-align:center;
-    transition: left 0.4s linear;
+    transition: left 0.4s linear, background-color 0.3s linear;
     animation ${props => props.show ? css`${fadein} 0.2s linear forwards` : "none"};
 `
 
@@ -223,15 +224,15 @@ const ContainerLink = styled.div`
     text-align: center;
     position:relative;
     height: 70px;
-    box-shadow: inset 0 0 15px 20px ${colors.WHITE};
+    box-shadow: inset 0 0 15px 20px ${props => props.colors.PRIMARY};
+    transition: background-color 0.3s linear, box-shadow 0.3s linear;
     &:hover{
-        background-color: ${colors.DARK_WHITE};
+        background-color: ${props => props.colors.SECONDARY};
         cursor: pointer;
     }
     &:active{
-        background-color: ${colors.LIGHT_GRAY};
+        background-color: ${props => props.colors.SECONDARY};
     }
-    transition: background-color 0.2s linear ;
 `
 
 const Text = styled.p`
@@ -239,7 +240,9 @@ const Text = styled.p`
     margin: auto;
     line-height: 70px;
     font-size: 20px;
+    color: ${props => props.color}
     user-select: none; 
+    transition: color 0.3s linear;
 `
 
 const ContainerLogoOut = styled.div`
@@ -247,11 +250,11 @@ const ContainerLogoOut = styled.div`
     z-index: 11;
     width: 100%;
     height: 70px;
-    background-color: ${colors.WHITE};
+    background-color: ${props => props.colors.SECONDARY};
     border-bottom-right-radius: 10px;
-    box-shadow: 0 -3px 10px -2px ${colors.BLACK};
+    box-shadow: 0 -3px 10px -2px black;
     &:hover{
-        background-color: ${colors.DARK_WHITE};
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)};
         cursor: pointer;
     }
     transition: background-color 0.2s linear;
@@ -272,20 +275,21 @@ const Title = styled.h2`
     margin: 0;
     line-height: 70px;
     height: 100%;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
     user-select: none; 
+    transition: color 0.3s linear;
 `
 
 const ContainerTitle = styled.div`
     position: relative;
     z-index: 11;
     height: 70px;
-    box-shadow: 0px 3px 10px -1px ${colors.BLACK};
-    background-color: ${colors.WHITE};
+    box-shadow: 0px 3px 10px -1px black;
+    background-color: ${props => props.colors.SECONDARY};
     border-top-right-radius: 10px;
     transition: background-color 0.2s linear;
     &:hover{
-        background-color: ${colors.DARK_WHITE};
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)};
         cursor: pointer;
     }
 `
@@ -296,7 +300,7 @@ const Label = styled.div`
     padding-left: 10px;
     top: ${props => props.top}px;
     left: 300px;
-    background-color: white;
+    background-color: ${props => props.colors.PRIMARY};
     height: 50px;
     cursor: pointer;
     width: 40px;
@@ -305,28 +309,29 @@ const Label = styled.div`
     border-bottom-right-radius: 10px;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s linear;
 `
 
 const Bar1 = styled.div`
     width: 30px;
     height: 5px;
-    background-color: #333;
+    background-color: ${props => props.color};
     margin: 6px 0;
-    transition: transform 0.3s linear;
+    transition: transform 0.3s linear, background-color 0.3s linear;
 `
 const Bar2 = styled.div`
     width: 30px;
     height: 5px;
-    background-color: #333;
+    background-color: ${props => props.color};
     margin: 6px 0;
-    transition: opacity 0.3s linear;
+    transition: opacity 0.3s linear, background-color 0.3s linear;
 `
 const Bar3 = styled.div`
     width: 30px;
     height: 5px;
-    background-color: #333;
+    background-color: ${props => props.color};
     margin: 6px 0;
-    transition: transform 0.3s linear;
+    transition: transform 0.3s linear, background-color 0.3s linear;
 `
 
 const AreEqual = (prevProps, nextProps) => {

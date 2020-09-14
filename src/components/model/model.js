@@ -8,7 +8,7 @@ import { setModelInactive } from '../../stores/models/modelActions';
 
 import AddIcon from 'react-ionicons/lib/MdClose';
 
-const Model = ({ setModelInactive, activeModels, id, title, content }) => {
+const Model = ({ setModelInactive, activeModels, id, title, content, colors }) => {
     const UUID_Background = useRef(generateUUID());
     const UUID_CloseButton = useRef(generateUUID());
 
@@ -41,7 +41,7 @@ const Model = ({ setModelInactive, activeModels, id, title, content }) => {
     return (
         <div>
             <BackgroundPopup id={UUID_Background.current} enable={isEnabled()} index={getIndex()} />
-            <Popup enable={isEnabled()} index={getIndex()}>
+            <Popup colors={colors} enable={isEnabled()} index={getIndex()}>
                 <TopBar>
                     <Title>{title}</Title>
                     <CloseButtonContainer>
@@ -57,7 +57,10 @@ const Model = ({ setModelInactive, activeModels, id, title, content }) => {
 }
 
 const mapStateToProps = state => {
-    return { activeModels: state.modelReducer.activeModels };
+    return { 
+        activeModels: state.modelReducer.activeModels,
+        colors: state.preferencesReducer.colors   
+    };
 };
 
 const mapDispatchToProps = {
@@ -79,8 +82,8 @@ const Popup = styled.div`
     border-radius: 10px;
     left: 50%;
     transform: translate(-50%, 0%);
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 5px 0px black;
     transition: top 0.5s linear;
 
 `

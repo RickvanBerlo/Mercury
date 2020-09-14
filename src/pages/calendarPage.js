@@ -8,6 +8,7 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import languageSelector from '../utils/languageSelector';
 import UUID from '../utils/GenerateUUID';
 import Event from '../components/event/event';
+import colorChanger from '../utils/colorChanger';
 import EventPlaceholder from '../components/event/eventPlaceholder';
 import Model from '../components/model/model';
 import ItemSelector from '../components/itemSelector/itemSelector';
@@ -168,10 +169,10 @@ const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModel
                 key={changeDateModelId.current}
                 id={changeDateModelId.current}
                 title={"selecteer een maand"}
-                content={createContent(MONTH_NAMES, setCurrentYear, setMonth, () => { setModelInactive(changeDateModelId.current) })}
+                content={createContent(MONTH_NAMES, setCurrentYear, setMonth, colors,() => { setModelInactive(changeDateModelId.current) })}
             />
         )
-    }, [setModelInactive, addModel, setCurrentMonth, setCurrentYear])
+    }, [setModelInactive, addModel, setCurrentMonth, setCurrentYear, colors])
 
     let nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
     let prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
@@ -221,7 +222,7 @@ const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModel
 }
 
 //content model
-const createContent = (months, setYear, setMonth, setModelInactive) => {
+const createContent = (months, setYear, setMonth, colors, setModelInactive) => {
     const years = [];
     for (let i = new Date().getFullYear() - 50; i < new Date().getFullYear() + 50; i++) {
         years.push(i);
@@ -235,8 +236,8 @@ const createContent = (months, setYear, setMonth, setModelInactive) => {
                 <ItemSelector items={months} defaultItem={months[new Date().getMonth()]} callback={setMonth} />
             </SelectorsContainer>
             <BottomBar>
-                <Button onClick={setModelInactive} onTouchEnd={setModelInactive}>
-                    <ButtonText>
+                <Button colors={colors} onClick={setModelInactive} onTouchEnd={setModelInactive}>
+                    <ButtonText color={colors.TEXT}>
                         Accepteren
                         </ButtonText>
                 </Button>
@@ -420,22 +421,14 @@ const Button = styled.div`
     width: 80%;
     height: 40px;
     margin-top: 10px;
-    box-shadow: inset 0px 0px 10px 10px white;
+    box-shadow: inset 0px 0px 10px 10px ${props => props.colors.SECONDARY};
     transition: background-color 0.3s linear;
     &:hover{
-        background-color: gray;
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)};
         cursor: pointer;
     }
     &:active{
-        background-color: #b8b8b8;
-    }
-    @media (max-width: 767px) {
-        &:hover{
-            background-color: white;
-        }
-        &:active{
-            background-color: gray;
-        }
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.2)};
     }
 `
 

@@ -120,7 +120,7 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
         <Container colors={colors}>
             <BackgroundImage backgroundImage={backgroundImage}></BackgroundImage>
             <Clock digital={clock}/>
-            {keycloak.authenticated && <TodoList key={UUID()}/>}
+            {keycloak.authenticated && <TodoList/>}
             <CenterContainer>
                 <SearchBar id="searchbar" type="text" placeholder="Wat wil je vandaag weten?" onChange={(event) => { searchText.current = event.target.value }}></SearchBar>
                 {keycloak.authenticated && <WebsiteLinksContainer>

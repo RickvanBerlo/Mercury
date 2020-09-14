@@ -2,10 +2,9 @@ import React, { useEffect, memo, useState, useRef } from 'react';
 import { connect } from "react-redux";
 import { removeMessage } from '../../stores/snackbar/snackbarActions';
 import styled, { keyframes, css } from 'styled-components';
-import colors from '../../constants/colors';
 
 
-const Snackbar = ({ removeMessage, messages, timeInSeconds }) => {
+const Snackbar = ({ removeMessage, messages, timeInSeconds, colors }) => {
     const [showSnackbar, setShowSnackbar] = useState(null);
     const timeout = useRef(null);
 
@@ -28,8 +27,8 @@ const Snackbar = ({ removeMessage, messages, timeInSeconds }) => {
         }
     }, [messages, timeInSeconds])
     return (
-        <SnackBarContainer id="snackbar" enable={showSnackbar} onTouchStart={() => { disableTimer(timeout, setShowSnackbar) }} onClick={() => { disableTimer(timeout, setShowSnackbar) }}>
-            <Text>{messages[messages.length - 1]}</Text>
+        <SnackBarContainer colors={colors} id="snackbar" enable={showSnackbar} onTouchStart={() => { disableTimer(timeout, setShowSnackbar) }} onClick={() => { disableTimer(timeout, setShowSnackbar) }}>
+            <Text color={colors.TEXT}>{messages[messages.length - 1]}</Text>
         </SnackBarContainer>
     )
 }
@@ -40,7 +39,11 @@ const disableTimer = (timeout, setShowSnackbar) => {
 }
 
 const mapStateToProps = state => {
-    return { messages: state.snackbarReducer.messages, timeInSeconds: state.snackbarReducer.timeInSeconds };
+    return { 
+        messages: state.snackbarReducer.messages, 
+        timeInSeconds: state.snackbarReducer.timeInSeconds,
+        colors: state.preferencesReducer.colors,    
+    };
 };
 
 const mapDispatchToProps = {
@@ -68,7 +71,8 @@ const Text = styled.p`
     line-height: 40px;
     font: 20px 'Open Sans Bold',sans-serif;
     padding: 0px 10px;
-    user-select: none; 
+    user-select: none;
+    color: ${props => props.color} 
 `
 
 const SnackBarContainer = styled.div`
@@ -78,8 +82,8 @@ const SnackBarContainer = styled.div`
     display: inline-flex;
     max-width: 90%;
     border-radius: 10px;
-    background-color: ${colors.WHITE};
-    border: 5px solid ${colors.LIGHT_GRAY}
+    background-color: ${props => props.colors.PRIMARY};
+    border: 5px solid ${props => props.colors.SECONDARY};
     z-index: 8;
     cursor: pointer;
     box-shadow: 3px 4px 10px 0px;
