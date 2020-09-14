@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, memo, useState, useCallback } from "react";
 import styled from 'styled-components';
-import colors from '../constants/colors';
 import { connect } from "react-redux";
 import { getEventsOfMonth } from '../stores/events/eventActions';
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
@@ -23,7 +22,7 @@ const MONTH_NAMES = languageSelector().MONTHS;
 const DAY_NAMES = languageSelector().DAYS;
 const AMOUNT_OF_EVENTS_IN_DAY_CONTAINER = 3;
 
-const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModelInactive }) => {
+const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModelInactive, colors }) => {
     const history = useHistory();
     const isPressing = useRef(false);
     const isDragging = useRef(false);
@@ -178,16 +177,16 @@ const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModel
     let prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
     let currentMonthDate = new Date(currentYear, currentMonth, 1);
     return (
-        <Container>
-            <TopBarContainer>
+        <Container colors={colors}>
+            <TopBarContainer colors={colors}>
                 <FlexContainer>
                     <ButtonYear onClick={() => { setModelActive(changeDateModelId.current) }} onTouchEnd={() => { setModelActive(changeDateModelId.current) }}>
-                        <Year>{currentYear}</Year>
+                        <Year color={colors.MAIN}>{currentYear}</Year>
                     </ButtonYear>
                 </FlexContainer>
                 <FlexContainer>
                     <ButtonMonth onClick={() => { setModelActive(changeDateModelId.current) }} onTouchEnd={() => { setModelActive(changeDateModelId.current) }}>
-                        <Month>{MONTH_NAMES[currentMonth]}</Month>
+                        <Month color={colors.MAIN}>{MONTH_NAMES[currentMonth]}</Month>
                     </ButtonMonth>
                 </FlexContainer>
                 <ButtonContainer>
@@ -197,24 +196,24 @@ const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModel
                     </RightFloat>
                 </ButtonContainer>
             </TopBarContainer>
-            <DayNamesContainer>
+            <DayNamesContainer colors={colors}>
                 <DayNames>
                     {getDayNames()}
                 </DayNames>
             </DayNamesContainer>
 
             <AnimationContainer className="monthContainer" left="-100%">
-                {createMonth(events, monthContainerPositions.current[0] === 0 ? currentMonthDate : monthContainerPositions.current[0] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[0] === 0 ? currentMonthDate : monthContainerPositions.current[0] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage, colors)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="0%">
-                {createMonth(events, monthContainerPositions.current[1] === 0 ? currentMonthDate : monthContainerPositions.current[1] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[1] === 0 ? currentMonthDate : monthContainerPositions.current[1] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage, colors)}
             </AnimationContainer>
             <AnimationContainer className="monthContainer" left="100%">
-                {createMonth(events, monthContainerPositions.current[2] === 0 ? currentMonthDate : monthContainerPositions.current[2] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage)}
+                {createMonth(events, monthContainerPositions.current[2] === 0 ? currentMonthDate : monthContainerPositions.current[2] === 100 ? nextMonthDate : prevMonthDate, navigateToDayPage, navigateToEventPage, colors)}
             </AnimationContainer>
 
 
-            <AddButton onClick={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }} onTouchEnd={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }}>
+            <AddButton colors={colors} onClick={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }} onTouchEnd={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
@@ -295,15 +294,15 @@ const getDayNames = () => {
 
 
 //creates day squares in the calendar
-const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage) => {
+const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage, colors) => {
     let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     firstDayOfMonth.setDate(-firstDayOfMonth.getDay() + 1);
     let weeks = [];
     for (let i = 0; i < 6; i++) {
         weeks.push(
             <WeekContainer key={firstDayOfMonth.toLocaleDateString("fr-CA") + "_weekContainer"}>
-                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage)}
-                {createWeekDate(firstDayOfMonth)}
+                {createWeek(events, firstDayOfMonth, currentDate.getMonth(), navigateToDayPage, navigateToEventPage, colors)}
+                {createWeekDate(firstDayOfMonth, colors)}
             </WeekContainer>
         )
     }
@@ -314,10 +313,10 @@ const createMonth = (events, currentDate, navigateToDayPage, navigateToEventPage
     )
 }
 
-const createWeekDate = (selectedDate) => {
+const createWeekDate = (selectedDate, colors) => {
     return (
         <WeekDate>
-            {getCorrectWeekNumber(selectedDate)}
+            {getCorrectWeekNumber(selectedDate, colors)}
         </WeekDate>)
 }
 
@@ -326,15 +325,15 @@ const getCorrectWeekNumber = (now) => {
     return Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
-const createWeek = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
+const createWeek = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage, colors) => {
     return (
         <DaysContainer key={firstDayOfWeek.toLocaleDateString("fr-CA") + "_container"}>
-            {createDays(events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage)}
+            {createDays(events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage, colors)}
         </DaysContainer>
     )
 }
 
-const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage) => {
+const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateToEventPage, colors) => {
     const days = [];
     const date = new Date();
     const today = date.toLocaleDateString('nl');
@@ -346,6 +345,7 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
         //make day
         days.push(
             <Day
+                colors={colors}
                 key={date.toLocaleDateString("fr-CA")}
                 onClick={() => { navigateToDayPage(date) }}
                 onTouchEnd={() => { navigateToDayPage(date) }}>
@@ -363,6 +363,7 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
                     else return null;
                 })}
                 <DayNumber
+                    colors={colors}
                     today={firstDayOfWeek.toLocaleDateString('nl') === today ? true : false}
                     toggle={firstDayOfWeek.getMonth() === month ? true : false}>
                     {firstDayOfWeek.getDate()}
@@ -378,7 +379,10 @@ const createDays = (events, firstDayOfWeek, month, navigateToDayPage, navigateTo
 //end square creation
 
 const mapStateToProps = state => {
-    return { events: state.eventReducer.events };
+    return { 
+        events: state.eventReducer.events,
+        colors: state.preferencesReducer.colors     
+    };
 };
 
 const mapDispatchToProps = {
@@ -392,6 +396,7 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
+    background-color: ${props => props.colors.PRIMARY}
 `
 
 const SelectorsContainer = styled.div`
@@ -415,21 +420,21 @@ const Button = styled.div`
     width: 80%;
     height: 40px;
     margin-top: 10px;
-    box-shadow: inset 0px 0px 10px 10px ${colors.WHITE};
+    box-shadow: inset 0px 0px 10px 10px white;
     transition: background-color 0.3s linear;
     &:hover{
-        background-color: ${colors.DARK_WHITE}
+        background-color: gray;
         cursor: pointer;
     }
     &:active{
-        background-color: ${colors.ACTIVE_COLOR};
+        background-color: #b8b8b8;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.WHITE};
+            background-color: white;
         }
         &:active{
-            background-color: ${colors.DARK_WHITE};
+            background-color: gray;
         }
     }
 `
@@ -439,19 +444,19 @@ const ButtonText = styled.p`
     font-size: 20px;
     line-height: 40px;
     text-align: center;
-    color: ${colors.DARK_GREEN}
+    color: ${props => props.color}
 `
 
 const TopBarContainer = styled.div`
     height: 50px;
-    width: calc(100vw - 15px);
-    background-color: ${colors.WHITE};
+    width: 100vw;
     text-align: center;
     display: flex;
+    background-color: ${props => props.colors.SECONDARY}
 `
 
 const Month = styled.p`
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
     line-height: 50px;
     font-size: 25px;
     user-select: none;
@@ -465,10 +470,11 @@ const RightFloat = styled.div`
     float: right;
     display: flex;
     margin-top: 10px;
+    margin-right: 5%;
 `
 
 const Year = styled.p`
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
     line-height: 50px;
     font-size: 25px;
     user-select: none;
@@ -494,19 +500,18 @@ const DayNamesContainer = styled.div`
     z-index: 1;
     height: 40px;
     width: 100vw;
-    background-color: ${colors.WHITE};
-    box-shadow: 0 4px 2px -2px gray;
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 2px 0px black;
 `
 
 const DayNames = styled.div`
     height: 100%;
     display: flex;
     width: calc(100vw - 15px);
-    background-color: ${colors.WHITE};
 `
 
 const DateName = styled.p`
-    color: ${colors.GRAY};
+    color: gray;
     user-select: none;
     line-height: 40px;
     font-size: ${mobilecheck() ? "10px" : "18px"};
@@ -516,14 +521,14 @@ const DateName = styled.p`
 
 const WeekDate = styled.p`
     padding-top: 5px;
-    color: ${colors.WHITE};
+    color: white;
     font-size: 18px;
     user-select: none;
     word-wrap: break-word;
     white-space: pre-line;
     margin: 0;
     width: 15px;
-    background-color: ${colors.GRAY}
+    background-color: gray;
     
 `
 
@@ -544,12 +549,12 @@ const AddButton = styled.div`
     bottom: 20px;
     right: 30px;
     border-radius: 100px;
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 10px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 10px 0px black;
 `
 
 const Day = styled.div`
-    border: 0.5px solid ${colors.LIGHT_GRAY};
+    border: 0.5px solid ${props => props.colors.BORDER};
     flex: 1;
     position: relative;
     transition: background-color 0.3s linear;
@@ -562,8 +567,8 @@ const DayNumber = styled.p`
     bottom: 2px;
     right: 5px;
     margin: 0;
-    color: ${props => props.toggle ? props.today ? colors.WHITE : colors.BLACK : colors.LIGHT_GRAY}
-    background-color: ${props => props.today ? colors.DARK_GREEN : colors.WHITE};
+    color: ${props => props.toggle ? props.today ? "white" : props.colors.TEXT : "#78787850"}
+    background-color: ${props => props.today ? props.colors.MAIN : props.colors.PRIMARY};
     padding: 1px 3px;
     border-radius: 10px;
 `

@@ -1,6 +1,5 @@
 import React, { useEffect, memo, useCallback } from "react";
 import styled from 'styled-components';
-import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import { connect } from "react-redux";
 import { deleteEvent, passEvent } from '../stores/events/eventActions';
@@ -15,7 +14,7 @@ import ClockIcon from 'react-ionicons/lib/MdClock';
 import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
-const Event = ({ events, deleteEvent, passEvent }) => {
+const Event = ({ events, deleteEvent, passEvent, colors }) => {
     const { date, id } = useParams();
     const history = useHistory();
 
@@ -62,9 +61,9 @@ const Event = ({ events, deleteEvent, passEvent }) => {
     }, [history, goBack, goEdit, goRemove]);
 
     return (
-        <Container>
-            <TopBar>
-                <Title>{event.title}</Title>
+        <Container colors={colors}>
+            <TopBar colors={colors}>
+                <Title color={colors.MAIN}>{event.title}</Title>
                 <LeftButtonContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </LeftButtonContainer>
@@ -75,25 +74,24 @@ const Event = ({ events, deleteEvent, passEvent }) => {
             </TopBar>
             <ContentContainer>
                 <SpacingContainer>
-                    <CalendarIcon id="calendar" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
-                    <Seperator>-</Seperator>
+                    <CalendarIcon id="calendar" fontSize="35px" color={colors.MAIN} style={{ position: "absolute", paddingTop: "13px" }} />
+                    <Seperator color={colors.TEXT}>-</Seperator>
                     <TextContainer>
-                        <Text>{event.startDate}</Text>
-                        <Text>{event.endDate}</Text>
+                        <Text color={colors.TEXT}>{event.startDate}</Text>
+                        <Text color={colors.TEXT}>{event.endDate}</Text>
                     </TextContainer>
                 </SpacingContainer>
                 <SpacingContainer>
-                    <ClockIcon id="clock" fontSize="35px" color={colors.DARK_GREEN} style={{ position: "absolute", paddingTop: "13px" }} />
-                    <Seperator>-</Seperator>
+                    <ClockIcon id="clock" fontSize="35px" color={colors.MAIN} style={{ position: "absolute", paddingTop: "13px" }} />
+                    <Seperator color={colors.TEXT}>-</Seperator>
                     <TextContainer>
-                        <Text>{event.startTime}</Text>
-                        <Text>{event.endTime}</Text>
+                        <Text color={colors.TEXT}>{event.startTime}</Text>
+                        <Text color={colors.TEXT}>{event.endTime}</Text>
                     </TextContainer>
                 </SpacingContainer>
-                <Line />
                 <DescriptionContainer>
-                    <DescriptionIcon id="description" fontSize="35px" color={colors.DARK_GREEN} style={{ paddingTop: "13px" }} />
-                    <Description dangerouslySetInnerHTML={{ __html: event.description }}></Description>
+                    <DescriptionIcon id="description" fontSize="35px" color={colors.MAIN} style={{ paddingTop: "13px" }} />
+                    <Description color={colors.TEXT} dangerouslySetInnerHTML={{ __html: event.description }}></Description>
                 </DescriptionContainer>
             </ContentContainer>
         </Container>
@@ -102,7 +100,8 @@ const Event = ({ events, deleteEvent, passEvent }) => {
 
 const mapStateToProps = state => {
     return {
-        events: state.eventReducer.events
+        events: state.eventReducer.events,
+        colors: state.preferencesReducer.colors  
     };
 };
 
@@ -113,23 +112,20 @@ const mapDispatchToProps = {
 
 const Container = styled.div`
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    background-color: ${props => props.colors.PRIMARY}
 `
 
 const Seperator = styled.p`
     position: absolute;
     left: 50%;
+    color: ${props => props.color}
 `
 
 const LeftButtonContainer = styled.div`
     position: absolute;
     top: 5px;
     left: 10px;
-`
-const Line = styled.div`
-    height: 15px;
-    border-bottom: 1px solid ${colors.GRAY};
-    box-shadow: 0px 2px 2px ${colors.GRAY};
 `
 
 const DescriptionContainer = styled.div`
@@ -143,7 +139,7 @@ const DescriptionContainer = styled.div`
 
 const Description = styled.div`
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
     font-size: 20px;
     padding-left: 53px;
     white-space: pre;
@@ -158,7 +154,7 @@ const TextContainer = styled.div`
 
 const Text = styled.p`
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
     font-size: 20px;
     text-align: center;
     flex: 1;
@@ -194,7 +190,7 @@ const Title = styled.p`
     line-height: 50px;
     text-align:center;
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TopBar = styled.div`
@@ -202,7 +198,8 @@ const TopBar = styled.div`
     z-index: 2;
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 5px 0px black;
 `
 const areEqual = (prevProps, nextProps) => {
     return true;

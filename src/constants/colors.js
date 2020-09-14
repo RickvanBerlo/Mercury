@@ -31,7 +31,8 @@ export const darkBackground = {
     SECONDARY: "#404040",
     TEXT: "#ffffff",
     SHADOW: "#000000",
-    INSET_SHADOW: "#404040"
+    INSET_SHADOW: "#404040",
+    BORDER: "#404040"
 }
 
 export const lightBackground = {
@@ -40,6 +41,7 @@ export const lightBackground = {
     TEXT: "#000000",
     SHADOW: "#888",
     INSET_SHADOW: "#fdfdfd",
+    BORDER: "#E8E8E8"
 }
 
 export default colors;

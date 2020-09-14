@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from 'styled-components';
-import colors from '../../constants/colors';
+import { connect } from "react-redux";
 
-const CurrentTime = () => {
+const CurrentTime = ({ colors }) => {
     const [time, setTime] = useState(getTime());
     let timeout = useRef(null);
 
@@ -25,7 +25,7 @@ const CurrentTime = () => {
     }, [time])
 
     return (
-        <Container id={"currentTime"} ><ArrowLeft /></Container>
+        <Container colors={colors} id={"currentTime"} ><ArrowLeft colors={colors}/></Container>
     )
 }
 
@@ -39,6 +39,12 @@ const getTime = () => {
     return h + ":" + m + ":" + s;
 }
 
+const mapStateToProps = state => {
+    return {
+        colors: state.preferencesReducer.colors,
+    };
+};
+
 const Container = styled.div`
     position: relative;
     display: flow-root;
@@ -46,7 +52,7 @@ const Container = styled.div`
     width: calc(100% - 20px);
     height: 2px;
     opacity: 0;
-    background-color: ${colors.DARK_GREEN};
+    background-color: ${props => props.colors.MAIN};
     z-index: 0;
     transition: opacity 0.2s linear, top 0.1s linear;
 `
@@ -56,9 +62,9 @@ const ArrowLeft = styled.div`
     height: 0; 
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 15px solid ${colors.DARK_GREEN};
+    border-left: 15px solid ${props => props.colors.MAIN};
     float: right;
     transform: translateY(-9px);
 `
 
-export default CurrentTime
+export default connect(mapStateToProps, undefined)(CurrentTime);

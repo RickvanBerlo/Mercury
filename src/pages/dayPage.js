@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, memo } from "react";
 import styled from 'styled-components';
-import colors from '../constants/colors';
 import IconButton from '../components/buttons/dasboard/iconButton';
 import ToggleIconButton from '../components/buttons/dasboard/toggleIconButton';
 import UUID from '../utils/GenerateUUID';
@@ -17,7 +16,7 @@ import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ events }) => {
+const Day = ({ events, colors }) => {
     const history = useHistory();
     const { date } = useParams();
     const allDayEvents = getAllDayEvents(date, events);
@@ -74,9 +73,9 @@ const Day = ({ events }) => {
     }, [])
 
     return (
-        <Container>
-            <TopBar>
-                <Title>{date}</Title>
+        <Container colors={colors}>
+            <TopBar colors={colors}>
+                <Title color={colors.MAIN}>{date}</Title>
                 <PositionButtonLeftContainer>
                     <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonLeftContainer>
@@ -84,15 +83,15 @@ const Day = ({ events }) => {
                     <ToggleIconButton id="showAllDay" iconOne={EyeIcon} iconTwo={EyeOffIcon} callback={ToggleShowAllDay} fontSize="40px" color={colors.DARK_GREEN} />
                 </PositionButtonRightContainer>
             </TopBar>
-            <AllDayContainer id={"allDayContainer"}>
-                {placeAllDayEvents(allDayEvents, goToEvent, date)}
+            <AllDayContainer colors={colors} id={"allDayContainer"}>
+                {placeAllDayEvents(allDayEvents, goToEvent, date, colors)}
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
-                {createDayGrid(click)}
+                {createDayGrid(click, colors)}
                 {placeTimedEvents(objectIsEmpty(events) ? [] : events[date].timedEvents, goToEvent)}
                 <CurrentTime />
             </DayContainer>
-            <AddButton onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
+            <AddButton colors={colors} onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
                 <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
@@ -114,16 +113,16 @@ const getAllDayEvents = (dateOfDay, events) => {
     return array;
 }
 
-const createDayGrid = (click) => {
+const createDayGrid = (click, colors) => {
     let array = [];
 
     for (let i = 0; i < 24; i++) {
         array.push(
             <HourContainer key={UUID()} offset={i}>
                 <HourSectionsContainer>
-                    {createQuarterContainers(i, click)}
+                    {createQuarterContainers(i, click, colors)}
                 </HourSectionsContainer>
-                <HourNameContainer>
+                <HourNameContainer colors={colors}>
                     <HourName>{i < 10 ? "0" + i + "..00" : i + "..00"}</HourName>
                 </HourNameContainer>
             </HourContainer>
@@ -132,11 +131,11 @@ const createDayGrid = (click) => {
     return array;
 }
 
-const createQuarterContainers = (hour, click) => {
+const createQuarterContainers = (hour, click, colors) => {
     let containers = [];
     for (let i = 0; i < 4; i++) {
         containers.push(
-            <QuarterContainer key={ParseTimeToString(hour, i)} id={ParseTimeToString(hour, i)} onClick={(e) => { click(e, ParseTimeToString(hour, i)) }} onTouchEnd={(e) => { click(e, ParseTimeToString(hour, i)) }}>
+            <QuarterContainer colors={colors} key={ParseTimeToString(hour, i)} id={ParseTimeToString(hour, i)} onClick={(e) => { click(e, ParseTimeToString(hour, i)) }} onTouchEnd={(e) => { click(e, ParseTimeToString(hour, i)) }}>
             </QuarterContainer>
         )
     }
@@ -157,19 +156,19 @@ const sortEventsOnTime = (first, second) => {
     return diffBetweenTime(second.startTime, first.startTime)
 }
 
-const placeAllDayEvents = (events, goToEvent, selectedDay) => {
+const placeAllDayEvents = (events, goToEvent, selectedDay, colors) => {
     let eventComponents = [];
 
     for (let i = 0; i < events.length; i++) {
         eventComponents.push(
-            <AllDayEvent key={events[i].id} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
+            <AllDayEvent colors={colors} key={events[i].id} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}>
                 <ColorBubble color={events[i].color}></ColorBubble>
-                <AllDayEventTitle>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
+                <AllDayEventTitle color={colors.TEXT}>{events[i].title} ({datediff(events[i].startDate, selectedDay) + 1}/{datediff(events[i].startDate, events[i].endDate) + 1})</AllDayEventTitle>
             </AllDayEvent>
         )
     }
     if (eventComponents.length === 0) {
-        eventComponents.push(<Text key={UUID()}>geen events gevonden...</Text>)
+        eventComponents.push(<Text color={colors.MAIN} key={UUID()}>geen events gevonden...</Text>)
     }
 
     return eventComponents;
@@ -213,6 +212,7 @@ const caclulatePositionOfEvent = (events, event) => {
 const mapStateToProps = state => {
     return {
         events: state.eventReducer.events,
+        colors: state.preferencesReducer.colors  
     };
 };
 
@@ -222,7 +222,8 @@ const mapDispatchToProps = {
 
 const Container = styled.div`
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    background-color: ${props => props.colors.PRIMARY};
 `
 
 const AllDayContainer = styled.div`
@@ -231,11 +232,11 @@ const AllDayContainer = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     width: 100vw;
-    box-shadow: 0px 3px 6px -1px ${colors.BLACK};
+    box-shadow: 0px 3px 6px -1px black;
     z-index: 1;
     max-height: 0;
     overflow: hidden;
-    background-color: ${colors.WHITE};
+    background-color: ${props => props.colors.SECONDARY};
     transition: max-height 0.2s linear;
 
 `
@@ -250,17 +251,17 @@ const AllDayEvent = styled.div`
     margin-bottom: 2px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
-    box-shadow: inset 0px 0px 5px 5px ${colors.WHITE};
+    box-shadow: inset 0px 0px 5px 5px white;
     &:hover{
-        background-color: ${colorChanger(colors.LIGHT_GRAY, -0.2)}
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)}
         cursor: pointer;
     }
     @media (max-width: 767px) {
         &:hover{
-            background-color: ${colors.WHITE};
+            background-color: white;
         }
         &:active{
-            background-color: ${colorChanger(colors.LIGHT_GRAY, -0.2)}
+            background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)}
         }
     }
 `
@@ -287,7 +288,7 @@ const TimedEvent = styled.div`
     margin-right: 3px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
-    box-shadow: 0px 1px 2px 0px ${colors.BLACK};
+    box-shadow: 0px 1px 2px 0px black;
     &:hover{
         background-color: ${props => colorChanger(props.color, -0.2)}
         cursor: pointer;
@@ -302,7 +303,7 @@ const TimedEvent = styled.div`
 `
 
 const AllDayEventTitle = styled.p`
-    color: ${colors.BLACK}
+    color: ${props => props.color};
     margin: 0;
     font-size: 20px;
     height: 100%;
@@ -313,7 +314,7 @@ const AllDayEventTitle = styled.p`
 `
 
 const EventTitle = styled.p`
-    color: ${colors.WHITE}
+    color: white;
     margin: 0;
     width: calc(100% - 16px);
     text-align: center;
@@ -343,7 +344,7 @@ const HourName = styled.div`
     width: 10px;
     font-size: 20px;
     word-wrap: break-word;
-    color: ${colors.WHITE};
+    color: white;
     margin: auto;
     top: 50%;
     transform: translate(0%, -50%);
@@ -352,11 +353,11 @@ const HourName = styled.div`
 const QuarterContainer = styled.div`
     width: 100%;
     height: calc(25% - 1px);
-    border-bottom: 1px solid ${colors.GRAY};
+    border-bottom: 1px solid ${props => props.colors.BORDER};
     transition: background-color 0.3s linear;
     display: flex;
     &:hover{
-        background-color: ${colors.LIGHT_GRAY}
+        background-color: ${props => colorChanger(props.colors.PRIMARY, -0.1)}
     }
 
 `
@@ -367,8 +368,8 @@ const HourSectionsContainer = styled.div`
 
 const HourNameContainer = styled.div`
     width: 20px;
-    background-color: ${colors.GRAY};
-    border-bottom: 1px solid ${colors.WHITE};
+    background-color: #7A7A7A;
+    border-bottom: 1px solid ${props => props.colors.BORDER};
     white-space: pre-line;
 `
 
@@ -386,7 +387,7 @@ const Title = styled.p`
     line-height: 50px;
     text-align:center;
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const Text = styled.p`
@@ -395,7 +396,7 @@ const Text = styled.p`
     line-height: 40px;
     text-align:center;
     margin: 0;
-    color: ${colors.DARK_GREEN};
+    color: ${props => props.color};
 `
 
 const TopBar = styled.div`
@@ -403,7 +404,8 @@ const TopBar = styled.div`
     z-index: 2;
     width: 100vw;
     height: 50px;
-    box-shadow: 0px 2px 5px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 5px 0px black;
 `
 
 const DayContainer = styled.div`
@@ -423,8 +425,8 @@ const AddButton = styled.div`
     bottom: 20px;
     right: 30px;
     border-radius: 100px;
-    background-color: ${colors.WHITE};
-    box-shadow: 0px 2px 10px 0px ${colors.BLACK};
+    background-color: ${props => props.colors.SECONDARY};
+    box-shadow: 0px 2px 10px 0px black;
 `
 
 const areEqual = (prevProps, nextProps) => {
