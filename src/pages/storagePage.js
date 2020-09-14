@@ -222,7 +222,7 @@ const createItems = (items, currentPath, selectedFiles, mouseUp, mouseDown, anim
     const itemComponents = [];
     items[currentPath].forEach((item, index) => {
         itemComponents.push(
-            <ItemContainer key={GenerateUUID()} delay={index} animation={animation} color={selectedFiles[item.fileName] !== undefined ? colorChanger(colors.SECONDARY, -0.1) : colors.SECONDARY} onMouseDown={(e) => { mouseDown(e, item) }} onMouseUp={(e) => { mouseUp(e, item) }}>
+            <ItemContainer key={GenerateUUID()} delay={index} animation={animation} color={selectedFiles[item.fileName] !== undefined ? colorChanger(colors.PRIMARY, -0.1) : colors.PRIMARY} onMouseDown={(e) => { mouseDown(e, item) }} onMouseUp={(e) => { mouseUp(e, item) }}>
                 <CenterImageContainer>
                     {getCorrectIcon(item.fileName, colors)}
                 </CenterImageContainer>

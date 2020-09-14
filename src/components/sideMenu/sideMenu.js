@@ -106,7 +106,6 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
             mouseX = mobilecheck() ? event.touches[0].pageX : event.pageX;
             mouseY = mobilecheck() ? event.touches[0].pageY : event.pageY;
             pressed = true;
-            preloadPages();
         }
 
         const endDrag = (event) => {
@@ -116,6 +115,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
                 pressed = false;
                 drag = false;
                 scroll.current = false;
+                preloadPages();
             }
         }
         const label = document.getElementById("label");

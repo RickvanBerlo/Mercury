@@ -8,7 +8,6 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import '../css/dashboardTransition.css';
 
 const DashboardRoutes = ({ history }) => {
-
     const createPrivateRoutes = () => {
         const privateRoutes = [];
         for (const key in pages) {

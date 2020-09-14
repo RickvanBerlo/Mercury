@@ -15,9 +15,9 @@ const EventEdit = ({ events, addEvent, replaceEvent, passEvent, colors }) => {
     const { date, id, time } = useParams();
     const history = useHistory();
     let event;
-    if (!objectIsEmpty(events)){
-    event = events[date].allDayEvents.find(event => event.id === id);
-    if (event === undefined) event = events[date].timedEvents.find(event => event.id === id);
+    if (!objectIsEmpty(events) && events[date]){
+        event = events[date].allDayEvents.find(event => event.id === id);
+        if (event === undefined) event = events[date].timedEvents.find(event => event.id === id);
     }
     if (event === undefined) event = {};
 

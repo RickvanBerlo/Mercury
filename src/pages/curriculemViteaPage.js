@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, memo} from 'react';
 import Header from '../components/headers/parallaxHeader';
 import AboutMeSection from '../components/personalPageSections/aboutMeSection';
 import Footer from '../components/footers/personalPageFooter';
@@ -16,8 +16,12 @@ import LayerThree from '../assets/LayerThree.webp';
 import LayerFour from '../assets/LayerFour.webp';
 import LayerFive from '../assets/LayerFive.webp';
 
-const CurriculemVitae = () => {
+const CurriculemVitae = ({loaded}) => {
   const strings = languageSelector();
+
+  useEffect(() => {
+    loaded();
+  }, [loaded])
 
   return (
     <ParallaxProvider>
@@ -33,4 +37,4 @@ const CurriculemVitae = () => {
   );
 }
 
-export default CurriculemVitae;
+export default memo(CurriculemVitae);

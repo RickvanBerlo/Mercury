@@ -24,14 +24,14 @@ const NoteEditPage = lazy(() => import('../pages/noteEditPage'));
 
 export const pages = {
     "notes/noteedit/:id": { PAGE: NoteEditPage },
+    "calendar/:date": { PAGE: DayPage },
+    "calendar/:date/events/:id/eventedit": { PAGE: EventEditPage },
+    "calendar/:date/createevent/:time": { PAGE: EventEditPage },
+    "calendar/:date/events/:id": { PAGE: EventPage },
     "notes/createnote": { PAGE: NoteEditPage },
     "home": { PAGE: HomePage, ICON: HomeIcon, PUBLIC: true },
     "calendar": { PAGE: CalendarPage, ICON: CalanderIcon },
     "notes": { PAGE: NotesPage, ICON: NotesIcon },
     "storage": { PAGE: StoragePage, ICON: StorageIcon },
     "config": { PAGE: ConfigPage, ICON: ConfigIcon },
-    "calendar/:date": { PAGE: DayPage },
-    "calendar/:date/events/:id/eventedit": { PAGE: EventEditPage },
-    "calendar/:date/createevent/:time": { PAGE: EventEditPage },
-    "calendar/:date/events/:id": { PAGE: EventPage },
 };
