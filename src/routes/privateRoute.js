@@ -6,7 +6,6 @@ import colors from '../constants/colors';
 import { login } from '../stores/keycloak/keycloakActions';
 import BackgroundImage from '../components/backgroundImage/backgroundImage';
 import backgroundImage from '../assets/background.webp';
-import mobileBackgroundImage from '../assets/backgroundmobile.webp';
 
 const PrivateRoute = ({ component, login, keycloak, init, authenticated, ...rest }) => {
     useEffect(() => {
@@ -22,7 +21,7 @@ const PrivateRoute = ({ component, login, keycloak, init, authenticated, ...rest
                 component={component}
             /> 
         :
-            <Container><BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage></Container>
+            <Container><BackgroundImage backgroundImage={backgroundImage}></BackgroundImage></Container>
     )
 }
 

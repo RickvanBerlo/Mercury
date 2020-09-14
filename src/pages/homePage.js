@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import styled, { keyframes } from 'styled-components';
 import backgroundImage from '../assets/background.webp';
-import mobileBackgroundImage from '../assets/backgroundmobile.webp';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
@@ -32,7 +31,7 @@ const LoginStyledIcon = styled(PersonIcon)`
 `
 
 
-const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock, init, keycloak, login }) => {
+const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock, init, keycloak, login, colors }) => {
     const scroll = useRef(false);
     const searchText = useRef("");
     const [selectedWeblink, setSelectedWeblink] = useState({});
@@ -118,8 +117,8 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
     }, [add, setModelInactive, addModel])
 
     return ( 
-        <Container>
-            <BackgroundImage backgroundImage={backgroundImage} mobileBackgroundImage={mobileBackgroundImage}></BackgroundImage>
+        <Container colors={colors}>
+            <BackgroundImage backgroundImage={backgroundImage}></BackgroundImage>
             <Clock digital={clock}/>
             {keycloak.authenticated && <TodoList key={UUID()}/>}
             <CenterContainer>
@@ -187,6 +186,7 @@ const mapStateToProps = state => {
         clock: state.preferencesReducer.clock,
         init: state.keycloakReducer.init,
         keycloak: state.keycloakReducer.keycloak,
+        colors: state.preferencesReducer.colors    
     };
 };
 
@@ -213,7 +213,7 @@ const Container = styled.div`
     width: 100vw;
     height: 100vh;
     text-align: center;
-    background-image: linear-gradient(${colors.HEADER_BACKGROUND_COLOR} 80%, ${colors.DARK_GRAY} 1%, ${colors.DARK_GRAY});
+    background-color: ${props => props.colors.PRIMARY}
 `
 
 const ContentContainer = styled.div`
@@ -300,6 +300,7 @@ const WebsiteLink = styled.div`
     margin: auto;
     margin-top: 10px;
     background-color: ${colors.WHITE};
+    box-shadow: 0px 0px 5px 0px black;
     animation ${fadein} 0.4s linear forwards;
 `
 const WebsiteName = styled.p`
@@ -309,6 +310,7 @@ const WebsiteName = styled.p`
     display:block;
     white-space: nowrap;
     overflow: hidden;
+    text-shadow: 0px 0px 5px black;
     color: ${colors.WHITE}
     margin: 5px 10px;
 `

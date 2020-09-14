@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Switch, Redirect } from "react-router-dom";
 import PublicRoute from './publicRoute';
 import background from '../assets/background.webp';
-import colors from '../constants/colors';
 
 //pages
 const Dashboard = lazy(() => import('../pages/dashboardPage'));
@@ -32,10 +31,9 @@ const Container = styled.div`
     right: 0;
     bottom: 0;
     left: 0;
-    background: url(${props => props.background}) bottom;
-    background-size: 100vw;
-    background-repeat: no-repeat;
-    background-color: ${colors.HEADER_BACKGROUND_COLOR};
+    box-sizing: border-box;
+    background: url(${background}) no-repeat center center fixed;
+    background-size: cover;
 `
 
 export default Routes;
