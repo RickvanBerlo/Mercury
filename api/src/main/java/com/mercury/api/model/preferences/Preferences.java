@@ -23,17 +23,22 @@ public class Preferences {
 
     private boolean darkmode;
     private boolean clock;
+    private Image backgroundImage;
     @CreatedDate
     private Instant createdDate;
     @LastModifiedDate
     private Instant lastModifiedDate;
 
     public Preferences() {
+        this.darkmode = false;
+        this.clock = false;
+        this.backgroundImage = new Image();
     }
 
-    public Preferences(boolean darkmode, boolean clock) {
+    public Preferences(boolean darkmode, boolean clock, Image backgroundImage) {
         this.darkmode = darkmode;
         this.clock = clock;
+        this.backgroundImage = backgroundImage;
     }
 
     public Preferences CreateResponseInstant() {
@@ -41,6 +46,7 @@ public class Preferences {
         tmp.setClock(this.clock);
         tmp.setDarkmode(this.darkmode);
         tmp.setCreatedDate(this.createdDate);
+        tmp.setBackgroundImage(this.backgroundImage);
         tmp.setLastModifiedDate(this.lastModifiedDate);
         return tmp;
     }

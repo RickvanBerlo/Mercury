@@ -27,7 +27,16 @@ public class EventsController {
     @RequestMapping(value = "/events", method = RequestMethod.POST)
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
-            Event savedEvent = service.save(event);
+            Event savedEvent = service.save(new Event(
+                event.getTitle(), 
+                event.getDescription(), 
+                event.isHasTime(), 
+                event.getStartDate(), 
+                event.getEndDate(),
+                event.getColor(), 
+                event.getStartTime(), 
+                event.getEndTime()
+            ));
             return new ResponseEntity<>(savedEvent.CreateResponseInstant(), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

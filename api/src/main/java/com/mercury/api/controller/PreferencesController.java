@@ -1,6 +1,7 @@
 package com.mercury.api.controller;
 
 import java.util.Optional;
+
 import com.mercury.api.model.preferences.Preferences;
 import com.mercury.api.service.preferences.PreferenceService;
 
@@ -22,7 +23,7 @@ public class PreferencesController {
         try {
             Optional<Preferences> pref = service.get();
             if(!pref.isPresent()){
-                Preferences savedPreferences = service.save(new Preferences(false, false));
+                Preferences savedPreferences = service.save(new Preferences());
                 return new ResponseEntity<>(savedPreferences, HttpStatus.OK);
             }
             return new ResponseEntity<>(pref.get().CreateResponseInstant(), HttpStatus.OK);

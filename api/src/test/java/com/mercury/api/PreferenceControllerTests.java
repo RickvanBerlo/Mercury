@@ -1,6 +1,7 @@
 package com.mercury.api;
 
 import com.mercury.api.controller.PreferencesController;
+import com.mercury.api.model.preferences.Image;
 import com.mercury.api.model.preferences.Preferences;
 
 import org.junit.jupiter.api.Order;
@@ -28,7 +29,7 @@ public class PreferenceControllerTests {
     @Test
     @Order(2)
     public void PostPreferences() {
-        Preferences pref = preferencesController.savePreferences(new Preferences(true, true)).getBody();
+        Preferences pref = preferencesController.savePreferences(new Preferences(true, true, new Image())).getBody();
         Assertions.assertEquals(pref.isClock(), true);
         Assertions.assertEquals(pref.isDarkmode(), true);
     }
