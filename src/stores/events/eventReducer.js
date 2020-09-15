@@ -8,6 +8,9 @@ const fulfilled = "_FULFILLED";
 export default (state = InitState, action) => {
     let events;
     switch (action.type) {
+        case (actions.ADD_EVENT + fulfilled):
+            events = addEvent(state.events, action.payload);
+            return { ...state, events: { ...events } };
         case (actions.DELETE_EVENT + fulfilled):
             events = deleteEvent(state.events, state.passedEvent)
             return { ...state, events: { ...events } };

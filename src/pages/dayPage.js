@@ -29,6 +29,8 @@ const Day = ({ events, colors }) => {
     const goToEventEdit = (time) => {
         if(time !== undefined)
         history.push(`${date}/createevent/${time}`);
+        else
+        history.push(`${date}/createevent/00:00`);
     }
 
     const goToEvent = (e, event) => {
