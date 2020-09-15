@@ -12,15 +12,15 @@ import ConfigIcon from 'react-ionicons/lib/MdBuild';
 // import EventEditPage from '../pages/eventEditPage';
 // import EventPage from '../pages/eventPage';
 // import NoteEditPage from '../pages/noteEditPage';
-const HomePage = lazy(() => import('../pages/homePage'));
-const CalendarPage = lazy(() => import('../pages/calendarPage'));
-const NotesPage = lazy(() => import('../pages/notesPage'));
-const StoragePage = lazy(() => import('../pages/storagePage'));
-const ConfigPage = lazy(() => import('../pages/configPage'));
-const DayPage = lazy(() => import('../pages/dayPage'));
-const EventEditPage = lazy(() => import('../pages/eventEditPage'));
-const EventPage = lazy(() => import('../pages/eventPage'));
-const NoteEditPage = lazy(() => import('../pages/noteEditPage'));
+export const HomePage = lazy(() => import('../pages/homePage'));
+export const CalendarPage = lazy(() => import('../pages/calendarPage'));
+export const NotesPage = lazy(() => import('../pages/notesPage'));
+export const StoragePage = lazy(() => import('../pages/storagePage'));
+export const ConfigPage = lazy(() => import('../pages/configPage'));
+export const DayPage = lazy(() => import('../pages/dayPage'));
+export const EventEditPage = lazy(() => import('../pages/eventEditPage'));
+export const EventPage = lazy(() => import('../pages/eventPage'));
+export const NoteEditPage = lazy(() => import('../pages/noteEditPage'));
 
 export const pages = {
     "notes/noteedit/:id": { PAGE: NoteEditPage },

@@ -13,6 +13,7 @@ import EventPlaceholder from '../components/event/eventPlaceholder';
 import Model from '../components/model/model';
 import ItemSelector from '../components/itemSelector/itemSelector';
 import { useHistory } from "react-router-dom";
+import { EventEditPage, EventPage, DayPage } from '../constants/pages';
 
 import PreviousIcon from 'react-ionicons/lib/MdArrowBack';
 import NextIcon from 'react-ionicons/lib/MdArrowForward';
@@ -161,6 +162,12 @@ const Calendar = ({ getEventsOfMonth, events, addModel, setModelActive, setModel
     useEffect(() => {
         getEventsOfMonth(new Date(currentYear, currentMonth, 1).toLocaleDateString("fr-CA"))
     }, [currentYear, currentMonth, getEventsOfMonth])
+
+    useEffect(() => {
+        EventEditPage.preload();
+        EventPage.preload();
+        DayPage.preload();
+    }, [])
 
     useEffect(() => {
         addModel(

@@ -6,6 +6,7 @@ import IconButton from '../components/buttons/dasboard/iconButton';
 import UUID from '../utils/GenerateUUID';
 import { useHistory } from "react-router-dom";
 import colorChanger from "../utils/colorChanger";
+import { NoteEditPage } from '../constants/pages';
 import '../css/notesPage.css';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
@@ -18,6 +19,10 @@ const Notes = ({ notes, getNotes, colors }) => {
     useEffect(() => {
         getNotes();
     }, [getNotes])
+
+    useEffect(() => {
+        NoteEditPage.preload();
+    }, [])
 
     const NoItemsIcon = styled(ListIcon)`
         margin: 0;
