@@ -5,15 +5,13 @@ import SideMenu from '../components/sideMenu/sideMenu';
 import ModelsContainer from '../components/model/modelsContainer';
 import DashboardRoutes from '../routes/dashboardRoutes';
 import SnackBar from '../components/notification/snackbar';
-import { getAllSideMenuButtonPages } from '../utils/pageSelector';
 import { removeAllModels } from '../stores/models/modelActions';
 
 const Dashboard = ({ history, removeAllModels, colors }) => {
-    removeAllModels();
     return (
         <Container colors={colors}>
-            <DashboardRoutes colors={colors} history={history} />
-            <SideMenu history={history} sideMenuButtons={getAllSideMenuButtonPages()} />
+            <DashboardRoutes removeAllModels={removeAllModels} history={history} />
+            <SideMenu history={history}/>
             <SnackBar />
             <ModelsContainer />
         </Container>

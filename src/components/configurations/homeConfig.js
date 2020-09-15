@@ -4,18 +4,25 @@ import styled from 'styled-components';
 import BaseConfig from './baseConfig';
 import SliderButton from '../buttons/dasboard/sliderButton';
 import { changeClock, changeBackgroundImage, removeBackgroundImage } from '../../stores/preferences/preferencesActions';
+import { addMessage } from '../../stores/snackbar/snackbarActions';
 import colorChanger from '../../utils/colorChanger';
 import IconButton from "../buttons/cv/iconButton";
 
 import removeImageIcon from 'react-ionicons/lib/MdCloseCircle';
 
-const HomeConfig = ({ changeClock, clock, colors, changeBackgroundImage, removeBackgroundImage, backgroundImage }) => {
+const MAX_FILE_SIZE = 1000000;
+
+const HomeConfig = ({ changeClock, clock, colors, changeBackgroundImage, removeBackgroundImage, backgroundImage, addMessage }) => {
     const onChangeClock = (bool) => {
         changeClock(bool);
     }
 
     const imageSelector = (e) => {
-        changeBackgroundImage(e.target.files[0]);
+        if (e.target.files[0].size > MAX_FILE_SIZE){
+            addMessage("Your image size needs to be below 1MB")
+        }else{
+            changeBackgroundImage(e.target.files[0]);
+        }
     }
 
     useEffect(() => {
@@ -96,6 +103,7 @@ const SelectedImage = styled.label`
     padding-right: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
+    transition: background-color 0.3s linear, color 0.3s linear, border 0.3s linear;
     &:hover{
         cursor: pointer;
     }
@@ -132,7 +140,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     changeClock,
     changeBackgroundImage, 
-    removeBackgroundImage
+    removeBackgroundImage,
+    addMessage
 }
 
 const MemoHomeConfig = memo(connect(mapStateToProps, mapDispatchToProps)(HomeConfig), areEqual)

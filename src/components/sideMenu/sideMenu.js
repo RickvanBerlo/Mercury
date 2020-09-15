@@ -5,17 +5,30 @@ import getScreenResolution from '../../utils/screenResolution';
 import { mobilecheck } from '../../utils/deviceCheck';
 import { logout } from '../../stores/keycloak/keycloakActions';
 import { getPreferences } from '../../stores/preferences/preferencesActions';
-import { pages } from '../../constants/pages';
+import { CalendarPage,ConfigPage,HomePage,NotesPage,StoragePage } from '../../constants/pages';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 import colorChanger from '../../utils/colorChanger';
+import CalanderIcon from 'react-ionicons/lib/MdCalendar';
+import HomeIcon from 'react-ionicons/lib/MdHome';
+import NotesIcon from 'react-ionicons/lib/MdList';
+import StorageIcon from 'react-ionicons/lib/MdFolder';
+import ConfigIcon from 'react-ionicons/lib/MdBuild';
 
 const INIT_LABEL_Y = 75;
 
 const SIDEMENU_MIN = -300;
 const SIDEMENU_MAX = 0;
 
+export const sideMenu = [
+    { NAME: "Home", ICON: HomeIcon },
+    { NAME: "Calendar", ICON: CalanderIcon },
+    { NAME: "Notes", ICON: NotesIcon },
+    { NAME: "Storage", ICON: StorageIcon },
+    { NAME: "Config", ICON: ConfigIcon },
+];
+
 //this component wil only be rendered once.
-const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPreferences, colors }) => {
+const SideMenu = ({ history, keycloak, logout, init, getPreferences, colors }) => {
     let sidemenuX = useRef(SIDEMENU_MIN)
     let scroll = useRef(false);
     const [usersName, setUsersName] = useState("Mercury");
@@ -73,9 +86,11 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
         let pressed = false;
 
         const preloadPages = () => {
-            for(const key in pages){
-                pages[key].PAGE.preload();
-            }
+            CalendarPage.preload();
+            ConfigPage.preload();
+            HomePage.preload();
+            NotesPage.preload();
+            StoragePage.preload();
         }
 
         const setOffset = (event) => {
@@ -151,7 +166,7 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
                 <Title color={colors.MAIN}>{usersName}</Title>
             </ContainerTitle>
             <ContainerButtons>
-                {createSideMenuButtons(sideMenuButtons, changeCurrentPage, colors)}
+                {createSideMenuButtons(changeCurrentPage, colors)}
             </ContainerButtons>
             <ContainerLogoOut colors={colors} onTouchStart={() => { logout() }} onClick={() => { logout() }}>
                 <Text color={colors.TEXT}>Log out</Text>
@@ -161,18 +176,16 @@ const SideMenu = ({ history, keycloak, logout, sideMenuButtons = [], init, getPr
     )
 }
 
-const createSideMenuButtons = (buttons, changeCurrentPage, colors) => {
-    let array = [];
-    for (const key in buttons) {
-        const Icon = buttons[key].ICON;
-        array.push(
-            <ContainerLink colors={colors} key={key} onTouchEnd={() => { changeCurrentPage(key.toLowerCase()) }} onClick={() => { changeCurrentPage(key.toLowerCase()) }}>
-                <Text color={colors.TEXT}>{key}</Text>
+const createSideMenuButtons = (changeCurrentPage, colors) => {
+    return sideMenu.map((button, index) => {
+        const Icon = button.ICON;
+        return (
+            <ContainerLink colors={colors} key={index + "_" + button.NAME + "_sidemenu"} onTouchEnd={() => { changeCurrentPage(button.NAME.toLowerCase()) }} onClick={() => { changeCurrentPage(button.NAME.toLowerCase()) }}>
+                <Text color={colors.TEXT}>{button.NAME}</Text>
                 <Icon style={{ position: "absolute", top: 20, right: 20, transition: "fill 0.3s linear" }} fontSize="30px" color={colors.TEXT} />
             </ContainerLink>
         )
-    }
-    return array;
+    })
 }
 
 const toggleAnimationLabel = (toggle) => {
