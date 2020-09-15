@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import styled, { keyframes } from 'styled-components';
-import backgroundImage from '../assets/background.webp';
 import colors from '../constants/colors';
 import { mobilecheck } from '../utils/deviceCheck';
 import formBuilder from '../utils/formBuilder';
@@ -13,6 +12,7 @@ import { deleteWeblink, getWeblinks, add } from '../stores/weblinks/weblinkActio
 import { addModel, setModelActive, setModelInactive } from '../stores/models/modelActions';
 import { login } from '../stores/keycloak/keycloakActions';
 import TodoList from '../components/todoList/todoList';
+import colorChanger from '../utils/colorChanger';
 
 import AddIcon from 'react-ionicons/lib/MdAdd';
 import PersonIcon from 'react-ionicons/lib/MdPerson';
@@ -31,14 +31,14 @@ const LoginStyledIcon = styled(PersonIcon)`
 `
 
 
-const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock, init, keycloak, login, colors }) => {
+const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelActive, setModelInactive, clock, init, keycloak, login, colors, backgroundImage }) => {
     const scroll = useRef(false);
     const searchText = useRef("");
     const [selectedWeblink, setSelectedWeblink] = useState({});
     const timer = useRef(undefined);
     const pressDown = useRef(false);
     const addWeblinkModelId = useRef(UUID());
-    
+
     const navigateToLink = (link, newTab) => {
         if (!scroll.current) {
             let win = window.open(link, newTab ? '_blank' : '_self');
@@ -128,9 +128,9 @@ const Home = ({ deleteWeblink, getWeblinks, add, weblinks, addModel, setModelAct
                 </WebsiteLinksContainer>}
             </CenterContainer>
             {!keycloak.authenticated && 
-                <LoginButton onClick={onClickLogin}>
-                    <LoginText>Login</LoginText>
-                    <LoginStyledIcon fontSize="30px" color={colors.WHITE} />   
+                <LoginButton colors={colors} onClick={onClickLogin}>
+                    <LoginText color={colors.TEXT}>Login</LoginText>
+                    <LoginStyledIcon fontSize="30px" color={colors.TEXT} />   
                 </LoginButton>
             }
         </Container>
@@ -184,6 +184,7 @@ const mapStateToProps = state => {
     return { 
         weblinks: state.weblinkReducer.weblinks,
         clock: state.preferencesReducer.clock,
+        backgroundImage: state.preferencesReducer.backgroundImage.base64,
         init: state.keycloakReducer.init,
         keycloak: state.keycloakReducer.keycloak,
         colors: state.preferencesReducer.colors    
@@ -232,7 +233,7 @@ const SearchBar = styled.input`
 `
 
 const LoginText = styled.p`
-  color: ${colors.WHITE}
+  color: ${props => props.color}
   font-size: 18px;
   line-height: 40px;
   flex: 1;
@@ -247,12 +248,12 @@ const LoginButton = styled.div`
     bottom: 30px;
     right: 30px;
     display: flex;
-    background-color: ${colors.TRANSPARENT_20_WHITE};
+    background-color: ${props => props.colors.SECONDARY};
     border-radius: 5px;
     transition: all 0.2s linear;
     &:hover{
         cursor: pointer;
-        background-color: ${colors.TRANSPARENT_80};
+        background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)};
     }
 `
 

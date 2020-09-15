@@ -16,6 +16,29 @@ export const changeDarkmode = (bool) => {
     }
 }
 
+export const changeBackgroundImage = (data) => {
+    return {
+        type: actions.CHANGE_BACKGROUND_IMAGE,
+        payload: new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(data);
+            reader.onload = (function (theFile) {
+                var fileName = theFile.name;
+                return function (e) {
+                    resolve({ name: fileName, base64: e.target.result});
+                };
+            })(data);
+            reader.onerror = error => reject(error);
+        })
+    }
+}
+
+export const removeBackgroundImage = () => {
+    return {
+        type: actions.REMOVE_BACKGROUND_IMAGE,
+    }
+}
+
 export const getPreferences = () => {
     return {
         type: actions.GET_PREFERENCES,

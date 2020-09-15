@@ -1,14 +1,30 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { connect } from "react-redux";
 import styled from 'styled-components';
 import BaseConfig from './baseConfig';
 import SliderButton from '../buttons/dasboard/sliderButton';
-import { changeClock } from '../../stores/preferences/preferencesActions';
+import { changeClock, changeBackgroundImage, removeBackgroundImage } from '../../stores/preferences/preferencesActions';
+import colorChanger from '../../utils/colorChanger';
+import IconButton from "../buttons/cv/iconButton";
 
-const HomeConfig = ({ changeClock, clock, colors }) => {
+import removeImageIcon from 'react-ionicons/lib/MdCloseCircle';
+
+const HomeConfig = ({ changeClock, clock, colors, changeBackgroundImage, removeBackgroundImage, backgroundImage }) => {
     const onChangeClock = (bool) => {
         changeClock(bool);
     }
+
+    const imageSelector = (e) => {
+        changeBackgroundImage(e.target.files[0]);
+    }
+
+    useEffect(() => {
+        const removeImageButton = document.getElementById("removeImageIcon");
+        removeImageButton.addEventListener("click", removeBackgroundImage, false);
+        return () => {
+            removeImageButton.removeEventListener("click", removeBackgroundImage, false);
+        }
+    },[removeBackgroundImage])
 
     const createContent = () => {
         return (
@@ -18,12 +34,22 @@ const HomeConfig = ({ changeClock, clock, colors }) => {
                     <SliderButton onChange={onChangeClock} checked={clock}/>
                     <Description color={colors.TEXT} position="right">Digital Clock</Description>
                 </ItemContainer>
+                <ItemContainer>
+                    <Description color={colors.TEXT} position="left">Background Image</Description>
+                    <InputContainer>
+                        <HiddenFileSelect id="imageSelector" name="imageSelector" accept="image/*" onChange={imageSelector}/>
+                        <SelectedImage colors={colors} htmlFor="imageSelector">{backgroundImage.name}</SelectedImage>
+                    </InputContainer>
+                    <ContainerImage>
+                        <IconButton icon={removeImageIcon} id="removeImageIcon" fontSize="30px" color="red" hoverColor="darkred"/>
+                    </ContainerImage>
+                </ItemContainer>
             </Container>
         )
     }
 
     return (
-        <BaseConfig title="Home" content={createContent()} maxHeight="60px" />
+        <BaseConfig title="Home" content={createContent()} maxHeight="120px" />
     )
 }
 
@@ -36,6 +62,43 @@ const Container = styled.div`
     padding-left: 20px;
     padding-right: 20px;
     text-align: left;
+`
+const ContainerImage = styled.div`
+    margin-top: 7px;
+    margin-bottom: 3px;
+`
+
+const HiddenFileSelect = styled.input.attrs({ type: 'file' })`
+    width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+`
+
+const InputContainer = styled.div`
+    flex: 1;
+
+`
+
+const SelectedImage = styled.label`
+    display: inline-block;
+    height: 30px;
+    min-width: calc(100% - 10px);
+    background-color: ${props => props.colors.SECONDARY};
+    color: ${props => props.colors.TEXT};
+    font-size: 18px;
+    line-height: 30px;
+    border: 1px solid ${props => colorChanger(props.colors.SECONDARY, -0.3)};
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    &:hover{
+        cursor: pointer;
+    }
 `
 
 const ItemContainer = styled.div`
@@ -61,12 +124,15 @@ const areEqual = (prevProps, nextProps) => {
 const mapStateToProps = state => {
     return { 
         clock: state.preferencesReducer.clock,
-        colors: state.preferencesReducer.colors  
+        colors: state.preferencesReducer.colors,
+        backgroundImage: state.preferencesReducer.backgroundImage,
     };
 };
 
 const mapDispatchToProps = {
-    changeClock
+    changeClock,
+    changeBackgroundImage, 
+    removeBackgroundImage
 }
 
 const MemoHomeConfig = memo(connect(mapStateToProps, mapDispatchToProps)(HomeConfig), areEqual)

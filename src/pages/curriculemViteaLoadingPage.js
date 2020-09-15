@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import styled, {keyframes} from 'styled-components';
+import styled, {keyframes, css} from 'styled-components';
 import CurriculemVitae from '../pages/curriculemViteaPage';
 
-const CVloading = ({ }) => {
+const CVloading = () => {
     const [loaded, setLoaded] = useState(false);
     const [animFinish, setAnimFinish] = useState(false);
     if (!loaded && !animFinish) document.body.style.overflow = 'hidden';
@@ -11,12 +11,20 @@ const CVloading = ({ }) => {
         setLoaded(true);
     }
     useEffect(() => {
+
+        const animationEnd = (e) => {
+            if (e.elapsedTime === 1){
+                setAnimFinish(true)
+            }
+            else if(e.elapsedTime === 1.1){
+                document.body.style.overflow = 'unset';
+            }
+        }
+
         const overlay = document.getElementById("overlay");
-        overlay.addEventListener("animationend", ()=> { console.log("hoi"); setAnimFinish(true) }, false);
-        overlay.addEventListener("transitionend", () => { document.body.style.overflow = 'unset'; }, false);
+        overlay.addEventListener("animationend", animationEnd, false);
         return () => {
-            overlay.removeEventListener("animationend", () => { setAnimFinish(true) }, false);
-            overlay.removeEventListener("transitionend", () => { document.body.style.overflow = 'unset'; }, false);
+            overlay.removeEventListener("animationend", animationEnd, false);
         }
     }, [setAnimFinish])
 
@@ -32,20 +40,36 @@ const Container = styled.div`
 `
 
 const changeColor = keyframes`
+    from {
+        background-color: white;
+    }
     to {
         background-color: #caf2f2;
     }
 `
 
+const hide = keyframes`
+    from{
+        background-color: #caf2f2;
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+`
+
 const Overlay = styled.div`
-    position: absolute;
-    opacity: ${props => props.hide ? "0" : "1"}
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 100vw;
+    opacity: 1;
     height: 100vh;
     background-color: white;
-    z-index: 100;
+    z-index: 10000;
     transition: opacity 0.5s ease-in;
-    animation: ${changeColor}  1s ease-in forwards;
+    animation: ${props => props.hide ? css`${hide} 1.1s ease-in forwards` : css`${changeColor} 1s ease-in forwards`};
 `
 
 export default CVloading;
