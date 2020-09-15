@@ -20,6 +20,7 @@ const Day = ({ events, colors }) => {
     const history = useHistory();
     const { date } = useParams();
     const allDayEvents = getAllDayEvents(date, events);
+    const timedEvents = objectIsEmpty(events) ? [] : objectIsEmpty(events[date]) ? [] : events[date].timedEvents;
 
     const goBack = useCallback(() => {
         history.goBack();
@@ -88,7 +89,7 @@ const Day = ({ events, colors }) => {
             </AllDayContainer>
             <DayContainer id={"dayContainer"}>
                 {createDayGrid(click, colors)}
-                {placeTimedEvents(objectIsEmpty(events) ? [] : events[date].timedEvents, goToEvent)}
+                {placeTimedEvents(timedEvents, goToEvent)}
                 <CurrentTime />
             </DayContainer>
             <AddButton colors={colors} onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
@@ -99,7 +100,7 @@ const Day = ({ events, colors }) => {
 }
 
 const getAllDayEvents = (dateOfDay, events) => {
-    if (objectIsEmpty(events)) return [];
+    if (objectIsEmpty(events) || objectIsEmpty(events[dateOfDay])) return [];
     const date = new Date(dateOfDay);
     let array = events[dateOfDay].allDayEvents;
     let offset = events[dateOfDay].offset;
@@ -144,10 +145,23 @@ const createQuarterContainers = (hour, click, colors) => {
 
 const placeTimedEvents = (events, goToEvent) => {
     let eventComponents = [];
-    events.sort(sortEventsOnTime)
-    for (let i = 0; i < events.length; i++) {
-        const placement = caclulatePositionOfEvent(events, events[i]);
-        eventComponents.push(<TimedEvent key={UUID()} className="event" color={events[i].color} offsetLeft={placement.offsetLeft} offsetTop={placement.offsetTop} width={placement.width} height={placement.height} onClick={(e) => { goToEvent(e, events[i]) }} onTouchEnd={(e) => { goToEvent(e, events[i]) }}> <EventTitle>{events[i].title}</EventTitle></TimedEvent >)
+    events.sort(sortEventsOnTime);
+    const positionedEvents = caclulatePositionOfEvents(events);
+    for (const key in positionedEvents){
+        eventComponents.push(
+            <TimedEvent 
+                key={UUID()} 
+                className="event" 
+                color={positionedEvents[key].color} 
+                offsetLeft={positionedEvents[key].offsetLeft} 
+                offsetTop={positionedEvents[key].offsetTop} 
+                width={positionedEvents[key].width} 
+                height={positionedEvents[key].height} 
+                onClick={(e) => { goToEvent(e, positionedEvents[key]) }} 
+                onTouchEnd={(e) => { goToEvent(e, positionedEvents[key]) }}> 
+                    <EventTitle>{positionedEvents[key].title}</EventTitle>
+            </TimedEvent >
+        )
     }
     return eventComponents;
 }
@@ -180,33 +194,47 @@ const diffBetweenTime = (startTime, endTime) => {
     return ((parseInt(end[0]) * 60) + (parseInt(end[1]))) - ((parseInt(start[0]) * 60) + (parseInt(start[1])));
 }
 
-const caclulatePositionOfEvent = (events, event) => {
-    let offsetTop = diffBetweenTime("00:00", event.startTime) * 3;
-    let offsetLeft = undefined;
-    let height = diffBetweenTime(event.startTime, event.endTime) * 3;
-    if (height < 25) height = 25;
-    let width = undefined;
+const caclulatePositionOfEvents = (events) => {
+    const sortedEvents = {};
 
-    const collisionEvents = events.filter((storedEvent) => {
-        //top half
-        if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.startTime) > 0) return true;
-        //bottom half
-        else if (event.startTime.localeCompare(storedEvent.endTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
-        //inside
-        else if (event.startTime.localeCompare(storedEvent.startTime) > 0 && event.endTime.localeCompare(storedEvent.endTime) < 0) return true;
-        //outside
-        else if (event.startTime.localeCompare(storedEvent.startTime) < 0 && event.endTime.localeCompare(storedEvent.endTime) > 0) return true;
-        //same
-        else if (event.startTime.localeCompare(storedEvent.startTime) === 0 && event.endTime.localeCompare(storedEvent.endTime) === 0) return true;
-        else return false;
-    }).sort((eventA, eventB) => {
-        return eventA.startTime.localeCompare(eventB.startTime);
-    });
-    width = 100 / collisionEvents.length;
-    collisionEvents.forEach((storedEvent, index) => {
-        if (storedEvent.id === event.id) offsetLeft = width * index;
+    events.forEach((event) => {
+        const collisionEvents = [];
+        for (const key in sortedEvents) {
+            //top half
+            if (event.startTime.localeCompare(sortedEvents[key].startTime) < 0 && event.endTime.localeCompare(sortedEvents[key].startTime) > 0) collisionEvents.push(sortedEvents[key]);
+            //bottom half
+            if (event.startTime.localeCompare(sortedEvents[key].endTime) < 0 && event.endTime.localeCompare(sortedEvents[key].endTime) >= 0) collisionEvents.push(sortedEvents[key]);
+            //inside
+            else if (event.startTime.localeCompare(sortedEvents[key].startTime) > 0 && event.endTime.localeCompare(sortedEvents[key].endTime) < 0) collisionEvents.push(sortedEvents[key]);
+            //outside
+            else if (event.startTime.localeCompare(sortedEvents[key].startTime) < 0 && event.endTime.localeCompare(sortedEvents[key].endTime) > 0) collisionEvents.push(sortedEvents[key]);
+            //same
+            else if (event.startTime.localeCompare(sortedEvents[key].startTime) === 0 && event.endTime.localeCompare(sortedEvents[key].endTime) === 0) collisionEvents.push(sortedEvents[key]);
+        }
+        const sortedCollisionEvents = collisionEvents.sort((eventA, eventB) => {
+            return eventA.startTime.localeCompare(eventB.startTime);
+        });
+        collisionEvents.push(event);
+        let width = 100 / sortedCollisionEvents.length;
+        sortedCollisionEvents.forEach((collisionEvent, index) => {
+            if(sortedEvents[collisionEvent.id] === undefined){
+                let offsetLeft = width * index;
+                if (sortedCollisionEvents[index - 1] && sortedCollisionEvents[index - 1].offsetLeft > 0){
+                    offsetLeft = 0; 
+                }
+                sortedEvents[collisionEvent.id] = {
+                    ...event,
+                    offsetTop: diffBetweenTime("00:00", event.startTime) * 3,
+                    offsetLeft: offsetLeft,
+                    height: diffBetweenTime(event.startTime, event.endTime) * 3,
+                    width: width
+                }
+
+                if (sortedCollisionEvents[index - 1]) sortedEvents[sortedCollisionEvents[index - 1].id].width = width;
+            }
+        })
     })
-    return { offsetTop, offsetLeft, height, width };
+    return sortedEvents;
 }
 
 const mapStateToProps = state => {
