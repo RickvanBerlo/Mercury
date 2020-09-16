@@ -281,11 +281,12 @@ const AllDayEvent = styled.div`
     margin-bottom: 2px;
     border-radius: 5px;
     transition: background-color 0.3s linear;
-    box-shadow: inset 0px 0px 5px 5px white;
+    box-shadow: inset 0px 0px 5px 5px ${props => props.colors.SECONDARY};
     &:hover{
         background-color: ${props => colorChanger(props.colors.SECONDARY, -0.1)}
         cursor: pointer;
     }
+
     @media (max-width: 767px) {
         &:hover{
             background-color: white;
