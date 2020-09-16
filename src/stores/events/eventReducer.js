@@ -12,7 +12,7 @@ export default (state = InitState, action) => {
             events = addEvent(state.events, action.payload);
             return { ...state, events: { ...events } };
         case (actions.DELETE_EVENT + fulfilled):
-            events = deleteEvent(state.events, state.passedEvent)
+            events = deleteEvent(state.events, state.passedEvent);
             return { ...state, events: { ...events } };
         case (actions.GET_EVENT + fulfilled):
             return { ...state };
@@ -53,6 +53,7 @@ const deleteEvent = (events, event) => {
     } else {
         calculateAllDayEventPlaces(events, event, false);
     }
+    return events;
 }
 
 const deleteTimedEvent = (events, event) => {
