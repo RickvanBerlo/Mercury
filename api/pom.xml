@@ -11,9 +11,9 @@
 	</parent>
 	<groupId>com.mercury</groupId>
 	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<version>1.0.0</version>
+	<name>mercury-api</name>
+	<description>api for mercury projects</description>
 
 	<properties>
 		<java.version>11</java.version>

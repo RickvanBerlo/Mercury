@@ -34,9 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileStorageControllerTests {
     private String relativePath;
 
-    @Value("${tmpPath}")
-    private String tempPath;
-
     @Autowired
     private FileStorageController fileStorageController;
 
@@ -62,8 +59,9 @@ public class FileStorageControllerTests {
     @Order(9)
     public void getFilledDir() {
         MultipartFile multipartFile = null;
+        File file;
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             System.out.println(file.getAbsolutePath());
             if (!file.createNewFile())
                 System.out.println("File already exists.");
@@ -76,14 +74,17 @@ public class FileStorageControllerTests {
         Directory dir = fileStorageController.getContent(relativePath).getBody();
         Assertions.assertEquals(dir.getPath(), relativePath);
         Assertions.assertTrue(!dir.getFiles().isEmpty());
+        System.gc();
+        file.delete();
     }
 
     @Test
     @Order(4)
     public void uploadFile() {
         MultipartFile multipartFile = null;
+        File file;
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             if (!file.createNewFile())
                 System.out.println("File already exists.");
             FileInputStream input = new FileInputStream(file);
@@ -93,6 +94,8 @@ public class FileStorageControllerTests {
         }
         FileInfo fileInfo = fileStorageController.uploadFile(multipartFile, relativePath);
         Assertions.assertEquals(fileInfo.getFileName(), "test.txt");
+        System.gc();
+        file.delete();
     }
 
     @Test
@@ -120,8 +123,9 @@ public class FileStorageControllerTests {
     @Order(5)
     public void deleteFile() {
         MultipartFile multipartFile = null;
+        File file;
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             if (!file.createNewFile())
                 System.out.println("File already exists.");
             FileInputStream input = new FileInputStream(file);
@@ -136,6 +140,8 @@ public class FileStorageControllerTests {
         Directory dir = fileStorageController.getContent(relativePath).getBody();
 
         Assertions.assertTrue(dir.getFiles().isEmpty());
+        System.gc();
+        file.delete();
     }
 
     @Test
@@ -143,9 +149,11 @@ public class FileStorageControllerTests {
     public void deleteFiles() {
         MultipartFile multipartFile = null;
         Directory dir = null;
+        File file;
+        File file2;
         // make file 1
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             if (!file.createNewFile())
                 System.out.println("File already exists.");
             FileInputStream input = new FileInputStream(file);
@@ -159,11 +167,12 @@ public class FileStorageControllerTests {
         Assertions.assertTrue(!dir.getFiles().isEmpty());
         // make file 2
         try {
-            File file = new File(tempPath + "test2.txt");
-            if (!file.createNewFile())
+            file2 = new File("test2.txt");
+            if (!file2.createNewFile())
                 System.out.println("File already exists.");
-            FileInputStream input = new FileInputStream(file);
-            multipartFile = new MockMultipartFile("test2.txt", file.getName(), "text/plain",
+                FileInputStream input = new FileInputStream(file2);
+                    multipartFile = new MockMultipartFile("test2.txt", 
+                    file2.getName(), "text/plain",
                     IOUtils.toByteArray(input));
         } catch (IOException e) {
             throw new RuntimeException("nope", e);
@@ -178,14 +187,18 @@ public class FileStorageControllerTests {
         dir = fileStorageController.getContent(relativePath).getBody();
 
         Assertions.assertTrue(dir.getFiles().isEmpty());
+        System.gc();
+        file.delete();
+        file2.delete();
     }
 
     @Test
     @Order(7)
     public void downloadFile() {
         MultipartFile multipartFile = null;
+        File file;
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             if (!file.createNewFile())
                 System.out.println("File already exists.");
             FileInputStream input = new FileInputStream(file);
@@ -201,14 +214,17 @@ public class FileStorageControllerTests {
         HttpStatus httpstatus = fileStorageController.downloadFile(relativePath.substring(1) + "test.txt", request)
                 .getStatusCode();
         Assertions.assertEquals(httpstatus.value(), 200);
+        System.gc();
+        file.delete();
     }
 
     @Test
     @Order(8)
     public void uploadFiles() {
         MultipartFile multipartFile = null;
+        File file;
         try {
-            File file = new File(tempPath + "test.txt");
+            file = new File("test.txt");
             if (!file.createNewFile())
                 System.out.println("File already exists.");
             FileInputStream input = new FileInputStream(file);
@@ -220,5 +236,7 @@ public class FileStorageControllerTests {
         List<FileInfo> infos = fileStorageController.uploadMultipleFiles(files, relativePath);
 
         Assertions.assertEquals(infos.get(0).getFileName(), "test.txt");
+        System.gc();
+        file.delete();
     }
 }
