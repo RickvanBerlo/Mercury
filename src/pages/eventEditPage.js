@@ -15,9 +15,9 @@ const EventEdit = ({ events, addEvent, replaceEvent, passEvent, colors }) => {
     const { date, id, time } = useParams();
     const history = useHistory();
     let event = {};
-    if (!objectIsEmpty(events))
+    if (!objectIsEmpty(events) && !objectIsEmpty(events[id]))
         event = events[id];
-
+        
     const goBack = useCallback(() => {
         history.goBack();
     }, [history])
@@ -65,7 +65,7 @@ const buildForm = (onSubmit, date, selectedTime, event) => {
     builder.addTimeInput("startTime", { value: event.startTime === undefined ? selectedTime : event.startTime, label: "Begin tijd", dependencies: [{ valueOf: "endTime", functions: [dependencieFunctions.timePicker.largerThen] }] });
     builder.addTimeInput("endTime", { value: event.endTime === undefined ? ChangeTimeByHour(selectedTime === undefined? "00:00": selectedTime,1) : event.endTime, label: "Eind tijd", dependencies: [{ valueOf: "startTime", functions: [dependencieFunctions.timePicker.smallerThen] }] });
     builder.addColorInput("color", { value: event.color, label: "Kleur", });
-    builder.addTextEditorInput("description", { value: event.description, required: true, placeholder: "Description", rows: "10", label: "Beschrijving" });
+    builder.addTextEditorInput("description", { value: event.description, placeholder: "Description", rows: "10", label: "Beschrijving" });
     return builder.getForm("eventForm", "Verzenden", onSubmit);
 }
 

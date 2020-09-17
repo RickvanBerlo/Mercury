@@ -19,7 +19,7 @@ const Event = ({ events, deleteEvent, passEvent, colors }) => {
     const history = useHistory();
 
     let event = {};
-    if (!objectIsEmpty(events))
+    if (!objectIsEmpty(events) && !objectIsEmpty(events[id]))
         event = events[id];
 
     const goBack = useCallback(() => {
