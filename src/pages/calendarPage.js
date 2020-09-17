@@ -199,8 +199,8 @@ const Calendar = ({ getEventsOfMonth, events, layout, addModel, setModelActive, 
                 </FlexContainer>
                 <ButtonContainer>
                     <RightFloat>
-                        <IconButton id="calendar_prev" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
-                        <IconButton id="calendar_next" icon={NextIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                        <IconButton id="calendar_prev" icon={PreviousIcon} fontSize={40} color={colors.DARK_GREEN} />
+                        <IconButton id="calendar_next" icon={NextIcon} fontSize={40} color={colors.DARK_GREEN} />
                     </RightFloat>
                 </ButtonContainer>
             </TopBarContainer>
@@ -222,7 +222,7 @@ const Calendar = ({ getEventsOfMonth, events, layout, addModel, setModelActive, 
 
 
             <AddButton colors={colors} onClick={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }} onTouchEnd={() => { history.push(`calendar/${new Date().toLocaleDateString("fr-CA")}/createevent/00:00`); }}>
-                <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
+                <IconButton id="calendar_prev" icon={AddIcon} fontSize={60} color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container >
     )

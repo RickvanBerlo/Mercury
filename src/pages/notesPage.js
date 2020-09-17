@@ -68,7 +68,7 @@ const Notes = ({ notes, getNotes, colors }) => {
                 {createNotes(notes, amountOfRows, goToEditNote, colors)}
             </Content>
             <AddButton colors={colors} onClick={goToEditNote}>
-                <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
+                <IconButton id="calendar_prev" icon={AddIcon} fontSize={60} color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
     )

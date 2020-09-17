@@ -62,11 +62,11 @@ const Event = ({ events, deleteEvent, passEvent, colors }) => {
             <TopBar colors={colors}>
                 <Title color={colors.MAIN}>{event.title}</Title>
                 <LeftButtonContainer>
-                    <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                    <IconButton id="goBack" icon={PreviousIcon} fontSize={40} color={colors.DARK_GREEN} />
                 </LeftButtonContainer>
                 <RightButtonContainer>
-                    <Spacing><IconButton id="edit" icon={EditIcon} fontSize="35px" color={colors.DARK_GREEN} /></Spacing>
-                    <Spacing><IconButton id="remove" icon={TrashIcon} fontSize="35px" color={colors.DARK_GREEN} /></Spacing>
+                    <Spacing><IconButton id="edit" icon={EditIcon} fontSize={35} color={colors.DARK_GREEN} /></Spacing>
+                    <Spacing><IconButton id="remove" icon={TrashIcon} fontSize={35} color={colors.DARK_GREEN} /></Spacing>
                 </RightButtonContainer>
             </TopBar>
             <ContentContainer>

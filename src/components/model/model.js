@@ -45,7 +45,7 @@ const Model = ({ setModelInactive, activeModels, id, title, content, colors }) =
                 <TopBar>
                     <Title>{title}</Title>
                     <CloseButtonContainer>
-                        <IconButton id={UUID_CloseButton.current} icon={AddIcon} color={colors.BLACK} fontSize="30px" round={false} />
+                        <IconButton id={UUID_CloseButton.current} icon={AddIcon} color={colors.BLACK} fontSize={30} round={false} />
                     </CloseButtonContainer>
                 </TopBar>
                 <MiddleContainer>

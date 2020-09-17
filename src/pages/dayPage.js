@@ -82,10 +82,10 @@ const Day = ({ events, layout, colors }) => {
             <TopBar colors={colors}>
                 <Title color={colors.MAIN}>{date}</Title>
                 <PositionButtonLeftContainer>
-                    <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                    <IconButton id="goBack" icon={PreviousIcon} fontSize={40} color={colors.DARK_GREEN} />
                 </PositionButtonLeftContainer>
                 <PositionButtonRightContainer>
-                    <ToggleIconButton id="showAllDay" iconOne={EyeIcon} iconTwo={EyeOffIcon} callback={ToggleShowAllDay} fontSize="40px" color={colors.DARK_GREEN} />
+                    <ToggleIconButton id="showAllDay" iconOne={EyeIcon} iconTwo={EyeOffIcon} callback={ToggleShowAllDay} fontSize={40} color={colors.DARK_GREEN} />
                 </PositionButtonRightContainer>
             </TopBar>
             <AllDayContainer colors={colors} id={"allDayContainer"}>
@@ -97,7 +97,7 @@ const Day = ({ events, layout, colors }) => {
                 <CurrentTime />
             </DayContainer>
             <AddButton colors={colors} onClick={(e) => {goToEventEdit()}} onTouchEnd={(e) => {goToEventEdit()}}>
-                <IconButton id="calendar_prev" icon={AddIcon} fontSize="60px" color={colors.DARK_GREEN} round={true} />
+                <IconButton id="calendar_prev" icon={AddIcon} fontSize={60} color={colors.DARK_GREEN} round={true} />
             </AddButton>
         </Container>
     )

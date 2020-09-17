@@ -185,8 +185,8 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
             <TopBar colors={colors}>
                 <ButtonContainer>
                     <FloatLeftContainer>
-                        <VisibilityContainer hide={(currentPath.split('/')[1] === "") ? true : (editState.current ? true : false)}><IconButton id="undo" icon={arrowBackIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={(currentPath.split('/')[1] === "") ? true : (editState.current ? true : false)}><IconButton id="undo" icon={arrowBackIcon} fontSize={40} color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteSelectedFiles" icon={CloseIcon} fontSize={40} color={colors.DARK_GREEN} /></VisibilityContainer>
                     </FloatLeftContainer>
                 </ButtonContainer>
                 <TitleContainer>
@@ -194,9 +194,9 @@ const Storage = ({ createDir, addModel, setModelActive, setModelInactive, addFil
                 </TitleContainer>
                 <ButtonContainer>
                     <FloatRightContainer>
-                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteItems" icon={TrashIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                        <VisibilityContainer hide={editState.current}><IconButton id="addDocuments" icon={DocumentIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
-                        <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize="40px" color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={!editState.current}><IconButton id="deleteItems" icon={TrashIcon} fontSize={40} color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={editState.current}><IconButton id="addDocuments" icon={DocumentIcon} fontSize={40} color={colors.DARK_GREEN} /></VisibilityContainer>
+                        <VisibilityContainer hide={editState.current}><IconButton id="addFolder" icon={FolderIcon} fontSize={40} color={colors.DARK_GREEN} /></VisibilityContainer>
                     </FloatRightContainer>
                 </ButtonContainer>
             </TopBar>

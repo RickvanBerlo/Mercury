@@ -74,7 +74,7 @@ const Authentication = ({ history, ToggleLogin = true }) => {
                             <Link href='#' onClick={() => { TogglePages(false, setToggle) }}>Nog geen Account? Registreer hier!</Link>
                         </BottomContainer>
                         <TopContainer toggle={toggle}>
-                            <IconButton id={"backButton"} icon={PreviousIcon} fontSize="40px" />
+                            <IconButton id={"backButton"} icon={PreviousIcon} fontSize={40} />
                         </TopContainer>
                     </OffsetTransform>
                 </ContainerLeft>

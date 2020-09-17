@@ -48,7 +48,7 @@ const HomeConfig = ({ changeClock, clock, colors, changeBackgroundImage, removeB
                         <SelectedImage colors={colors} htmlFor="imageSelector">{backgroundImage.name}</SelectedImage>
                     </InputContainer>
                     <ContainerImage>
-                        <IconButton icon={removeImageIcon} id="removeImageIcon" fontSize="30px" color="red" hoverColor="darkred"/>
+                        <IconButton icon={removeImageIcon} id="removeImageIcon" fontSize={30} color="red" hoverColor="darkred"/>
                     </ContainerImage>
                 </ItemContainer>
             </Container>

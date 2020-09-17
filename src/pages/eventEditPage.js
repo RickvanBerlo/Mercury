@@ -17,7 +17,7 @@ const EventEdit = ({ events, addEvent, replaceEvent, passEvent, colors }) => {
     let event = {};
     if (!objectIsEmpty(events) && !objectIsEmpty(events[id]))
         event = events[id];
-        
+
     const goBack = useCallback(() => {
         history.goBack();
     }, [history])
@@ -45,7 +45,7 @@ const EventEdit = ({ events, addEvent, replaceEvent, passEvent, colors }) => {
             <TopBar colors={colors}>
                 <Title color={colors.MAIN}>{event.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
-                    <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                    <IconButton id="goBack" icon={PreviousIcon} fontSize={40} color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
             </TopBar>
             <EventContainer>

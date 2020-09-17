@@ -52,10 +52,10 @@ const NoteEdit = ({ removeNote, add, replace, notes, passNote, colors }) => {
             <TopBar colors={colors}>
                 <Title color={colors.MAIN}>{note.id === undefined ? "Toevoegen" : "Veranderen"}</Title>
                 <PositionButtonContainer>
-                    <IconButton id="goBack" icon={PreviousIcon} fontSize="40px" color={colors.DARK_GREEN} />
+                    <IconButton id="goBack" icon={PreviousIcon} fontSize={40} color={colors.DARK_GREEN} />
                 </PositionButtonContainer>
                 {note.id && <RightButtonContainer>
-                    <IconButton id="remove" icon={TrashIcon} fontSize="35px" color={colors.DARK_GREEN} />
+                    <IconButton id="remove" icon={TrashIcon} fontSize={35} color={colors.DARK_GREEN} />
                 </RightButtonContainer>}
             </TopBar>
             <EventContainer>

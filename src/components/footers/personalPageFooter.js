@@ -24,7 +24,7 @@ const Footer = ({ links }) => {
         <Container>
             <FlexWarpper>
                 {links.map((link, index) => {
-                    return (<IconButton key={index} id={index + "footer"} icon={link.ICON} fontSize="40px" color="white" onClick={() => window.open(link.LINK, "_blank")} />);
+                    return (<IconButton key={index} id={index + "footer"} icon={link.ICON} fontSize={40} color="white" onClick={() => window.open(link.LINK, "_blank")} />);
                 })}
             </FlexWarpper>
         </Container >
