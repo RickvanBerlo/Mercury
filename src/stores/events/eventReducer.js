@@ -44,8 +44,12 @@ const addEvent = (state, event) => {
     event.endDate = `${event.endDate[0]}-${event.endDate[1] < 10 ? "0" + event.endDate[1] : event.endDate[1]}-${event.endDate[2] < 10 ? "0" + event.endDate[2] : event.endDate[2]}`;
     event.endTime = `${event.endTime[0] < 10 ? "0" + event.endTime[0] : event.endTime[0]}:${event.endTime[1] < 10 ? "0" + event.endTime[1] : event.endTime[1]}`;
     event.startTime = `${event.startTime[0] < 10 ? "0" + event.startTime[0] : event.startTime[0]}:${event.startTime[1] < 10 ? "0" + event.startTime[1] : event.startTime[1]}`;
+    //check if the object already exists in the events array. if it doesn't place it in the layout.
+    if (state.events[event.id] === undefined){
+        state.events[event.id] = event;
+        placeEventInLayout(state, event);
+    }
     state.events[event.id] = event;
-    placeEventInLayout(state, event);
     return state;
 }
 
@@ -55,6 +59,7 @@ const placeEventInLayout = (state, event) => {
     for (let i = 0; i <= difference; i++) {
         const key = startDate.toLocaleDateString("fr-CA");
         if (state.layout[key] === undefined) state.layout[key] = {};
+        //when the new event date is smaller then the current date change event to undifined. this will sort the list without adding the new event.
         if(new Date(event.endDate).getTime() < startDate.getTime())
             state.layout[key] = orderList(state.events, state.layout, key);
         else
@@ -78,14 +83,20 @@ const getLastKnownDate = (events, list) => {
 const orderList = (events, layout, key, event = undefined) => {
     let orderedList = {};
     const subtractLayout = { ...layout[key] };
+    
     if(event !== undefined)
     subtractLayout["new"] = event.id;
+
+    //get key for previous day.
     const yesterday = new Date(key);
     yesterday.setDate(yesterday.getDate() - 1);
     const perviousKey = yesterday.toLocaleDateString("fr-CA");
+
     let amountOfItems = 0;
+
     if (event !== undefined)
     layout[key]["new"] = event.id;
+    
     console.log("lets add new event to list")
     console.log(event);
     console.log("sort list for day")

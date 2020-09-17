@@ -16,11 +16,13 @@ import EyeIcon from 'react-ionicons/lib/MdEye';
 import EyeOffIcon from 'react-ionicons/lib/MdEyeOff';
 import AddIcon from 'react-ionicons/lib/MdAdd';
 
-const Day = ({ events, colors }) => {
+const Day = ({ events, layout, colors }) => {
     const history = useHistory();
     const { date } = useParams();
-    const allDayEvents = getAllDayEvents(date, events);
-    const timedEvents = objectIsEmpty(events) ? [] : objectIsEmpty(events[date]) ? [] : events[date].timedEvents;
+    const splitEvent = splitEvents(events, layout[date]);
+    console.log(splitEvent)
+    const allDayEvents = splitEvent.allDay;
+    const timedEvents = splitEvent.timed;
 
     const goBack = useCallback(() => {
         history.goBack();
@@ -101,20 +103,33 @@ const Day = ({ events, colors }) => {
     )
 }
 
-const getAllDayEvents = (dateOfDay, events) => {
-    if (objectIsEmpty(events) || objectIsEmpty(events[dateOfDay])) return [];
-    const date = new Date(dateOfDay);
-    let array = events[dateOfDay].allDayEvents;
-    let offset = events[dateOfDay].offset;
-    while (offset > 0) {
-        date.setDate(date.getDate() - 1);
-        if (events[date.toLocaleDateString("fr-CA")].offset === (offset -1)) {
-            array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
-            offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
-        }
+const splitEvents = (events, layout) => {
+    const splitEvents = { timed: [], allDay: [] };
+    if (objectIsEmpty(events) || objectIsEmpty(layout)) return splitEvents;
+
+    for(const key in layout){
+        if (events[layout[key]].hasTime)
+            splitEvents.timed.push(events[layout[key]]);
+        else
+            splitEvents.allDay.push(events[layout[key]]);
     }
-    return array;
+    return splitEvents;
 }
+
+// const getAllDayEvents = (dateOfDay, events) => {
+//     if (objectIsEmpty(events) || objectIsEmpty(events[dateOfDay])) return [];
+//     const date = new Date(dateOfDay);
+//     let array = events[dateOfDay].allDayEvents;
+//     let offset = events[dateOfDay].offset;
+//     while (offset > 0) {
+//         date.setDate(date.getDate() - 1);
+//         if (events[date.toLocaleDateString("fr-CA")].offset === (offset -1)) {
+//             array = array.concat(events[date.toLocaleDateString("fr-CA")].allDayEvents);
+//             offset -= events[date.toLocaleDateString("fr-CA")].allDayEvents.length;
+//         }
+//     }
+//     return array;
+// }
 
 const createDayGrid = (click, colors) => {
     let array = [];
@@ -242,6 +257,7 @@ const caclulatePositionOfEvents = (events) => {
 const mapStateToProps = state => {
     return {
         events: state.eventReducer.events,
+        layout: state.eventReducer.layout,
         colors: state.preferencesReducer.colors  
     };
 };

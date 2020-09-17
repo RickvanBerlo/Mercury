@@ -15,15 +15,12 @@ import DescriptionIcon from 'react-ionicons/lib/MdList';
 
 
 const Event = ({ events, deleteEvent, passEvent, colors }) => {
-    const { date, id } = useParams();
+    const { id } = useParams();
     const history = useHistory();
 
-    let event;
-    if (!objectIsEmpty(events)) {
-    event = events[date].allDayEvents.find(event => event.id === id);
-    if (event === undefined) event = events[date].timedEvents.find(event => event.id === id);
-    }
-    if (event === undefined) event = {};
+    let event = {};
+    if (!objectIsEmpty(events))
+        event = events[id];
 
     const goBack = useCallback(() => {
         history.goBack();

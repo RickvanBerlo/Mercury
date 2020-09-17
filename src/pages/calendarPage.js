@@ -347,7 +347,6 @@ const createDays = (events, layout, firstDayOfWeek, month, navigateToDayPage, na
     const today = date.toLocaleDateString('nl');
     for (let i = 0; i < 7; i++) {
         const date = new Date(firstDayOfWeek);
-
         days.push(
             <Day
                 colors={colors}
@@ -372,13 +371,13 @@ const createDays = (events, layout, firstDayOfWeek, month, navigateToDayPage, na
 const createEvents = (events, layout, date, navigateToEventPage, navigateToDayPage) => {
     const array = [];
     for (const key in layout) {
-        if (key > AMOUNT_OF_EVENTS_IN_DAY_CONTAINER){ 
-            array.push(<EventPlaceholder index={0} key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={AMOUNT_OF_EVENTS_IN_DAY_CONTAINER} navigateToDayPage={() => { navigateToDayPage(date) }} />);
+        if (key >= AMOUNT_OF_EVENTS_IN_DAY_CONTAINER){ 
+            array.push(<EventPlaceholder key={date.toLocaleDateString("fr-CA") + "_placeholder"} offset={AMOUNT_OF_EVENTS_IN_DAY_CONTAINER} navigateToDayPage={() => { navigateToDayPage(date) }} />);
             break;
         }
         else{
-            if (events[layout[key]].startDate === date.toLocaleDateString("fr-CA"))
-            array.push(<Event key={layout[key]} index={0} offset={key} placedDate={date.toLocaleDateString("fr-CA")} props={events[layout[key]]} navigateToEventPage={() => { navigateToEventPage(events[layout[key]]) }} />);
+            if (events[layout[key]].startDate === date.toLocaleDateString("fr-CA") || date.getDay() === 0)
+                array.push(<Event key={layout[key]} offset={key} placedDate={date.toLocaleDateString("fr-CA")} props={events[layout[key]]} navigateToEventPage={() => { navigateToEventPage(events[layout[key]]) }} />);
         }
     }
     return array;

@@ -39,7 +39,7 @@ const fadein = keyframes`
 
 const Container = styled.div`
     position: relative;
-    transform:  translateY(calc(${props => props.offset * 100}% + ${props => props.index * 3}px));
+    transform:  translateY(calc(${props => props.offset * 100}% + ${props => props.offset * 3}px));
     margin-left: 3px;
     height: 16%;
     width: calc(100%  - 6px);
