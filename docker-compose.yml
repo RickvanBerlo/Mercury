@@ -5,15 +5,15 @@ services:
     image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: mercury
     ports:
       - 27017-27019:27017-27019
   mercury:
-    # image: mercury/api
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mercury/api
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     depends_on:
         - mongo
     ports:

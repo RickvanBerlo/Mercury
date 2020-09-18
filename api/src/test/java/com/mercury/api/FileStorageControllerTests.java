@@ -24,7 +24,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
