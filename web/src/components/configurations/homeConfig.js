@@ -6,7 +6,7 @@ import SliderButton from '../buttons/dasboard/sliderButton';
 import { changeClock, changeBackgroundImage, removeBackgroundImage } from '../../stores/preferences/preferencesActions';
 import { addMessage } from '../../stores/snackbar/snackbarActions';
 import colorChanger from '../../utils/colorChanger';
-import IconButton from "../buttons/cv/iconButton";
+import IconButton from "../buttons/dasboard/iconButton";
 
 import removeImageIcon from 'react-ionicons/lib/MdCloseCircle';
 
@@ -48,7 +48,7 @@ const HomeConfig = ({ changeClock, clock, colors, changeBackgroundImage, removeB
                         <SelectedImage colors={colors} htmlFor="imageSelector">{backgroundImage.name}</SelectedImage>
                     </InputContainer>
                     <ContainerImage>
-                        <IconButton icon={removeImageIcon} id="removeImageIcon" fontSize={30} color="red" hoverColor="darkred"/>
+                        <IconButton icon={removeImageIcon} id="removeImageIcon" fontSize={30} color="red" hoverColor="darkred" shadow={false}/>
                     </ContainerImage>
                 </ItemContainer>
             </Container>
@@ -71,8 +71,7 @@ const Container = styled.div`
     text-align: left;
 `
 const ContainerImage = styled.div`
-    margin-top: 7px;
-    margin-bottom: 3px;
+    margin-top: 11px;
 `
 
 const HiddenFileSelect = styled.input.attrs({ type: 'file' })`
