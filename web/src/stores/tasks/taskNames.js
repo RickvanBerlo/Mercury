@@ -1,0 +1,7 @@
+export default {
+    ADD_TASK: "ADD_TASK",
+    GET_TASKS_OF_TODAY: "GET_TASKS_OF_TODAY",
+    REPLACE_TASK: "REPLACE_TASK",
+    
+
+}

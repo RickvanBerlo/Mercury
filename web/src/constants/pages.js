@@ -1,0 +1,10 @@
+import lazy from "react-lazy-with-preload";
+export const HomePage = lazy(() => import('../pages/homePage'));
+export const CalendarPage = lazy(() => import('../pages/calendarPage'));
+export const NotesPage = lazy(() => import('../pages/notesPage'));
+export const StoragePage = lazy(() => import('../pages/storagePage'));
+export const ConfigPage = lazy(() => import('../pages/configPage'));
+export const DayPage = lazy(() => import('../pages/dayPage'));
+export const EventEditPage = lazy(() => import('../pages/eventEditPage'));
+export const EventPage = lazy(() => import('../pages/eventPage'));
+export const NoteEditPage = lazy(() => import('../pages/noteEditPage'));
