@@ -20,7 +20,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 14
-    - name: Build with Maven
+    - name: up one directory
       run: cd api
+    - name: Build with Maven
       run: mvn -B package --file api/pom.xml -Dspring.profiles.active=github
 
